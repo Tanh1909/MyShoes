@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/Security.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/WebSecurityConfigAdapter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/constant/AuthErrorCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/constant/ERole.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/exception/CustomAccessDenied.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/exception/CustomAuthenticationEntryPoint.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/exception/Exception.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/filter/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/service/UserDetailImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/service/UserDetailServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/mapper/UserMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/request/AuthRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/request/UserCreationRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/AuthResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserDetailResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/IRxRoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/IRxUserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/RoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/UserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/AuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/utils/JwtUtils.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/resources/application-spring-security-local.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/mvnw" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/mvnw" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/mvnw.cmd" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/mvnw.cmd" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/src/main/java/org/example/moduleapplication/ModuleApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-application/src/test/java/org/example/moduleapplication/ModuleApplicationTests.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/org/example/jooqrepository/IBlockingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IBlockingRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/org/example/jooqrepository/IRxJooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/org/example/jooqrepository/JooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/org/example/jooqrepository/utils/SQLQueryUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/utils/SQLQueryUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/config/constant/PageConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/PageConstant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/data/request/PageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/request/PageRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/data/response/ApiResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/ApiResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/data/response/PageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/PageResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/data/response/base/BaseResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/base/BaseResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/exception/AppException.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/exception/AppException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/exception/ErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/exception/ErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/exception/ErrorCodeBase.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/ErrorCodeBase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/template/RxTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/template/RxTemplate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/org/example/common/utils/TimeUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/utils/TimeUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Enum" />
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Tanh1909&quot;
+  }
+}</component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1727545034" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Tanh1909/MyShoes.git&quot;,
+    &quot;accountId&quot;: &quot;dc4d4a2f-44fd-4016-96b3-5062e9865fc2&quot;
+  }
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2mf5N1j7iJigF2V7feXfyJo7zz9" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "Maven.MyShoes [-pl,module-app,clean,-P,local].executor": "Run",
+    "Maven.MyShoes [-pl,module-app,clean,install,-P...].executor": "Run",
+    "Maven.MyShoes [-pl,module-app,clean].executor": "Run",
+    "Maven.MyShoes [-pl,module-application,clean...].executor": "Run",
+    "Maven.MyShoes [-pl,starter-spring-security...].executor": "Run",
+    "Maven.MyShoes [-pl...].executor": "Run",
+    "Maven.MyShoes [clean].executor": "Run",
+    "Maven.MyShoes [help:all-profiles].executor": "Run",
+    "Maven.jooq-repository [clean].executor": "Run",
+    "Maven.jooq-repository [install].executor": "Run",
+    "Maven.module-app [clean,-P,local].executor": "Run",
+    "Maven.module-app [clean].executor": "Run",
+    "Maven.module-application [clean].executor": "Run",
+    "Maven.module-common [clean].executor": "Run",
+    "Maven.module-common [install].executor": "Run",
+    "Maven.module-core [clean].executor": "Run",
+    "Maven.module-core [install].executor": "Run",
+    "Maven.starter-spring-security [clean].executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Spring Boot.Main (1).executor": "Run",
+    "Spring Boot.Main.executor": "Run",
+    "Spring Boot.ModuleAppApplication.executor": "Run",
+    "Spring Boot.ModuleApplication.executor": "Run",
+    "Spring Boot.ModuleCoreCommonApplication.executor": "Run",
+    "Spring Boot.Security.executor": "Run",
+    "Spring Boot.StarterSpringSecurityApplication.executor": "Run",
+    "git-widget-placeholder": "main",
+    "jdk.selected.JAVA_MODULE": "21",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/project/MyShoes/module-core/starter-spring-security/src/main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.configurations.included.in.services": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\MyShoes\module-core\starter-spring-security\src\main" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\project\MyShoes" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.example.security" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn -pl module-application clean install -am" />
+      <command value="mvn -pl module-application clean install " />
+      <command value="mvn -pl module-core/starter-spring-security clean install " />
+      <command value="mvn -pl module-application clean install -am -P local" />
+      <command value="mvn -pl module-core/starter-spring-security clean install -am -P spring-security-local" />
+      <command value="mvn -pl module-core/starter-spring-security clean install -am -P local" />
+      <command value="mvn help:all-profiles " />
+      <command value="mvn -pl module-app clean -P local" />
+      <command value="mvn -pl module-app clean" />
+      <command value="mvn clean -P local" />
+      <command value="mvn clean" />
+      <command value="mvn -pl module-app clean install -P local" />
+      <command value="mvn -pl module-core/starter-spring-security clean install -P local" />
+      <command value="mvn -pl starter-spring-security clean install -P local" />
+    </option>
+  </component>
+  <component name="RunDashboard">
+    <option name="configurationTypes">
+      <set>
+        <option value="KtorApplicationConfigurationType" />
+        <option value="MicronautRunConfigurationType" />
+        <option value="QuarkusRunConfigurationType" />
+        <option value="SpringBootApplicationConfigurationType" />
+      </set>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="ModuleAppApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="module-app" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.moduleapp.ModuleAppApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-b114ca120d71-intellij.indexing.shared.core-IU-242.21829.142" />
+        <option value="bundled-js-predefined-d6986cc7102b-7c0b70fcd90d-JavaScript-IU-242.21829.142" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="" />
+      <created>1727454748321</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727454748321</updated>
+      <workItem from="1727454749269" duration="2867000" />
+      <workItem from="1727529317944" duration="12621000" />
+      <workItem from="1727542658072" duration="671000" />
+      <workItem from="1727543400098" duration="4262000" />
+      <workItem from="1727577944576" duration="1436000" />
+      <workItem from="1727579405096" duration="8722000" />
+      <workItem from="1727588248403" duration="1313000" />
+      <workItem from="1727589795804" duration="1732000" />
+      <workItem from="1727597375973" duration="1736000" />
+      <workItem from="1727627777822" duration="4911000" />
+      <workItem from="1727713132327" duration="286000" />
+      <workItem from="1727714267796" duration="2651000" />
+      <workItem from="1727717834051" duration="882000" />
+      <workItem from="1727798624721" duration="60000" />
+      <workItem from="1727876178617" duration="1643000" />
+      <workItem from="1727878132569" duration="404000" />
+      <workItem from="1727879052749" duration="2028000" />
+      <workItem from="1727881502982" duration="2027000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/controller/AuthController.java</url>
+          <line>21</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

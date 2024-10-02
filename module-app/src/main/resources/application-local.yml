@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    username: root
+    url: jdbc:mysql://root:12345678@localhost:3306/quora?createDatabaseIfNotExist=true
+    password: '12345678'
+
+app:
+  module-auth: /auth
