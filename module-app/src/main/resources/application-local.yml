@@ -1,8 +1,12 @@
 spring:
   datasource:
     username: root
-    url: jdbc:mysql://root:12345678@localhost:3306/quora?createDatabaseIfNotExist=true
+    url: jdbc:mysql://root:12345678@localhost:3306/myshoes
     password: '12345678'
+cloudinary:
+  cloud_name: dwgusqbpa
+  api_key: '476734569334626'
+  api_secret: 5CKGbSals-qC1lRiu7wPwr6fC7o
 
 app:
   module-auth: /auth

@@ -19,7 +19,7 @@ public interface IBlockingRepository<P, ID> {
 
     List<P> findAllBlocking();
 
-    List<PageResponse<P>> findAllBlocking(PageRequest pageRequest);
+    PageResponse<P> findAllBlocking(PageRequest pageRequest);
 
     Optional<P> findByIdBlocking(ID id);
 

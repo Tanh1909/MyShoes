@@ -64,7 +64,7 @@ public class WebSecurityConfigAdapter {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_END_POINTS).permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .exceptionHandling(httpSecurityExceptionHandlingConfigurer ->
                         httpSecurityExceptionHandlingConfigurer

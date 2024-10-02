@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/module-application/pom.xml" />
         <option value="$PROJECT_DIR$/module-core/pom.xml" />
         <option value="$PROJECT_DIR$/module-app/pom.xml" />
+        <option value="$PROJECT_DIR$/module-core/cloudinary/pom.xml" />
       </list>
     </option>
   </component>

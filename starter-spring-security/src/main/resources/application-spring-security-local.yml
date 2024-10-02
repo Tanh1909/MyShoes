@@ -7,8 +7,3 @@ jwt:
   secret: dtienanh1909
   token-expiration: 600000
   refresh-expiration: 1200000
-logging:
-  level:
-    org:
-      springframework:
-        security: trace

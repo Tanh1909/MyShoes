@@ -17,6 +17,7 @@
     <modules>
         <module>module-common</module>
         <module>jooq-repository</module>
+        <module>cloudinary</module>
     </modules>
 
     <properties>

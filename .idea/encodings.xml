@@ -3,6 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/module-app/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/module-application/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/module-core/cloudinary/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/module-core/jooq-repository/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/module-core/module-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/module-core/src/main/java" charset="UTF-8" />

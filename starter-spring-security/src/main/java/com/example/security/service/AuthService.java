@@ -12,6 +12,6 @@ public interface AuthService {
     Single<AuthResponse> refreshToken(String refreshToken);
     Single<UserResponse> signUp(UserCreationRequest userCreationRequest);
     Single<String> logout(String token);
-    User getCurrentUser();
+    Single<User> getCurrentUser();
 
 }
