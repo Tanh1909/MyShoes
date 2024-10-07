@@ -6,10 +6,8 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
-    @Mapping(source = "image", target = "image", ignore = true)
     Product toProduct(ProductRequest productRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(source = "image", target = "image", ignore = true)
     void toProduct(@MappingTarget Product product, ProductRequest productRequest);
 }

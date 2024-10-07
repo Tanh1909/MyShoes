@@ -1,10 +1,8 @@
 package com.example.security.config.service;
 
 import com.example.security.data.response.UserDetailResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +11,11 @@ import org.springframework.stereotype.Component;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Component
+@NoArgsConstructor
 public class UserDetailImpl implements UserDetails {
+    private Long id;
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
@@ -29,6 +26,12 @@ public class UserDetailImpl implements UserDetails {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
         return new UserDetailImpl(user.getUsername(), user.getPassword(), authorities);
+    }
+
+    public UserDetailImpl(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
     }
 
     @Override

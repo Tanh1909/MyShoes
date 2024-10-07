@@ -13,6 +13,7 @@ import org.jooq.TableField;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +58,11 @@ public abstract class JooqRepository<P, ID> implements
                 .fetchOne()
                 .map(record -> record.into(pojoClass))
         );
+    }
+
+    @Override
+    public Single<List<P>> insertReturn(Collection<P> entities) {
+        return Single.just(entities.stream().map(p -> insertReturn(p).blockingGet()).toList());
     }
 
     @Override

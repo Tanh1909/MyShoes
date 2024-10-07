@@ -3,7 +3,9 @@ package com.example.repository.utils;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Table;
+import org.jooq.TableRecord;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,4 +21,5 @@ public class SQLQueryUtils {
         }
         return values;
     }
+
 }

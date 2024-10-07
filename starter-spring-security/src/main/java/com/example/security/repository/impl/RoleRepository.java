@@ -10,9 +10,11 @@ import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.common.template.RxTemplate.rxSchedulerIo;
 import static com.example.security.model.Tables.*;
+import static java.util.Optional.ofNullable;
 
 @Repository
 @RequiredArgsConstructor
@@ -31,11 +33,23 @@ public class RoleRepository extends JooqRepository<Role, Integer> implements IRx
 
     @Override
     public Single<List<Role>> findByUsername(String username) {
-        return rxSchedulerIo(() -> getDSLContext().select()
+        return rxSchedulerIo(() -> getDSLContext().select(ROLE.ID,ROLE.ROLE_NAME,ROLE.DESCRIPTION)
                 .from(getTable())
                 .leftJoin(USER_ROLE).on(ROLE.ID.eq(USER_ROLE.ROLE_ID))
                 .leftJoin(USER).on(USER_ROLE.USER_ID.eq(USER.ID))
+                .where(USER.USERNAME.eq(username))
                 .fetchInto(pojoClass)
+        );
+    }
+
+    @Override
+    public Single<Optional<Role>> findByRoleName(String name) {
+        return rxSchedulerIo(() -> ofNullable(
+                        getDSLContext().select()
+                                .from(getTable())
+                                .where(ROLE.ROLE_NAME.eq(name))
+                                .fetchOneInto(pojoClass)
+                )
         );
     }
 }

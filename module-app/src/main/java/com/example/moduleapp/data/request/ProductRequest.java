@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,5 +15,5 @@ public class ProductRequest {
     private BigDecimal price;
     private String category;
     private Integer stock;
-    private MultipartFile image;
+    private List<MultipartFile> image;
 }

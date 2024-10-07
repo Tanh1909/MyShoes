@@ -1,12 +1,21 @@
 package com.example.common.data.request;
 
+import com.example.common.config.constant.PageConstant;
 import lombok.Builder;
 import lombok.Data;
-import com.example.common.config.constant.PageConstant;
+import org.springframework.util.ObjectUtils;
 
 @Data
 @Builder
 public class PageRequest {
-    private Integer page = PageConstant.DEFAULT_PAGE.getValue();
-    private Integer size = PageConstant.DEFAULT_SIZE.getValue();
+    private Integer page;
+    private Integer size;
+
+    public Integer getPage() {
+        return ObjectUtils.isEmpty(this.page) ? PageConstant.DEFAULT_PAGE.getValue() : this.page;
+    }
+
+    public Integer getSize() {
+        return ObjectUtils.isEmpty(this.size) ? PageConstant.DEFAULT_SIZE.getValue() : this.size;
+    }
 }

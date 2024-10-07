@@ -5,5 +5,12 @@ spring:
     password: '12345678'
 jwt:
   secret: dtienanh1909
-  token-expiration: 600000
-  refresh-expiration: 1200000
+  token-expiration: 6000000
+  refresh-expiration: 12000000
+app:
+  module-auth: /auth
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: trace

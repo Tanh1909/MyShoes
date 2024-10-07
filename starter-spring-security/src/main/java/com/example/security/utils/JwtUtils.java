@@ -44,8 +44,7 @@ public class JwtUtils {
         claims.put("userId", user.getId());
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secret)
-                .setId(UUID.randomUUID().toString())
-                .setSubject(user.getEmail())
+                .setSubject(user.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiration)
                 .addClaims(claims)

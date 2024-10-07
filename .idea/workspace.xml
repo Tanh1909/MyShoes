@@ -5,33 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="fix bug security">
-      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/ProductMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ProductRequest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/cloudinary/src/main/java/com/example/cloudinary/config/CloudinaryConfig.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/cloudinary/src/main/java/com/example/cloudinary/constant/UploadFileError.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/cloudinary/src/main/java/com/example/cloudinary/service/IUploadFileService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/cloudinary/src/main/java/com/example/cloudinary/service/UploadFileServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/dto/PageDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxCartRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductAttributeRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/CartRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductAttributeRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/CartService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/controller/TestController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/IRxUserRoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/UserRoleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/ModuleAppApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/ModuleAppApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IBlockingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IBlockingRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/ProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/ProductMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ProductRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/utils/SQLQueryUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/utils/SQLQueryUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/IBlockingRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/IBlockingRepository.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/IRxJooqRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/IRxJooqRepository.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/JooqRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/JooqRepository.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/utils/SQLQueryUtils.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/target/classes/com/example/repository/utils/SQLQueryUtils.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/PageConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/PageConstant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/request/PageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/request/PageRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/template/RxTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/template/RxTemplate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/config/constant/PageConstant.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/config/constant/PageConstant.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/data/request/PageRequest$PageRequestBuilder.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/data/request/PageRequest$PageRequestBuilder.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/data/request/PageRequest.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/data/request/PageRequest.class" afterDir="false" />
@@ -47,10 +45,20 @@
       <change beforePath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/exception/GlobalExceptionHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/exception/GlobalExceptionHandler.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/template/RxTemplate.class" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/target/classes/com/example/common/template/RxTemplate.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/Security.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/Security.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/WebSecurityConfigAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/WebSecurityConfigAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/filter/JwtAuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/filter/JwtAuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/service/UserDetailImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/service/UserDetailImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserDetailResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/IRxRoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/IRxRoleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/RoleRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/AuthService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/impl/AuthServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/utils/JwtUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/utils/JwtUtils.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/resources/application-spring-security-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/resources/application-spring-security-local.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,6 +180,9 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="ReactorSettings">
+    <option name="notificationShown" value="true" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\project\MyShoes\module-core\starter-spring-security\src\main" />
@@ -271,6 +282,9 @@
       <workItem from="1727878132569" duration="404000" />
       <workItem from="1727879052749" duration="2028000" />
       <workItem from="1727881502982" duration="9351000" />
+      <workItem from="1728145093696" duration="8532000" />
+      <workItem from="1728204936862" duration="4533000" />
+      <workItem from="1728306802755" duration="11638000" />
     </task>
     <task id="LOCAL-00001" summary="fix bug security">
       <option name="closed" value="true" />
@@ -308,5 +322,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix bug security" />
     <option name="LAST_COMMIT_MESSAGE" value="fix bug security" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductAttributeRepository.java</url>
+          <line>40</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
