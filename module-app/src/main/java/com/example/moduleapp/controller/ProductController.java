@@ -25,5 +25,22 @@ public class ProductController {
     public Single<ApiResponse> findAll(@ModelAttribute PageRequest pageRequest) {
         return productService.findAll(pageRequest).map(ApiResponse::success);
     }
+    @PatchMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> update(@PathVariable Long id,@ModelAttribute ProductRequest productRequest) {
+        return productService.update(id,productRequest).map(ApiResponse::success);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> deleteById(@PathVariable Long id) {
+        return productService.delete(id).map(ApiResponse::success);
+    }
+
+    @PostMapping("/{id}/cart")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> addToCart() {
+        return productService.addToCart(1l).map(ApiResponse::success);
+    }
 
 }

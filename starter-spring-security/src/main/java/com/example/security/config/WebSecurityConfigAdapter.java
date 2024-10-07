@@ -71,7 +71,6 @@ public class WebSecurityConfigAdapter {
                                 .accessDeniedHandler(customAccessDenied)
                                 .authenticationEntryPoint(customAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -83,10 +82,8 @@ public class WebSecurityConfigAdapter {
         corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
-
         UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
         urlBasedCorsConfigurationSource.registerCorsConfiguration("http://localhost:3000/", corsConfiguration);
-
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
 }

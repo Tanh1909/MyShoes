@@ -10,7 +10,8 @@ import java.util.List;
 
 public interface ProductService {
     Single<Product> create(ProductRequest productRequest);
-    Single<Product> update(Long id,ProductRequest productRequest);
+    Single<String> update(Long id,ProductRequest productRequest);
     Single<String> delete(Long id);
     Single<PageResponse<Product>> findAll(PageRequest pageRequest);
+    Single<String> addToCart(Long id);
 }

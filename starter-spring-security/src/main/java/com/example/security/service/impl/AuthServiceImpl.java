@@ -2,6 +2,7 @@ package com.example.security.service.impl;
 
 import com.example.common.exception.AppException;
 import com.example.security.config.constant.AuthErrorCode;
+import com.example.security.config.constant.ERole;
 import com.example.security.config.service.UserDetailImpl;
 import com.example.security.data.mapper.UserMapper;
 import com.example.security.data.request.AuthRequest;
@@ -11,18 +12,21 @@ import com.example.security.data.response.UserDetailResponse;
 import com.example.security.data.response.UserResponse;
 import com.example.security.model.tables.pojos.Role;
 import com.example.security.model.tables.pojos.User;
+import com.example.security.model.tables.pojos.UserRole;
 import com.example.security.repository.impl.RoleRepository;
 import com.example.security.repository.impl.UserRepository;
+import com.example.security.repository.impl.UserRoleRepository;
 import com.example.security.service.AuthService;
 import com.example.security.utils.JwtUtils;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @Override
     public Single<AuthResponse> login(AuthRequest authRequest) {
@@ -62,16 +67,28 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Single<UserResponse> signUp(UserCreationRequest userCreationRequest) {
-        return userRepository.existByUsername(userCreationRequest.getUsername())
-                .flatMap(isExist -> {
+        return Single.zip(
+                userRepository.existByUsername(userCreationRequest.getUsername()),
+                roleRepository.findByRoleName(ERole.ROLE_USER.name()),
+                (isExist, roleOptional) -> {
                     if (isExist) {
                         throw new AppException(AuthErrorCode.ALREADY_EXISTS, "USERNAME");
                     }
+                    if (roleOptional.isEmpty()) {
+                        throw new AppException(AuthErrorCode.ALREADY_EXISTS, "ROLE");
+                    }
                     User user = userMapper.toUser(userCreationRequest);
                     user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
-                    return userRepository.insertReturn(user);
-                })
-                .map(userMapper::toUserResponse);
+                    return userRepository.insertReturn(user)
+                            .flatMap(userInsert -> {
+                                UserRole userRole = new UserRole();
+                                userRole.setUserId(userInsert.getId());
+                                userRole.setRoleId(roleOptional.get().getId());
+                                return userRoleRepository.insert(userRole)
+                                        .map(integer -> userMapper.toUserResponse(userInsert));
+                            });
+                }
+        ).flatMap(userResponseSingle -> userResponseSingle);
     }
 
     @Override
@@ -80,12 +97,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Single<User> getCurrentUser() {
+    public UserDetails getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal().equals("anonymousUser")) {
+        if (authentication instanceof AnonymousAuthenticationToken) {
             throw new AppException(AuthErrorCode.UNAUTHENTICATED);
         }
         UserDetailImpl userDetail = (UserDetailImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(userDetail.getUsername()).map(Optional::get);
+        return userDetail;
     }
 }
