@@ -1,4 +1,4 @@
-package com.example.moduleapp.data;
+package com.example.moduleapp.data.mapper;
 
 import com.example.moduleapp.data.request.ProductRequest;
 import com.example.moduleapp.model.tables.pojos.Product;

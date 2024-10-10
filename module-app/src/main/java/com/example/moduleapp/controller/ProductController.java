@@ -6,29 +6,33 @@ import com.example.moduleapp.data.request.ProductRequest;
 import com.example.moduleapp.service.ProductService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
+@Log4j2
 public class ProductController {
     private final ProductService productService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Single<ApiResponse> create(@ModelAttribute ProductRequest productRequest) {
+    public Single<ApiResponse> create(@RequestBody ProductRequest productRequest) {
         return productService.create(productRequest).map(ApiResponse::success);
     }
+
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Single<ApiResponse> findAll(@ModelAttribute PageRequest pageRequest) {
         return productService.findAll(pageRequest).map(ApiResponse::success);
     }
+
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> update(@PathVariable Long id,@ModelAttribute ProductRequest productRequest) {
-        return productService.update(id,productRequest).map(ApiResponse::success);
+    public Single<ApiResponse> update(@PathVariable Long id, @ModelAttribute ProductRequest productRequest) {
+        return productService.update(id, productRequest).map(ApiResponse::success);
     }
 
     @DeleteMapping("/{id}")
@@ -42,5 +46,6 @@ public class ProductController {
     public Single<ApiResponse> addToCart() {
         return productService.addToCart(1l).map(ApiResponse::success);
     }
+
 
 }

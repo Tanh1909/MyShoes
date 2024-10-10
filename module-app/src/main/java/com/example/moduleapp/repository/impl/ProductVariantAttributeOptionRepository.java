@@ -1,18 +1,16 @@
 package com.example.moduleapp.repository.impl;
 
-import com.example.moduleapp.model.tables.pojos.Product;
-import com.example.moduleapp.repository.IRxProductRepository;
+import com.example.moduleapp.model.Tables;
+import com.example.moduleapp.model.tables.pojos.ProductVariantsAttributeOption;
 import com.example.repository.JooqRepository;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 
-import static com.example.moduleapp.model.Tables.PRODUCT;
-
 @Repository
 @RequiredArgsConstructor
-public class ProductImpl extends JooqRepository<Product, Long> implements IRxProductRepository {
+public class ProductVariantAttributeOptionRepository extends JooqRepository<ProductVariantsAttributeOption, Integer> {
     private final DSLContext dslContext;
 
     @Override
@@ -22,7 +20,6 @@ public class ProductImpl extends JooqRepository<Product, Long> implements IRxPro
 
     @Override
     protected Table getTable() {
-        return PRODUCT;
+        return Tables.PRODUCT_VARIANTS_ATTRIBUTE_OPTION;
     }
-
 }

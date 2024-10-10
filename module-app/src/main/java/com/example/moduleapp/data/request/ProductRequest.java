@@ -1,19 +1,42 @@
 package com.example.moduleapp.data.request;
 
-import lombok.Builder;
-import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
-@Data
-@Builder
+@Getter
+@Setter
 public class ProductRequest {
     private String name;
     private String description;
-    private BigDecimal price;
-    private String category;
-    private Integer stock;
-    private List<MultipartFile> image;
+    private Integer categoryId;
+    private List<ImageRequest> image;
+    private Set<AttributeRequest> attributes;
+    private List<VariantsRequest> variants;
+
+
+    @Getter
+    @Setter
+    public static class AttributeRequest {
+        private String name;
+        private Set<String> options;
+    }
+
+    @Getter
+    @Setter
+    public static class VariantsRequest {
+        private Double price;
+        private Integer stock;
+        private List<String> AttributeOptions;
+    }
+
+    @Getter
+    @Setter
+    public static class ImageRequest {
+        private String url;
+        private boolean isDefault;
+    }
+
 }
