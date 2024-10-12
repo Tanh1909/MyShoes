@@ -4,50 +4,59 @@ import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.data.request.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
+import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.data.mapper.ProductAttributeMapper;
 import com.example.moduleapp.data.mapper.ProductMapper;
 import com.example.moduleapp.data.mapper.ProductVariantMapper;
+import com.example.moduleapp.data.request.ImageRequest;
 import com.example.moduleapp.data.request.ProductRequest;
 import com.example.moduleapp.model.tables.pojos.*;
 import com.example.moduleapp.repository.IRxCartRepository;
 import com.example.moduleapp.repository.IRxProductRepository;
-import com.example.moduleapp.repository.impl.ProductAttributeOptionRepository;
-import com.example.moduleapp.repository.impl.ProductAttributeRepository;
-import com.example.moduleapp.repository.impl.ProductVariantAttributeOptionRepository;
-import com.example.moduleapp.repository.impl.ProductVariantRepository;
+import com.example.moduleapp.repository.impl.*;
 import com.example.moduleapp.service.ProductService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class ProductServiceImpl implements ProductService {
     private final IRxCartRepository cartRepository;
     private final ProductMapper productMapper;
     private final ProductAttributeMapper productAttributeMapper;
     private final ProductVariantMapper productVariantMapper;
-    //    private final AuthService authService;
     private final IRxProductRepository productRepository;
     private final ProductAttributeRepository productAttributeRepository;
     private final ProductAttributeOptionRepository productAttributeOptionRepository;
     private final ProductVariantRepository productVariantRepository;
     private final ProductVariantAttributeOptionRepository productVariantAttributeOptionRepository;
+    private final ImageRepository imageRepository;
 
-    @Transactional
     @Override
     public Single<String> create(ProductRequest productRequest) {
+        Map<Integer, ImageRequest> mapImageReq = productRequest.getImages().stream().collect(Collectors.toMap(ImageRequest::getId, img -> img));
         return Single.zip(
                 productRepository.insertReturn(productMapper.toProduct(productRequest)),
                 productAttributeRepository.findOrInsert(productAttributeMapper.toProductAttribute(productRequest.getAttributes())),
-                (product, productAttributes) -> {
+                imageRepository.findAllByIdIn(mapImageReq.keySet()),
+                (product, productAttributes, images) -> {
+                    validateImage(images, mapImageReq.keySet());
+                    List<Image> imageReq = images.stream().map(image -> {
+                        image.setType(ImageEnum.PRODUCT.getValue());
+                        image.setTargetId(product.getId());
+                        if (mapImageReq.get(image.getId()).isPrimary()) image.setIsPrimary(Byte.valueOf("1"));
+                        return image;
+                    }).toList();
                     Map<String, Integer> mapReq = productAttributes.stream()
                             .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
                     List<ProductAttributeOption> productAttributeOptionStream = productRequest.getAttributes().stream()
@@ -61,7 +70,8 @@ public class ProductServiceImpl implements ProductService {
                     return Single.zip(
                             productVariantRepository.insertReturn(productVariantReq),
                             productAttributeOptionRepository.findOrInsert(productAttributeOptionStream),
-                            (productVariants, productAttributeOptions) -> {
+                            imageRepository.updateAll(imageReq),
+                            (productVariants, productAttributeOptions, imageResults) -> {
                                 Map<String, Integer> mapByValue = productAttributeOptions.stream().collect(Collectors.toMap(
                                         ProductAttributeOption::getValue,
                                         ProductAttributeOption::getId
@@ -86,6 +96,16 @@ public class ProductServiceImpl implements ProductService {
                     );
                 }
         ).flatMap(singleSingle -> singleSingle).map(listSingle -> "SUCCESS");
+    }
+
+    private static void validateImage(List<Image> images, Set<Integer> imageIds) {
+        Set<Integer> imageIdsResult = images.stream().map(Image::getId).collect(Collectors.toSet());
+        imageIds.forEach(id -> {
+            if (!imageIdsResult.contains(id)) {
+                log.debug("IMAGE ID: {} NOT FOUND", id);
+                throw new AppException(ErrorCodeBase.NOT_FOUND, "IMAGE ID");
+            }
+        });
     }
 
     @Override

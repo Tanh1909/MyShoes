@@ -13,8 +13,12 @@
     <name>module-app</name>
     <description>module-app</description>
 
-
     <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>starter-spring-security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -23,12 +27,12 @@
         </dependency>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>starter-spring-security</artifactId>
+            <artifactId>cloudinary</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>cloudinary</artifactId>
+            <artifactId>jooq-repository</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

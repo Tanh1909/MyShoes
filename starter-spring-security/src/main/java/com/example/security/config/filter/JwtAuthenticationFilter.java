@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UserDetailImpl userDetail = new UserDetailImpl();
                 userDetail.setUsername(claims.getSubject());
                 userDetail.setId(Long.valueOf(claims.get("userId").toString()));
+                userDetail.setIpAddress(request.getRemoteAddr());
                 String[] scopes = ((String) claims.get("scope")).trim().split(" ");
                 Set<GrantedAuthority> authorities = Arrays.stream(scopes).map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
                 userDetail.setAuthorities(authorities);

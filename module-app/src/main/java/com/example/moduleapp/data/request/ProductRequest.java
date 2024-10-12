@@ -12,7 +12,7 @@ public class ProductRequest {
     private String name;
     private String description;
     private Integer categoryId;
-    private List<ImageRequest> image;
+    private List<ImageRequest> images;
     private Set<AttributeRequest> attributes;
     private List<VariantsRequest> variants;
 
@@ -32,11 +32,6 @@ public class ProductRequest {
         private List<String> AttributeOptions;
     }
 
-    @Getter
-    @Setter
-    public static class ImageRequest {
-        private String url;
-        private boolean isDefault;
-    }
+
 
 }

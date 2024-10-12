@@ -8,5 +8,15 @@ cloudinary:
   api_key: '476734569334626'
   api_secret: 5CKGbSals-qC1lRiu7wPwr6fC7o
 
+vnpay:
+  tmn-code: O9IG86PT
+  hash-secret: CXXMBGVOQGKJVRWIWX7S91HWCDM3X6DK
+  url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+  version: 2.1.0
+  command: pay
+  order-type: other
+  return-url: http://localhost:8080/payment/vnpay-callback
+  expiration-time: 300000
+
 app:
   module-auth: /auth
