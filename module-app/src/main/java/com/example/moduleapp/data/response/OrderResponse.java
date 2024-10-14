@@ -14,6 +14,7 @@ public class OrderResponse {
     private List<OrderResponse> items;
     private Double totalAmount;
     private LocalDateTime createdAt;
+    private AddressResponse address;
 
 
     @Getter

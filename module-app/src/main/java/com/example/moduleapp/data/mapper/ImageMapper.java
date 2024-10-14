@@ -11,11 +11,4 @@ public interface ImageMapper {
 
     ImageResponse toImageResponse(Image image);
 
-    default Byte booleanToByte(boolean value) {
-        if (value) return 1;
-        return 0;
-    }
-    default boolean byteToBoolean(Byte value) {
-        return value == 1;
-    }
 }

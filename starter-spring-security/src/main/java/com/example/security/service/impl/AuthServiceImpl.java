@@ -75,7 +75,7 @@ public class AuthServiceImpl implements AuthService {
                         throw new AppException(AuthErrorCode.ALREADY_EXISTS, "USERNAME");
                     }
                     if (roleOptional.isEmpty()) {
-                        throw new AppException(AuthErrorCode.ALREADY_EXISTS, "ROLE");
+                        throw new AppException(AuthErrorCode.NOT_FOUND, "ROLE");
                     }
                     User user = userMapper.toUser(userCreationRequest);
                     user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));

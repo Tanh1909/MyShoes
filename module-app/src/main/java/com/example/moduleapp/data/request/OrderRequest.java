@@ -8,5 +8,13 @@ import java.util.List;
 @Getter
 @Setter
 public class OrderRequest {
-    private List<Integer> productVariantIds;
+    private Integer addressId;
+    private List<ProductVariantRequest> productVariants;
+
+    @Getter
+    @Setter
+    public static class ProductVariantRequest {
+        private Integer id;
+        private Integer quantity;
+    }
 }
