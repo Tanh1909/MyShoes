@@ -12,6 +12,7 @@
         <option value="$PROJECT_DIR$/module-app/pom.xml" />
         <option value="$PROJECT_DIR$/module-core/cloudinary/pom.xml" />
         <option value="$PROJECT_DIR$/module-auth/pom.xml" />
+        <option value="$PROJECT_DIR$/module-core/auth-config/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
