@@ -8,6 +8,13 @@ cloudinary:
   api_key: '476734569334626'
   api_secret: 5CKGbSals-qC1lRiu7wPwr6fC7o
 
+auth:
+  jwt:
+    secret: dtienanh1909
+    refresh-expiration: 600000
+    token-expiration: 600000
+  public-end-points:
+    - /auth
 vnpay:
   tmn-code: O9IG86PT
   hash-secret: CXXMBGVOQGKJVRWIWX7S91HWCDM3X6DK

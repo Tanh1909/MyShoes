@@ -33,14 +33,12 @@ public class ApiResponse<T> {
 
     public static <T> void writeResponseError(HttpServletResponse response, ErrorCode errorCode) {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(errorCode.getCode());
+        response.setStatus(errorCode.getHttpStatus().value());
         ApiResponse apiError = ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
         try {
             response.getWriter().write(JsonUtils.toString(apiError));
-            response.flushBuffer();
         } catch (IOException e) {
-            log.debug("Error writing response: {}", e.getMessage());
-
+            log.error(e.getMessage());
         }
     }
 }

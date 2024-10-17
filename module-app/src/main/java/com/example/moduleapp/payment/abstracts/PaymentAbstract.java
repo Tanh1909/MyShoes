@@ -1,5 +1,6 @@
 package com.example.moduleapp.payment.abstracts;
 
+import com.example.common.context.UserPrincipal;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.exception.AppException;
 import com.example.moduleapp.config.constant.OrderEnum;
@@ -14,10 +15,8 @@ import com.example.moduleapp.repository.impl.OrderItemRepository;
 import com.example.moduleapp.repository.impl.OrderRepository;
 import com.example.moduleapp.repository.impl.PaymentMethodRepository;
 import com.example.moduleapp.repository.impl.PaymentRepository;
-import com.example.security.config.service.UserDetailImpl;
 import io.reactivex.rxjava3.core.Single;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,7 +34,7 @@ public abstract class PaymentAbstract {
     public abstract PaymentMethodEnum getPaymentMethod();
 
 
-    public Single<PaymentResponse> pay(Integer orderId, UserDetails userDetails) {
+    public Single<PaymentResponse> pay(Integer orderId, UserPrincipal userPrincipal) {
         return Single.zip(
                         orderRepository.findById(orderId),
                         orderItemRepository.findByOrderId(orderId),
@@ -54,15 +53,13 @@ public abstract class PaymentAbstract {
                             payment.setAmount(totalAmount);
                             payment.setPaymentStatus(PaymentEnum.PENDING.getValue());
                             return paymentRepository.insertReturn(payment)
-                                    .map(paymentResult -> handlePaymentResponse(order, (UserDetailImpl) userDetails, paymentResult, totalAmount));
+                                    .map(paymentResult -> handlePaymentResponse(order, userPrincipal, paymentResult, totalAmount));
                         })
                 .flatMap(p -> p);
     }
 
 
-    public abstract PaymentResponse handlePaymentResponse(Order order, UserDetailImpl userDetails, Payment paymentResult, BigDecimal totalAmount);
-
-
+    public abstract PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult, BigDecimal totalAmount);
 
 
     private static void validatePaymentMethod(PaymentMethod paymentMethod) {

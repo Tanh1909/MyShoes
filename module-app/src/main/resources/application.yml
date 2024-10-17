@@ -2,6 +2,4 @@ spring:
   application:
     name: module-app
   profiles:
-    group:
-      local: local, spring-security-local
     active: local

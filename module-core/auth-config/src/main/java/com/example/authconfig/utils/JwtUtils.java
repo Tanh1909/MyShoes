@@ -1,7 +1,7 @@
 package com.example.authconfig.utils;
 
-import com.example.authconfig.config.JwtProperties;
-import com.example.common.config.security.SimpleSecurityUser;
+import com.example.authconfig.config.properties.JwtProperties;
+import com.example.common.context.SimpleSecurityUser;
 import com.example.common.utils.JsonUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 @Data
 @RequiredArgsConstructor
 public class JwtUtils {
-    private JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
     @PostConstruct
     public void init() {
@@ -60,7 +60,7 @@ public class JwtUtils {
     public SimpleSecurityUser getUser(String token) {
         Claims claims = getBody(token);
         if (claims != null) {
-            return claims.get("user", SimpleSecurityUser.class);
+            return JsonUtils.toObject(claims.get("user", String.class), SimpleSecurityUser.class);
         }
         return null;
     }

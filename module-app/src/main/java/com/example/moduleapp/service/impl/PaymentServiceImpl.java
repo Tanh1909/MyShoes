@@ -1,5 +1,6 @@
 package com.example.moduleapp.service.impl;
 
+import com.example.common.context.UserPrincipal;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.exception.AppException;
 import com.example.moduleapp.config.constant.PaymentEnum;
@@ -12,9 +13,8 @@ import com.example.moduleapp.model.tables.pojos.Payment;
 import com.example.moduleapp.payment.abstracts.PaymentAbstract;
 import com.example.moduleapp.payment.factory.PaymentFactory;
 import com.example.moduleapp.repository.impl.PaymentRepository;
+import com.example.moduleapp.service.AuthService;
 import com.example.moduleapp.service.PaymentService;
-import com.example.security.config.service.UserDetailImpl;
-import com.example.security.service.AuthService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,13 +30,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Single<PaymentResponse> pay(PaymentRequest paymentRequest) {
-        UserDetailImpl userDetail = (UserDetailImpl) authService.getCurrentUser();
+        UserPrincipal userPrincipal = new UserPrincipal();
         PaymentMethodEnum paymentMethod = PaymentMethodEnum.getValue(paymentRequest.getPaymentMethod());
         if (paymentMethod == null) {
             throw new AppException(PaymentErrorCode.PAYMENT_METHOD_NOT_SUPPORT);
         }
         PaymentAbstract paymentAbstract = paymentFactory.create(paymentMethod);
-        return paymentAbstract.pay(paymentRequest.getOrderId(), userDetail);
+        return paymentAbstract.pay(paymentRequest.getOrderId(), userPrincipal);
     }
 
     public Single<String> handleVNPayCallback(Integer paymentId, LocalDateTime paidAt, String responseCode) {

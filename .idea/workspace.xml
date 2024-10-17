@@ -5,24 +5,48 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="feature/tienanh1909/test">
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/mvnw" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/mvnw.cmd" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/AuthConfigApplication.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/filter/AuthenticationFilter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/utils/JwtUtils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/resources/application.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/security/SecurityContext.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/security/SimpleSecurityUser.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/security/UserPrincipal.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/AuthController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/UserMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxRoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxUserRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxUserRoleRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/AuthService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/AuthServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/template/RxTemplate.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/template/RxTemplate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/ModuleAppApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/ModuleAppApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/UserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/abstracts/PaymentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/abstracts/PaymentAbstract.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/CashPayment.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/CashPayment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/VNPAYPayment.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/VNPAYPayment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/AddressServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/AddressServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/OrderServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/PaymentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/PaymentServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/auth-config/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/AuthConfigApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/config/EndpointProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/config/properties/EndpointProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/config/JwtProperties.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/config/properties/JwtProperties.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/filter/AuthenticationFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/filter/AuthenticationFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/utils/JwtUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/auth-config/src/main/java/com/example/authconfig/utils/JwtUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/auth-config/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/security/SecurityContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/context/SecurityContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/security/SimpleSecurityUser.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/context/SimpleSecurityUser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/security/UserPrincipal.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/context/UserPrincipal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/ApiResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/ApiResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/config/constant/ERole.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/ERole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/request/AuthRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/AuthRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/request/UserCreationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/UserCreationRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/AuthResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/AuthResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/data/response/UserDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/UserDetailResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/RoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/RoleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/repository/impl/UserRoleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/UserRoleRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/impl/AuthServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/starter-spring-security/src/main/java/com/example/security/service/impl/AuthServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -101,7 +125,9 @@
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectViewState">
+    <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="openDirectoriesWithSingleClick" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
@@ -113,6 +139,7 @@
     "Maven.MyShoes [-pl,module-app,clean].executor": "Run",
     "Maven.MyShoes [-pl,module-application,clean...].executor": "Run",
     "Maven.MyShoes [-pl,module-auth].executor": "Run",
+    "Maven.MyShoes [-pl,module-core/auth-config...].executor": "Run",
     "Maven.MyShoes [-pl,module-core/cloudinary...].executor": "Run",
     "Maven.MyShoes [-pl,starter-spring-security...].executor": "Run",
     "Maven.MyShoes [-pl...].executor": "Run",
@@ -146,10 +173,10 @@
     "Spring Boot.ModuleCoreCommonApplication.executor": "Run",
     "Spring Boot.Security.executor": "Debug",
     "Spring Boot.StarterSpringSecurityApplication.executor": "Run",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/tienanh1909/auth-config",
     "jdk.selected.JAVA_MODULE": "21",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/project/MyShoes/module-core/auth-config/src/main/java/com/example/authconfig",
+    "last_opened_file_path": "D:/project/MyShoes/module-app/src/main/java/com/example/moduleapp/repository",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -167,6 +194,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\project\MyShoes\module-app\src\main\java\com\example\moduleapp\repository" />
       <recent name="D:\project\MyShoes\module-core\auth-config\src\main\java\com\example\authconfig" />
       <recent name="D:\project\MyShoes\module-core\starter-spring-security\src\main" />
     </key>
@@ -175,6 +203,10 @@
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="com.example.security" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.moduleapp.controller" />
+      <recent name="com.example.moduleapp.data.mapper" />
     </key>
   </component>
   <component name="RunAnythingCache">
@@ -195,8 +227,10 @@
       <command value="mvn -pl module-app clean install -P local" />
       <command value="mvn -pl starter-spring-security clean install -P local" />
       <command value="mvn -pl module-auth" />
-      <command value="mvn -pl module-app clean install -am -P  local" />
       <command value="mvn -pl module-app clean install -P  local" />
+      <command value="mvn -pl module-core/auth-config clean install" />
+      <command value="mvn -pl module-app clean install -am -P  local" />
+      <command value="mvn -pl module-app clean install  -P  local" />
     </option>
   </component>
   <component name="RunDashboard">
@@ -209,7 +243,7 @@
       </set>
     </option>
   </component>
-  <component name="RunManager" selected="Spring Boot.AuthConfigApplication">
+  <component name="RunManager" selected="Spring Boot.ModuleAppApplication">
     <configuration name="AuthConfigApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <module name="auth-config" />
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.authconfig.AuthConfigApplication" />
@@ -339,17 +373,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix bug security" />
     <MESSAGE value="feature/dtienanh/create_product" />
-    <option name="LAST_COMMIT_MESSAGE" value="feature/dtienanh/create_product" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/AddressServiceImpl.java</url>
-          <line>22</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="add excel utils" />
+    <MESSAGE value="add excel utils commit workspace compilier" />
+    <option name="LAST_COMMIT_MESSAGE" value="add excel utils commit workspace compilier" />
   </component>
 </project>
