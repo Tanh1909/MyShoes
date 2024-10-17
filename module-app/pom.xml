@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>starter-spring-security</artifactId>
+            <artifactId>auth-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>

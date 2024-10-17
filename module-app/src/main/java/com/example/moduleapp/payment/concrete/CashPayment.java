@@ -1,5 +1,6 @@
 package com.example.moduleapp.payment.concrete;
 
+import com.example.common.context.UserPrincipal;
 import com.example.moduleapp.config.constant.OrderEnum;
 import com.example.moduleapp.config.constant.PaymentMethodEnum;
 import com.example.moduleapp.data.response.PaymentResponse;
@@ -7,7 +8,6 @@ import com.example.moduleapp.model.tables.pojos.Order;
 import com.example.moduleapp.model.tables.pojos.Payment;
 import com.example.moduleapp.payment.abstracts.PaymentAbstract;
 import com.example.moduleapp.repository.impl.OrderRepository;
-import com.example.security.config.service.UserDetailImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class CashPayment extends PaymentAbstract {
     }
 
     @Override
-    public PaymentResponse handlePaymentResponse(Order order, UserDetailImpl userDetails, Payment paymentResult, BigDecimal totalAmount) {
+    public PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult, BigDecimal totalAmount) {
         order.setStatus(OrderEnum.PAYMENT_CONFIRM.getValue());
         orderRepository.updateBlocking(order.getId(), order);
         return PaymentResponse.builder()

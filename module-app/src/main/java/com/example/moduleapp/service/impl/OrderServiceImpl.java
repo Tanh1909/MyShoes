@@ -1,5 +1,6 @@
 package com.example.moduleapp.service.impl;
 
+import com.example.common.context.SimpleSecurityUser;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.exception.AppException;
 import com.example.moduleapp.config.constant.OrderEnum;
@@ -12,9 +13,8 @@ import com.example.moduleapp.repository.impl.AddressRepository;
 import com.example.moduleapp.repository.impl.OrderItemRepository;
 import com.example.moduleapp.repository.impl.OrderRepository;
 import com.example.moduleapp.repository.impl.ProductVariantRepository;
+import com.example.moduleapp.service.AuthService;
 import com.example.moduleapp.service.OrderService;
-import com.example.security.config.service.UserDetailImpl;
-import com.example.security.service.AuthService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,8 +32,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductVariantRepository productVariantRepository;
     private final AddressRepository addressRepository;
-    private final AuthService authService;
     private final OrderItemRepository orderItemRepository;
+    private final AuthService authService;
 
     @Override
     public Single<String> create(OrderRequest orderRequest) {
@@ -41,9 +41,9 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toMap(
                         OrderRequest.ProductVariantRequest::getId,
                         OrderRequest.ProductVariantRequest::getQuantity));
-        UserDetailImpl userDetail = (UserDetailImpl) authService.getCurrentUser();
+        SimpleSecurityUser user = authService.getCurrentUser();
         Order orderReq = new Order();
-        orderReq.setUserId(userDetail.getId());
+        orderReq.setUserId(user.getId().longValue());
         orderReq.setAddressId(orderRequest.getAddressId());
         orderReq.setStatus(OrderEnum.PENDING.getValue());
         return Single.zip(
