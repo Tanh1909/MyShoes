@@ -1,6 +1,6 @@
 package com.example.moduleapp.service.impl;
 
-import com.example.common.context.SimpleSecurityUser;
+import com.example.common.context.UserPrincipal;
 import com.example.moduleapp.data.mapper.AddressMapper;
 import com.example.moduleapp.data.request.AddressRequest;
 import com.example.moduleapp.model.tables.pojos.Address;
@@ -21,8 +21,8 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Single<String> create(AddressRequest addressRequest) {
         Address address = addressMapper.toAddress(addressRequest);
-        SimpleSecurityUser user = authService.getCurrentUser();
-        address.setUserId(user.getId().longValue());
+        UserPrincipal user = authService.getCurrentUser();
+        address.setUserId(user.getUserInfo().getId().longValue());
         return addressRepository.insert(address).map(integer -> "SUCCESS");
     }
 }

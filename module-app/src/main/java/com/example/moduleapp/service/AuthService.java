@@ -1,6 +1,7 @@
 package com.example.moduleapp.service;
 
 import com.example.common.context.SimpleSecurityUser;
+import com.example.common.context.UserPrincipal;
 import com.example.moduleapp.data.request.AuthRequest;
 import com.example.moduleapp.data.request.UserCreationRequest;
 import com.example.moduleapp.data.response.AuthResponse;
@@ -14,6 +15,6 @@ public interface AuthService {
 
     Single<UserResponse> signUp(UserCreationRequest userCreationRequest);
 
-    SimpleSecurityUser getCurrentUser();
+    UserPrincipal getCurrentUser();
 
 }

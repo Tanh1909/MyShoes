@@ -5,13 +5,13 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SecurityContext {
-    public static final ThreadLocal<SimpleSecurityUser> context = new ThreadLocal<>();
+    public static final ThreadLocal<UserPrincipal> context = new ThreadLocal<>();
 
-    public static void setSimpleSecurityUser(SimpleSecurityUser user) {
-        context.set(user);
+    public static void setContext(UserPrincipal userPrincipal) {
+        context.set(userPrincipal);
     }
 
-    public static SimpleSecurityUser getSimpleSecurityUser() {
+    public static UserPrincipal getUserPrincipal() {
         return context.get();
     }
 

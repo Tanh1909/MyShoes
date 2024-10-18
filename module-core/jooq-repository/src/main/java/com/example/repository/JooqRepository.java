@@ -153,6 +153,11 @@ public abstract class JooqRepository<P, ID> implements
     }
 
     @Override
+    public List<P> insertReturnBlocking(Collection<P> entities) {
+        return entities.stream().map(this::insertReturnBlocking).toList();
+    }
+
+    @Override
     public Integer updateBlocking(ID id, P entity) {
         return getDSLContext().update(getTable())
                 .set(SQLQueryUtils.toInsertQueries(getTable(), entity))

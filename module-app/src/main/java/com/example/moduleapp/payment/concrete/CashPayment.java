@@ -30,6 +30,5 @@ public class CashPayment extends PaymentAbstract {
         return PaymentResponse.builder()
                 .success(Boolean.TRUE)
                 .build();
-
     }
 }

@@ -15,6 +15,7 @@ auth:
     token-expiration: 600000
   public-end-points:
     - /auth
+    - /vnpay-callback
 vnpay:
   tmn-code: O9IG86PT
   hash-secret: CXXMBGVOQGKJVRWIWX7S91HWCDM3X6DK

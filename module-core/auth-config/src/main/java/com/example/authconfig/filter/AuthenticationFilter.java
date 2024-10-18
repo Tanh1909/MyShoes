@@ -3,10 +3,11 @@ package com.example.authconfig.filter;
 import com.example.authconfig.config.constant.AuthErrorCode;
 import com.example.authconfig.config.exception.UnauthenticatedException;
 import com.example.authconfig.config.exception.UnauthorizedException;
-import com.example.common.context.SecurityContext;
-import com.example.common.context.SimpleSecurityUser;
 import com.example.authconfig.utils.JwtUtils;
 import com.example.common.config.constant.ErrorCodeBase;
+import com.example.common.context.SecurityContext;
+import com.example.common.context.SimpleSecurityUser;
+import com.example.common.context.UserPrincipal;
 import com.example.common.data.response.ApiResponse;
 import com.example.common.exception.ErrorCode;
 import jakarta.servlet.FilterChain;
@@ -46,26 +47,32 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 String token = getTokenFromRequest(request);
                 if (token != null && jwtUtils.getBody(token) != null) {
                     SimpleSecurityUser simpleSecurityUser = jwtUtils.getUser(token);
-                    SecurityContext.setSimpleSecurityUser(simpleSecurityUser);
+                    UserPrincipal userPrincipal = UserPrincipal.builder()
+                            .userInfo(simpleSecurityUser)
+                            .uri(request.getRequestURI())
+                            .method(request.getMethod())
+                            .clientId(request.getRemoteAddr())
+                            .build();
+                    SecurityContext.setContext(userPrincipal);
                     filterChain.doFilter(request, response);
                 } else {
                     throw new UnauthenticatedException();
                 }
             }
         } catch (UnauthenticatedException ex) {
-            log.error("unauthenticate");
+            log.error("UNAUTHENTICATED WITH {}: {}", request.getMethod(), request.getRequestURI());
             ErrorCode errorCode = AuthErrorCode.UNAUTHENTICATED;
             ApiResponse.writeResponseError(response, errorCode);
         } catch (UnauthorizedException ex) {
-            log.error("unauthorized");
+            log.error("UNAUTHORIZED WITH {}: {}", request.getMethod(), request.getRequestURI());
             ErrorCode e = AuthErrorCode.UNAUTHORIZED;
             ApiResponse.writeResponseError(response, e);
         } catch (Exception ex) {
-            log.error("some thing wrong: {}", ex.getMessage());
+            log.error("SOMETHING WRONG WITH {}: {}", request.getMethod(), request.getRequestURI());
             ErrorCode e = ErrorCodeBase.INTERNAL_SERVER_ERROR;
             ApiResponse.writeResponseError(response, e);
         } finally {
-            log.debug("clear context");
+            log.debug("CLEAR CONTEXT");
             SecurityContext.clearContext();
         }
     }

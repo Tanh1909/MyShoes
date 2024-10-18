@@ -4,6 +4,7 @@ import com.example.authconfig.config.constant.AuthErrorCode;
 import com.example.authconfig.utils.JwtUtils;
 import com.example.common.context.SecurityContext;
 import com.example.common.context.SimpleSecurityUser;
+import com.example.common.context.UserPrincipal;
 import com.example.common.exception.AppException;
 import com.example.moduleapp.config.constant.ERole;
 import com.example.moduleapp.data.mapper.UserMapper;
@@ -91,11 +92,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public SimpleSecurityUser getCurrentUser() {
-        SimpleSecurityUser securityUser = SecurityContext.getSimpleSecurityUser();
-        if (securityUser == null) {
+    public UserPrincipal getCurrentUser() {
+        UserPrincipal userPrincipal = SecurityContext.getUserPrincipal();
+        if (userPrincipal == null) {
             throw new AppException(AuthErrorCode.UNAUTHENTICATED);
         }
-        return securityUser;
+        return userPrincipal;
     }
 }

@@ -3,10 +3,10 @@ package com.example.common.data.request;
 import com.example.common.config.constant.PageConstant;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.util.ObjectUtils;
 
 @Data
-@Builder
 public class PageRequest {
     private Integer page;
     private Integer size;

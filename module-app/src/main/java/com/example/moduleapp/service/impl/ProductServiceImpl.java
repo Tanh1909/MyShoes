@@ -2,7 +2,6 @@ package com.example.moduleapp.service.impl;
 
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.data.request.PageRequest;
-import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
 import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.data.mapper.ProductAttributeMapper;
@@ -10,6 +9,7 @@ import com.example.moduleapp.data.mapper.ProductMapper;
 import com.example.moduleapp.data.mapper.ProductVariantMapper;
 import com.example.moduleapp.data.request.ImageRequest;
 import com.example.moduleapp.data.request.ProductRequest;
+import com.example.moduleapp.data.response.ProductResponse;
 import com.example.moduleapp.model.tables.pojos.*;
 import com.example.moduleapp.repository.IRxCartRepository;
 import com.example.moduleapp.repository.IRxProductRepository;
@@ -136,8 +136,29 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Single<PageResponse<Product>> findAll(PageRequest pageRequest) {
-        return productRepository.findAll(pageRequest);
+    public Single<List<ProductResponse>> findAll(PageRequest pageRequest) {
+        return productRepository.findAll(pageRequest)
+                .flatMap(productPageResponse -> {
+                    List<Product> products = productPageResponse.getData().stream().toList();
+                    List<ProductResponse> productResponses = productMapper.toProductResponse(products);
+                    List<Integer> productIds = products.stream().map(Product::getId).toList();
+                    return Single.zip(
+                            imageRepository.findByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
+                            productRepository.getNumberOfPaid(productIds),
+                            (images, paidMap) -> {
+                                Map<Integer, String> imageMap = images.stream().collect(Collectors.toMap(
+                                        Image::getTargetId,
+                                        Image::getUrl,
+                                        (s, s2) -> s
+                                ));
+                                productResponses.forEach(productResponse -> {
+                                    productResponse.setImageUrl(imageMap.get(productResponse.getId()));
+                                    productResponse.setSold(paidMap.get(productResponse.getId()));
+                                });
+                                return productResponses;
+                            }
+                    );
+                });
     }
 
     @Override

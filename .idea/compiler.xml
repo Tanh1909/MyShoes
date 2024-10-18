@@ -33,12 +33,12 @@
           <entry name="$MAVEN_REPOSITORY$/org/mapstruct/mapstruct/1.5.5.Final/mapstruct-1.5.5.Final.jar" />
         </processorPath>
         <module name="module-app" />
-        <module name="starter-spring-security" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="module-application" target="21" />
       <module name="module-auth" target="21" />
+      <module name="starter-spring-security" target="21" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

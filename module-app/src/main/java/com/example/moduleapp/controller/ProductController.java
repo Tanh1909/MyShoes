@@ -25,13 +25,13 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> findAll(@ModelAttribute PageRequest pageRequest) {
+    public Single<ApiResponse> findAll(PageRequest pageRequest) {
         return productService.findAll(pageRequest).map(ApiResponse::success);
     }
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> update(@PathVariable Long id, @ModelAttribute ProductRequest productRequest) {
+    public Single<ApiResponse> update(@PathVariable Long id, ProductRequest productRequest) {
         return productService.update(id, productRequest).map(ApiResponse::success);
     }
 
