@@ -27,11 +27,12 @@ public class ProductRequest {
     @Getter
     @Setter
     public static class VariantsRequest {
+        private String skuCode;
         private Double price;
         private Integer stock;
-        private List<String> AttributeOptions;
-    }
+        private List<String> attributeOptions;
 
+    }
 
 
 }

@@ -41,7 +41,6 @@ public class VNPAYPayment extends PaymentAbstract {
                 .success(Boolean.TRUE)
                 .url(VNPAY_URL + buildQuery(params))
                 .build();
-
     }
 
     private String buildQuery(Map<String, String> params) {

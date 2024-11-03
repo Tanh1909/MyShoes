@@ -39,4 +39,21 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .fetchInto(pojoClass)
         );
     }
+
+    @Override
+    public Single<List<ProductVariant>> insertAndFind(Collection<ProductVariant> productVariants) {
+        List<String> skuCodes = productVariants.stream().map(ProductVariant::getSkuCode).toList();
+        return insert(productVariants)
+                .flatMap(integers -> findByNameIn(skuCodes));
+    }
+
+    @Override
+    public Single<List<ProductVariant>> findByNameIn(Collection<String> skuCodes) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select()
+                .from(getTable())
+                .where(PRODUCT_VARIANT.SKU_CODE.in(skuCodes))
+                .fetchInto(pojoClass)
+        );
+    }
 }

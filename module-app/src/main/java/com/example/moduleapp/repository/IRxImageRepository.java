@@ -17,7 +17,4 @@ public interface IRxImageRepository extends IRxJooqRepository<Image, Integer> {
 
     Single<List<Image>> findPrimaryByTargetIdInAndType(Collection<Integer> targetIds, String type);
 
-    Single<List<Image>> findAllByIdIn(Collection<Integer> ids);
-
-    Single<String> updateAll(Collection<Image> images);
 }

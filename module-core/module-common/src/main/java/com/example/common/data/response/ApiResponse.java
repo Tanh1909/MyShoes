@@ -36,7 +36,7 @@ public class ApiResponse<T> {
         response.setStatus(errorCode.getHttpStatus().value());
         ApiResponse apiError = ApiResponse.error(errorCode.getCode(), errorCode.getMessage());
         try {
-            response.getWriter().write(JsonUtils.toString(apiError));
+            response.getWriter().write(JsonUtils.encode(apiError));
         } catch (IOException e) {
             log.error(e.getMessage());
         }

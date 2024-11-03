@@ -20,12 +20,14 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @AllArgsConstructor
@@ -42,60 +44,79 @@ public class ProductServiceImpl implements ProductService {
     private final ProductVariantAttributeOptionRepository productVariantAttributeOptionRepository;
     private final ImageRepository imageRepository;
 
+    private static final Integer SKU_CODE_LENGTH = 8;
+
     @Override
     public Single<String> create(ProductRequest productRequest) {
-        Map<Integer, ImageRequest> mapImageReq = productRequest.getImages().stream().collect(Collectors.toMap(ImageRequest::getId, img -> img));
+        Map<Integer, ImageRequest> mapImageReq = productRequest.getImages().stream()
+                .collect(Collectors.toMap(ImageRequest::getId, img -> img));
+        productRequest.getVariants().forEach(variantsRequest -> variantsRequest.setSkuCode(generateSkuCode(SKU_CODE_LENGTH)));
         return Single.zip(
-                productRepository.insertReturn(productMapper.toProduct(productRequest)),
-                productAttributeRepository.findOrInsert(productAttributeMapper.toProductAttribute(productRequest.getAttributes())),
-                imageRepository.findAllByIdIn(mapImageReq.keySet()),
-                (product, productAttributes, images) -> {
-                    validateImage(images, mapImageReq.keySet());
-                    List<Image> imageReq = images.stream().map(image -> {
-                        image.setType(ImageEnum.PRODUCT.getValue());
-                        image.setTargetId(product.getId());
-                        if (mapImageReq.get(image.getId()).isPrimary()) image.setIsPrimary(Byte.valueOf("1"));
-                        return image;
-                    }).toList();
-                    Map<String, Integer> mapReq = productAttributes.stream()
-                            .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
-                    List<ProductAttributeOption> productAttributeOptionStream = productRequest.getAttributes().stream()
-                            .flatMap(attributeRequest -> attributeRequest.getOptions().stream()
-                                    .map(s -> new ProductAttributeOption()
-                                            .setValue(s)
-                                            .setProductAttributeId(mapReq.get(attributeRequest.getName()))
-                                    )).toList();
-                    List<ProductVariant> productVariantReq = productVariantMapper.toProductVariant(productRequest.getVariants()).stream()
-                            .map(productVariant -> productVariant.setProductId(product.getId())).toList();
-                    return Single.zip(
-                            productVariantRepository.insertReturn(productVariantReq),
-                            productAttributeOptionRepository.findOrInsert(productAttributeOptionStream),
-                            imageRepository.updateAll(imageReq),
-                            (productVariants, productAttributeOptions, imageResults) -> {
-                                Map<String, Integer> mapByValue = productAttributeOptions.stream().collect(Collectors.toMap(
-                                        ProductAttributeOption::getValue,
-                                        ProductAttributeOption::getId
-                                ));
-                                List<ProductRequest.VariantsRequest> variantsRequests = productRequest.getVariants();
-                                //Gia su sau khi insert xong no van giu nguyen thu tu
-                                List<ProductVariantsAttributeOption> pvaos = IntStream.range(0, productAttributeOptions.size())
-                                        .mapToObj(value -> {
-                                            ProductVariant productVariant = productVariants.get(value);
-                                            ProductRequest.VariantsRequest variantsRequest = variantsRequests.get(value);
-                                            return variantsRequest.getAttributeOptions().stream()
-                                                    .map(s -> new ProductVariantsAttributeOption()
-                                                            .setProductAttributeOptionId(mapByValue.get(s))
-                                                            .setVariantId(productVariant.getId())
-                                                    ).toList();
-                                        })
-                                        .flatMap(Collection::stream)
-                                        .toList();
-                                return productVariantAttributeOptionRepository.insertReturn(pvaos);
-                            }
+                        productRepository.insertReturn(productMapper.toProduct(productRequest)),
+                        productAttributeRepository.insertAndFind(productAttributeMapper.toProductAttribute(productRequest.getAttributes())),
+                        imageRepository.findByIds(mapImageReq.keySet()),
+                        (product, productAttributes, images) -> {
+                            validateImage(images, mapImageReq.keySet());
+                            List<Image> imageReq = images.stream().map(image -> {
+                                image.setType(ImageEnum.PRODUCT.getValue());
+                                image.setTargetId(product.getId());
+                                if (mapImageReq.get(image.getId()).isPrimary()) image.setIsPrimary(Byte.valueOf("1"));
+                                return image;
+                            }).toList();
+                            Map<String, Integer> mapReq = productAttributes.stream()
+                                    .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
+                            List<ProductAttributeOption> productAttributeOptions = productRequest.getAttributes().stream()
+                                    .flatMap(attributeRequest -> attributeRequest.getOptions().stream()
+                                            .map(s -> new ProductAttributeOption()
+                                                    .setValue(s)
+                                                    .setProductAttributeId(mapReq.get(attributeRequest.getName()))
+                                            )).toList();
+                            List<ProductVariant> productVariantReq = productVariantMapper.toProductVariant(productRequest.getVariants()).stream()
+                                    .map(productVariant -> productVariant.setProductId(product.getId()))
+                                    .toList();
+                            return Single.zip(
+                                    productVariantRepository.insertAndFind(productVariantReq),
+                                    productAttributeOptionRepository.insertAndFind(productAttributeOptions, mapReq.values()),
+                                    imageRepository.insertUpdateOnDuplicateKey(imageReq),
+                                    (productVariants, productAttributeOptionResult, imageResults) -> {
+                                        Map<String, Integer> valueAndId = productAttributeOptionResult.stream()
+                                                .collect(Collectors.toMap(
+                                                        ProductAttributeOption::getValue,
+                                                        ProductAttributeOption::getId
+                                                ));
+                                        Map<String, Integer> skuCodeAndId = productVariants.stream()
+                                                .collect(Collectors.toMap(ProductVariant::getSkuCode, ProductVariant::getId));
+                                        List<ProductVariantsAttributeOption> pvaos = new ArrayList<>();
+                                        productRequest.getVariants().forEach(variantsRequest -> {
+                                            variantsRequest.getAttributeOptions().forEach(attributeOptionRequest -> {
+                                                ProductVariantsAttributeOption pvao = new ProductVariantsAttributeOption();
+                                                pvao.setVariantId(skuCodeAndId.get(variantsRequest.getSkuCode()));
+                                                pvao.setProductAttributeOptionId(valueAndId.get(attributeOptionRequest));
+                                                pvaos.add(pvao);
+                                            });
+                                        });
+                                        return productVariantAttributeOptionRepository.insert(pvaos);
+                                    }
 
-                    );
-                }
-        ).flatMap(singleSingle -> singleSingle).map(listSingle -> "SUCCESS");
+                            );
+                        }
+                )
+                .flatMap(singleSingle -> singleSingle)
+                .flatMap(listSingle -> listSingle)
+                .map(integers -> "SUCCESS");
+    }
+
+    public static String generateSkuCode(int length) {
+        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        SecureRandom random = new SecureRandom();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmm");
+        String timestamp = LocalDateTime.now().format(formatter);
+        StringBuilder randomPart = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            randomPart.append(CHARACTERS.charAt(index));
+        }
+        return timestamp + "-" + randomPart.toString();
     }
 
     private static void validateImage(List<Image> images, Set<Integer> imageIds) {

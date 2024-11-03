@@ -10,9 +10,19 @@ import java.util.Optional;
 public interface IBlockingRepository<P, ID> {
     Integer insertBlocking(P entity);
 
+    List<Integer> insertBlocking(Collection<P> entities);
+
     P insertReturnBlocking(P entity);
 
     List<P> insertReturnBlocking(Collection<P> entities);
+
+    Optional<P> insertIgnoreOnDuplicateKeyBlocking(P pojo);
+
+    List<Integer> insertIgnoreOnDuplicateKeyBlocking(Collection<P> pojos);
+
+    Optional<P> insertUpdateOnDuplicateKeyBlocking(P pojo);
+
+    List<Integer> insertUpdateOnDuplicateKeyBlocking(Collection<P> pojos);
 
     Integer updateBlocking(ID id, P entity);
 

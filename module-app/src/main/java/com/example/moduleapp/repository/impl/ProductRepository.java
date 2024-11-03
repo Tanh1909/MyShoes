@@ -1,5 +1,6 @@
 package com.example.moduleapp.repository.impl;
 
+import com.example.moduleapp.config.constant.OrderEnum;
 import com.example.moduleapp.model.tables.pojos.Product;
 import com.example.moduleapp.repository.IRxProductRepository;
 import com.example.repository.JooqRepository;
@@ -37,6 +38,7 @@ public class ProductRepository extends JooqRepository<Product, Long> implements 
                 .select(ORDER_ITEM.PRODUCT_ID, DSL.count(ORDER_ITEM.PRODUCT_ID).as("count"))
                 .from(ORDER_ITEM)
                 .join(ORDER).on(ORDER_ITEM.ORDER_ID.eq(ORDER.ID))
+                .where(ORDER.STATUS.eq(OrderEnum.SUCCESS.getValue()))
                 .groupBy(ORDER_ITEM.PRODUCT_ID)
                 .fetchMap(ORDER_ITEM.PRODUCT_ID, DSL.field("count", Integer.class))
         );

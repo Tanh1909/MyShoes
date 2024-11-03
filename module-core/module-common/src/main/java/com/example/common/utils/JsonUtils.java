@@ -1,27 +1,37 @@
 package com.example.common.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class JsonUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String toString(Object obj) {
+    private static ObjectMapper getObjectMapper() {
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        return objectMapper;
+    }
+
+    public static String encode(Object obj) {
         try {
-            return objectMapper.writeValueAsString(obj);
+
+            return getObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
             log.error("Error converting Object to JSON: {}", e.getMessage());
             return null;
         }
     }
 
-    public static <T> T toObject(String json, Class<T> type) {
+    public static <T> T decode(String json, Class<T> type) {
         try {
-            return objectMapper.readValue(json, type);
+            return getObjectMapper().readValue(json, type);
         } catch (Exception e) {
             log.error("Error converting JSON to Object: {}", e.getMessage());
             return null;
         }
     }
+
 }

@@ -6,10 +6,7 @@ import com.example.repository.utils.SQLQueryUtils;
 import io.reactivex.rxjava3.core.Single;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Table;
-import org.jooq.TableField;
+import org.jooq.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
@@ -51,6 +48,19 @@ public abstract class JooqRepository<P, ID> implements
     }
 
     @Override
+    public Single<List<Integer>> insert(Collection<P> entities) {
+        List<InsertSetMoreStep> result = entities.stream()
+                .map(p -> SQLQueryUtils.toInsertQueries(getTable(), p))
+                .map(fieldObjectMap -> getDSLContext().insertInto(getTable())
+                        .set(fieldObjectMap)).toList();
+        return rxSchedulerIo(() -> Arrays.stream(getDSLContext()
+                        .batch(result)
+                        .execute())
+                .boxed()
+                .toList());
+    }
+
+    @Override
     public Single<P> insertReturn(P entity) {
         return rxSchedulerIo(() -> getDSLContext().insertInto(getTable())
                 .set(SQLQueryUtils.toInsertQueries(getTable(), entity))
@@ -60,9 +70,63 @@ public abstract class JooqRepository<P, ID> implements
         );
     }
 
+
     @Override
-    public Single<List<P>> insertReturn(Collection<P> entities) {
-        return Single.just(entities.stream().map(p -> insertReturn(p).blockingGet()).toList());
+    public Single<Optional<P>> insertIgnoreOnDuplicateKey(P pojo) {
+        return rxSchedulerIo(() -> ofNullable(getDSLContext()
+                .insertInto(getTable())
+                .set(SQLQueryUtils.toInsertQueries(getTable(), pojo))
+                .onDuplicateKeyIgnore()
+                .returning()
+                .fetchOne()
+                .map(record -> record.into(pojoClass))
+        ));
+    }
+
+    @Override
+    public Single<List<Integer>> insertIgnoreOnDuplicateKey(Collection<P> pojos) {
+        List<InsertReturningStep> result = pojos.stream()
+                .map(p -> SQLQueryUtils.toInsertQueries(getTable(), p))
+                .map(fieldObjectMap -> getDSLContext()
+                        .insertInto(getTable())
+                        .set(fieldObjectMap)
+                        .onDuplicateKeyIgnore()
+                ).toList();
+        return rxSchedulerIo(() -> Arrays.stream(getDSLContext()
+                        .batch(result)
+                        .execute())
+                .boxed()
+                .toList());
+    }
+
+    @Override
+    public Single<Optional<P>> insertUpdateOnDuplicateKey(P pojo) {
+        return rxSchedulerIo(() -> ofNullable(getDSLContext()
+                .insertInto(getTable())
+                .set(SQLQueryUtils.toInsertQueries(getTable(), pojo))
+                .onDuplicateKeyUpdate()
+                .set(SQLQueryUtils.toInsertQueries(getTable(), pojo))
+                .returning()
+                .fetchOne()
+                .map(record -> record.into(pojoClass))
+        ));
+    }
+
+    @Override
+    public Single<List<Integer>> insertUpdateOnDuplicateKey(Collection<P> pojos) {
+        List<InsertOnDuplicateSetMoreStep> result = pojos.stream()
+                .map(p -> SQLQueryUtils.toInsertQueries(getTable(), p))
+                .map(fieldObjectMap -> getDSLContext()
+                        .insertInto(getTable())
+                        .set(fieldObjectMap)
+                        .onDuplicateKeyUpdate()
+                        .set(fieldObjectMap)
+                ).toList();
+        return rxSchedulerIo(() -> Arrays.stream(getDSLContext()
+                        .batch(result)
+                        .execute())
+                .boxed()
+                .toList());
     }
 
     @Override
@@ -132,6 +196,16 @@ public abstract class JooqRepository<P, ID> implements
     }
 
     @Override
+    public Single<List<P>> findByIds(Collection<ID> ids) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select()
+                .from(getTable())
+                .where(idField.in(ids))
+                .fetchInto(pojoClass)
+        );
+    }
+
+    @Override
     public Single<Boolean> existsById(ID id) {
         return rxSchedulerIo(() -> getDSLContext().fetchExists(getTable(), idField.eq(id)));
     }
@@ -141,6 +215,19 @@ public abstract class JooqRepository<P, ID> implements
         return getDSLContext().insertInto(getTable())
                 .set(SQLQueryUtils.toInsertQueries(getTable(), entity))
                 .execute();
+    }
+
+    @Override
+    public List<Integer> insertBlocking(Collection<P> entities) {
+        List<InsertSetMoreStep> result = entities.stream()
+                .map(p -> SQLQueryUtils.toInsertQueries(getTable(), p))
+                .map(fieldObjectMap -> getDSLContext().insertInto(getTable())
+                        .set(fieldObjectMap)).toList();
+        return Arrays.stream(getDSLContext()
+                        .batch(result)
+                        .execute())
+                .boxed()
+                .toList();
     }
 
     @Override
@@ -155,6 +242,62 @@ public abstract class JooqRepository<P, ID> implements
     @Override
     public List<P> insertReturnBlocking(Collection<P> entities) {
         return entities.stream().map(this::insertReturnBlocking).toList();
+    }
+
+    @Override
+    public Optional<P> insertIgnoreOnDuplicateKeyBlocking(P pojo) {
+        return ofNullable(getDSLContext()
+                .insertInto(getTable())
+                .set(SQLQueryUtils.toInsertQueries(getTable(), pojo))
+                .onDuplicateKeyIgnore()
+                .returning()
+                .fetchOne()
+                .map(record -> record.into(pojoClass)));
+    }
+
+    @Override
+    public List<Integer> insertIgnoreOnDuplicateKeyBlocking(Collection<P> pojos) {
+        List<InsertReturningStep> result = pojos.stream()
+                .map(p -> SQLQueryUtils.toInsertQueries(getTable(), p))
+                .map(fieldObjectMap -> getDSLContext()
+                        .insertInto(getTable())
+                        .set(fieldObjectMap)
+                        .onDuplicateKeyIgnore()
+                ).toList();
+        return Arrays.stream(getDSLContext()
+                        .batch(result)
+                        .execute())
+                .boxed()
+                .toList();
+    }
+
+    @Override
+    public Optional<P> insertUpdateOnDuplicateKeyBlocking(P pojo) {
+        return ofNullable(getDSLContext()
+                .insertInto(getTable())
+                .set(SQLQueryUtils.toInsertQueries(getTable(), pojo))
+                .onDuplicateKeyUpdate()
+                .set(SQLQueryUtils.toInsertQueries(getTable(), pojo))
+                .returning()
+                .fetchOne()
+                .map(record -> record.into(pojoClass)));
+    }
+
+    @Override
+    public List<Integer> insertUpdateOnDuplicateKeyBlocking(Collection<P> pojos) {
+        List<InsertOnDuplicateSetMoreStep> result = pojos.stream()
+                .map(p -> SQLQueryUtils.toInsertQueries(getTable(), p))
+                .map(fieldObjectMap -> getDSLContext()
+                        .insertInto(getTable())
+                        .set(fieldObjectMap)
+                        .onDuplicateKeyUpdate()
+                        .set(fieldObjectMap)
+                ).toList();
+        return Arrays.stream(getDSLContext()
+                        .batch(result)
+                        .execute())
+                .boxed()
+                .toList();
     }
 
     @Override

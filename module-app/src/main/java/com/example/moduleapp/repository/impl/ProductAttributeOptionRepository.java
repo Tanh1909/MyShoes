@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.example.common.template.RxTemplate.rxSchedulerIo;
 import static com.example.moduleapp.model.Tables.PRODUCT_ATTRIBUTE_OPTION;
@@ -32,37 +30,22 @@ public class ProductAttributeOptionRepository extends JooqRepository<ProductAttr
         return PRODUCT_ATTRIBUTE_OPTION;
     }
 
-    @Override
-    public Single<List<ProductAttributeOption>> findOrInsert(Collection<ProductAttributeOption> productAttributeOptions) {
-        Set<String> valueReq = productAttributeOptions.stream()
-                .map(ProductAttributeOption::getValue)
-                .collect(Collectors.toSet());
-        return findByValueIn(valueReq)
-                .flatMap(paos -> {
-                    Set<String> value = paos.stream()
-                            .map(ProductAttributeOption::getValue)
-                            .collect(Collectors.toSet());
-                    Collection<ProductAttributeOption> missingProductAttributeOptions = productAttributeOptions.stream()
-                            .filter(productAttributeOption -> !value.contains(productAttributeOption.getValue()))
-                            .toList();
-                    if (missingProductAttributeOptions.isEmpty()) {
-                        return Single.just(paos);
-                    }
-                    return insertReturn(missingProductAttributeOptions)
-                            .flatMap(productAttributeOptions1 -> {
-                                paos.addAll(productAttributeOptions1);
-                                return Single.just(paos);
-                            });
 
-                });
+    @Override
+    public Single<List<ProductAttributeOption>> insertAndFind(Collection<ProductAttributeOption> productAttributeOptions, Collection<Integer> attributeIds) {
+        List<String> values = productAttributeOptions.stream().map(ProductAttributeOption::getValue).toList();
+        return insertUpdateOnDuplicateKey(productAttributeOptions)
+                .flatMap(integers -> findByValueInAndAttributeIdIn(values, attributeIds));
     }
 
     @Override
-    public Single<List<ProductAttributeOption>> findByValueIn(Collection<String> name) {
+    public Single<List<ProductAttributeOption>> findByValueInAndAttributeIdIn(Collection<String> values, Collection<Integer> attrIds) {
         return rxSchedulerIo(() -> getDSLContext()
                 .select()
                 .from(PRODUCT_ATTRIBUTE_OPTION)
-                .where(PRODUCT_ATTRIBUTE_OPTION.VALUE.in(name))
+                .where(PRODUCT_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_ID.in(attrIds)
+                        .and(PRODUCT_ATTRIBUTE_OPTION.VALUE.in(values))
+                )
                 .fetchInto(pojoClass)
         );
     }

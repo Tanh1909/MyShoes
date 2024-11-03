@@ -72,21 +72,5 @@ public class ImageRepository extends JooqRepository<Image, Integer> implements I
         );
     }
 
-    @Override
-    public Single<List<Image>> findAllByIdIn(Collection<Integer> ids) {
-        return rxSchedulerIo(() -> getDSLContext()
-                .select()
-                .from(getTable())
-                .where(IMAGE.ID.in(ids))
-                .fetchInto(pojoClass)
-        );
-    }
 
-    @Override
-    public Single<String> updateAll(Collection<Image> images) {
-        return Single.just(images.stream()
-                .map(image -> update(image.getId(), image).blockingGet())
-                .toList()
-        ).map(p -> "SUCCESS");
-    }
 }

@@ -11,9 +11,18 @@ import java.util.Optional;
 public interface IRxJooqRepository<P, ID> {
     Single<Integer> insert(P entity);
 
+    Single<List<Integer>> insert(Collection<P> entities);
+
     Single<P> insertReturn(P entity);
 
-    Single<List<P>> insertReturn(Collection<P> entities);
+
+    Single<Optional<P>> insertIgnoreOnDuplicateKey(P pojo);
+
+    Single<List<Integer>> insertIgnoreOnDuplicateKey(Collection<P> pojos);
+
+    Single<Optional<P>> insertUpdateOnDuplicateKey(P pojo);
+
+    Single<List<Integer>> insertUpdateOnDuplicateKey(Collection<P> pojos);
 
     Single<Integer> update(ID id, P entity);
 
@@ -26,6 +35,8 @@ public interface IRxJooqRepository<P, ID> {
     Single<PageResponse<P>> findAll(PageRequest pageRequest);
 
     Single<Optional<P>> findById(ID id);
+
+    Single<List<P>> findByIds(Collection<ID> ids);
 
     Single<Boolean> existsById(ID id);
 

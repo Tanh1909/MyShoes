@@ -46,7 +46,7 @@ public class JwtUtils {
                     .compact();
         }
         Map<String, Object> claims = new HashMap<>();
-        claims.put("user", JsonUtils.toString(user));
+        claims.put("user", JsonUtils.encode(user));
         claims.put("scope", getScope(user));
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secret)
@@ -60,7 +60,7 @@ public class JwtUtils {
     public SimpleSecurityUser getUser(String token) {
         Claims claims = getBody(token);
         if (claims != null) {
-            return JsonUtils.toObject(claims.get("user", String.class), SimpleSecurityUser.class);
+            return JsonUtils.decode(claims.get("user", String.class), SimpleSecurityUser.class);
         }
         return null;
     }

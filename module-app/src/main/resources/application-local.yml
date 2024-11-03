@@ -3,6 +3,18 @@ spring:
     username: root
     url: jdbc:mysql://root:12345678@localhost:3306/myshoes
     password: '12345678'
+  application:
+    name: kafka
+  kafka:
+    bootstrap-servers: localhost:29092
+    consumer:
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      group-id: my_app
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 cloudinary:
   cloud_name: dwgusqbpa
   api_key: '476734569334626'
@@ -28,3 +40,8 @@ vnpay:
 
 app:
   module-auth: /auth
+
+messing:
+  kafka:
+    topic:
+      order-success: ORDER_SUCCESS

@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface IRxProductAttributeOption extends IRxJooqRepository<ProductAttributeOption, Integer> {
 
-    Single<List<ProductAttributeOption>> findOrInsert(Collection<ProductAttributeOption> productAttributeOptions);
 
-    Single<List<ProductAttributeOption>> findByValueIn(Collection<String> name);
+    Single<List<ProductAttributeOption>> insertAndFind(Collection<ProductAttributeOption> productAttributeOptions, Collection<Integer> attributeIds);
+
+
+    Single<List<ProductAttributeOption>> findByValueInAndAttributeIdIn(Collection<String> values, Collection<Integer> attrIds);
 }

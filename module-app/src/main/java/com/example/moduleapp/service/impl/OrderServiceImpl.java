@@ -3,6 +3,7 @@ package com.example.moduleapp.service.impl;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.context.UserPrincipal;
 import com.example.common.exception.AppException;
+import com.example.common.utils.JsonUtils;
 import com.example.moduleapp.config.constant.OrderEnum;
 import com.example.moduleapp.config.constant.OrderErrorCode;
 import com.example.moduleapp.data.request.OrderRequest;
@@ -20,6 +21,8 @@ import com.example.moduleapp.service.OrderService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +43,9 @@ public class OrderServiceImpl implements OrderService {
     private final AddressRepository addressRepository;
     private final OrderItemRepository orderItemRepository;
     private final AuthService authService;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+    @Value("${messing.kafka.topic.order-success}")
+    private String oderSuccessTopic;
 
     @Transactional
     @Override
@@ -86,8 +92,11 @@ public class OrderServiceImpl implements OrderService {
                     Order order = getOptionalValue(orderOptional, Order.class);
                     OrderEnum orderEnum = OrderEnum.getValue(orderStatusRequest.getStatus());
                     switch (orderEnum) {
-                        case SUCCESS:
-                            return validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRM, OrderEnum.SUCCESS, order);
+                        case SUCCESS: {
+                            Single<Integer> updateStatus = validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRM, OrderEnum.SUCCESS, order);
+                            kafkaTemplate.send(oderSuccessTopic, JsonUtils.encode(order));
+                            return updateStatus;
+                        }
                         case CANCEL:
                             return validateAndUpdateBusinessOrderStatus(OrderEnum.PENDING, OrderEnum.CANCEL, order);
                         case REFUND:
