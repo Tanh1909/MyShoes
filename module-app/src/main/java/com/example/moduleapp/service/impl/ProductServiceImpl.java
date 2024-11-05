@@ -130,7 +130,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Single<String> update(Long id, ProductRequest productRequest) {
+    public Single<String> update(Integer id, ProductRequest productRequest) {
         return productRepository.existsById(id).flatMap(isExist ->
                 {
                     if (!isExist) throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT");
@@ -148,7 +148,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Single<String> delete(Long id) {
+    public Single<String> delete(Integer id) {
         return productRepository.existsById(id)
                 .flatMap(isExist -> {
                     if (!isExist) throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT");
@@ -183,7 +183,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Single<String> addToCart(Long id) {
+    public Single<String> addToCart(Integer id) {
         return productRepository.existsById(id)
                 .flatMap(isExist -> {
                     if (!isExist) throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT");

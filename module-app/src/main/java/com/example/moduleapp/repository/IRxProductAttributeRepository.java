@@ -11,4 +11,5 @@ public interface IRxProductAttributeRepository extends IRxJooqRepository<Product
     Single<List<ProductAttribute>> insertAndFind(Collection<ProductAttribute> productAttributes);
 
     Single<List<ProductAttribute>> findByNameIn(Collection<String> names);
+
 }

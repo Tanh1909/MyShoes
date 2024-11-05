@@ -99,4 +99,12 @@ public class AuthServiceImpl implements AuthService {
         }
         return userPrincipal;
     }
+
+    @Override
+    public void validateOwner(Long userId) {
+        UserPrincipal currentUser = getCurrentUser();
+        if (!currentUser.getUserInfo().getId().equals(userId.intValue())) {
+            throw new AppException(AuthErrorCode.UNAUTHORIZED);
+        }
+    }
 }

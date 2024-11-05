@@ -180,7 +180,7 @@ public abstract class JooqRepository<P, ID> implements
         ).map(result -> PageResponse.<P>builder().data(result).page(page).size(size).totalPage(totalPage).build());
     }
 
-    private Integer getTotalRecords() {
+    protected Integer getTotalRecords() {
         return getDSLContext().selectCount()
                 .from(getTable())
                 .fetchOne(0, int.class);

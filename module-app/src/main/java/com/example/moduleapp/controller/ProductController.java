@@ -31,20 +31,20 @@ public class ProductController {
 
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> update(@PathVariable Long id, ProductRequest productRequest) {
+    public Single<ApiResponse> update(@PathVariable Integer id, ProductRequest productRequest) {
         return productService.update(id, productRequest).map(ApiResponse::success);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> deleteById(@PathVariable Long id) {
+    public Single<ApiResponse> deleteById(@PathVariable Integer id) {
         return productService.delete(id).map(ApiResponse::success);
     }
 
     @PostMapping("/{id}/cart")
     @ResponseStatus(HttpStatus.OK)
     public Single<ApiResponse> addToCart() {
-        return productService.addToCart(1l).map(ApiResponse::success);
+        return productService.addToCart(1).map(ApiResponse::success);
     }
 
 

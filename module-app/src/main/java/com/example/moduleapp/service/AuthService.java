@@ -1,6 +1,5 @@
 package com.example.moduleapp.service;
 
-import com.example.common.context.SimpleSecurityUser;
 import com.example.common.context.UserPrincipal;
 import com.example.moduleapp.data.request.AuthRequest;
 import com.example.moduleapp.data.request.UserCreationRequest;
@@ -16,5 +15,7 @@ public interface AuthService {
     Single<UserResponse> signUp(UserCreationRequest userCreationRequest);
 
     UserPrincipal getCurrentUser();
+
+    void validateOwner(Long userId);
 
 }

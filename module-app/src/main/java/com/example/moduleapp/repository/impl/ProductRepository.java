@@ -19,7 +19,7 @@ import static com.example.moduleapp.model.Tables.*;
 
 @Repository
 @RequiredArgsConstructor
-public class ProductRepository extends JooqRepository<Product, Long> implements IRxProductRepository {
+public class ProductRepository extends JooqRepository<Product, Integer> implements IRxProductRepository {
     private final DSLContext dslContext;
 
     @Override
