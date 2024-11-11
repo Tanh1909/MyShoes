@@ -43,4 +43,15 @@ public class ProductRepository extends JooqRepository<Product, Integer> implemen
                 .fetchMap(ORDER_ITEM.PRODUCT_ID, DSL.field("count", Integer.class))
         );
     }
+
+    @Override
+    public Single<Integer> getNumberOfPaid(Integer productId) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select(DSL.count(ORDER_ITEM.PRODUCT_ID).as("count"))
+                .from(ORDER_ITEM)
+                .join(ORDER).on(ORDER_ITEM.ORDER_ID.eq(ORDER.ID))
+                .where(ORDER.STATUS.eq(OrderEnum.SUCCESS.getValue()).and(ORDER_ITEM.PRODUCT_ID.eq(productId)))
+                .fetchOneInto(Integer.class)
+        );
+    }
 }

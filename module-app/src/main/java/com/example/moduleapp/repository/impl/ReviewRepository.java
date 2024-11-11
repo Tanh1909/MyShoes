@@ -9,7 +9,13 @@ import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.example.common.template.RxTemplate.rxSchedulerIo;
 import static com.example.moduleapp.model.Tables.REVIEW;
@@ -46,5 +52,26 @@ public class ReviewRepository extends JooqRepository<Review, Integer> implements
                 .limit(size)
                 .fetchInto(pojoClass)
         ).map(result -> PageResponse.<Review>builder().data(result).page(page).size(size).totalPage(totalPage).build());
+    }
+
+    @Override
+    public Single<Map<Integer, BigDecimal>> getRatedByProductIdIn(Collection<Integer> productIds) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select(REVIEW.PRODUCT_ID, DSL.avg(REVIEW.RATING).as("RATING"))
+                .from(getTable())
+                .where(REVIEW.PRODUCT_ID.in(productIds).and(REVIEW.IS_REVIEW.isTrue()))
+                .groupBy(REVIEW.PRODUCT_ID)
+                .fetchMap(REVIEW.PRODUCT_ID, DSL.field("RATING", BigDecimal.class))
+        );
+    }
+
+    @Override
+    public Single<Optional<BigDecimal>> getRatedByProductId(Integer productId) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select(DSL.avg(REVIEW.RATING).as("RATING"))
+                .from(getTable())
+                .where(REVIEW.PRODUCT_ID.eq(productId).and(REVIEW.IS_REVIEW.isTrue()))
+                .fetchOptional(DSL.field("RATING",BigDecimal.class))
+        );
     }
 }

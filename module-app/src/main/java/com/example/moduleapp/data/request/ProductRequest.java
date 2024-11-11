@@ -11,6 +11,7 @@ import java.util.Set;
 public class ProductRequest {
     private String name;
     private String description;
+    private Double price;
     private Integer categoryId;
     private List<ImageRequest> images;
     private Set<AttributeRequest> attributes;

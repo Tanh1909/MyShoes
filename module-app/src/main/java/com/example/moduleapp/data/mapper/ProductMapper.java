@@ -1,6 +1,7 @@
 package com.example.moduleapp.data.mapper;
 
 import com.example.moduleapp.data.request.ProductRequest;
+import com.example.moduleapp.data.response.ProductDetailResponse;
 import com.example.moduleapp.data.response.ProductResponse;
 import com.example.moduleapp.model.tables.pojos.Product;
 import org.mapstruct.BeanMapping;
@@ -17,6 +18,8 @@ public interface ProductMapper {
     ProductResponse toProductResponse(Product product);
 
     List<ProductResponse> toProductResponse(List<Product> productList);
+
+    ProductDetailResponse toProductDetailResponse(Product product);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void toProduct(@MappingTarget Product product, ProductRequest productRequest);

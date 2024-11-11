@@ -1,5 +1,7 @@
 package com.example.moduleapp.data.response;
 
+import com.example.moduleapp.data.dto.ProductVariantDetail;
+import com.example.moduleapp.model.tables.pojos.Image;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +17,8 @@ public class ProductDetailResponse {
     private String description;
     private Double price;
     private Integer sold;
-    private List<String> imageUrl;
-//    ...
+    private Double rating;
+    private List<Image> images;
+    private Integer categoryId;
+    private List<ProductVariantDetail> productVariants;
 }

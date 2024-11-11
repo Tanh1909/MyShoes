@@ -6,8 +6,15 @@ import com.example.moduleapp.model.tables.pojos.Review;
 import com.example.repository.IRxJooqRepository;
 import io.reactivex.rxjava3.core.Single;
 
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 public interface IRxReviewRepository extends IRxJooqRepository<Review, Integer> {
-    Single<PageResponse<Review>> getReviewByUserId(PageRequest pageRequest,Integer userId, boolean isReview);
+    Single<PageResponse<Review>> getReviewByUserId(PageRequest pageRequest, Integer userId, boolean isReview);
+
+    Single<Map<Integer, BigDecimal>> getRatedByProductIdIn(Collection<Integer> productIds);
+
+    Single<Optional<BigDecimal>> getRatedByProductId(Integer productId);
 }

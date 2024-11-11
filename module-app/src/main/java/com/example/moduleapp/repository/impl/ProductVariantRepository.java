@@ -1,5 +1,6 @@
 package com.example.moduleapp.repository.impl;
 
+import com.example.moduleapp.data.dto.ProductVariantAttribute;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
 import com.example.moduleapp.model.tables.pojos.ProductVariant;
 import com.example.moduleapp.repository.IRxProductVariantRepository;
@@ -37,6 +38,16 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .select()
                 .from(getTable())
                 .where(PRODUCT_VARIANT.ID.in(ids))
+                .fetchInto(pojoClass)
+        );
+    }
+
+    @Override
+    public Single<List<ProductVariant>> findByProductId(Integer productId) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select()
+                .from(getTable())
+                .where(PRODUCT_VARIANT.PRODUCT_ID.eq(productId))
                 .fetchInto(pojoClass)
         );
     }
@@ -85,6 +96,38 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .join(PRODUCT_ATTRIBUTE_OPTION).on(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_OPTION_ID.eq(PRODUCT_ATTRIBUTE_OPTION.ID))
                 .where(PRODUCT_VARIANT.ID.in(ids))
                 .fetchInto(ProductVariantDetail.class)
+        );
+    }
+
+    @Override
+    public Single<List<ProductVariantAttribute>> findAttributeById(Integer id) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select(
+                        PRODUCT_VARIANTS_ATTRIBUTE_OPTION.VARIANT_ID,
+                        PRODUCT_ATTRIBUTE.NAME,
+                        PRODUCT_ATTRIBUTE_OPTION.VALUE
+                )
+                .from(PRODUCT_ATTRIBUTE)
+                .join(PRODUCT_ATTRIBUTE_OPTION).on(PRODUCT_ATTRIBUTE.ID.eq(PRODUCT_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_ID))
+                .join(PRODUCT_VARIANTS_ATTRIBUTE_OPTION).on(PRODUCT_ATTRIBUTE_OPTION.ID.eq(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_OPTION_ID))
+                .where(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.VARIANT_ID.eq(id))
+                .fetchInto(ProductVariantAttribute.class)
+        );
+    }
+
+    @Override
+    public Single<List<ProductVariantAttribute>> findAttributeByIdIn(Collection<Integer> ids) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select(
+                        PRODUCT_VARIANTS_ATTRIBUTE_OPTION.VARIANT_ID,
+                        PRODUCT_ATTRIBUTE.NAME,
+                        PRODUCT_ATTRIBUTE_OPTION.VALUE
+                )
+                .from(PRODUCT_ATTRIBUTE)
+                .join(PRODUCT_ATTRIBUTE_OPTION).on(PRODUCT_ATTRIBUTE.ID.eq(PRODUCT_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_ID))
+                .join(PRODUCT_VARIANTS_ATTRIBUTE_OPTION).on(PRODUCT_ATTRIBUTE_OPTION.ID.eq(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_OPTION_ID))
+                .where(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.VARIANT_ID.in(ids))
+                .fetchInto(ProductVariantAttribute.class)
         );
     }
 }

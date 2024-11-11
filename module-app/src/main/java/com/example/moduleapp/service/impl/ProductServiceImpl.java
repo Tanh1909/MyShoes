@@ -3,23 +3,27 @@ package com.example.moduleapp.service.impl;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.data.request.PageRequest;
 import com.example.common.exception.AppException;
+import com.example.common.utils.ValidateUtils;
 import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.data.mapper.ProductAttributeMapper;
 import com.example.moduleapp.data.mapper.ProductMapper;
 import com.example.moduleapp.data.mapper.ProductVariantMapper;
 import com.example.moduleapp.data.request.ImageRequest;
 import com.example.moduleapp.data.request.ProductRequest;
+import com.example.moduleapp.data.response.ProductDetailResponse;
 import com.example.moduleapp.data.response.ProductResponse;
 import com.example.moduleapp.model.tables.pojos.*;
 import com.example.moduleapp.repository.IRxCartRepository;
 import com.example.moduleapp.repository.IRxProductRepository;
 import com.example.moduleapp.repository.impl.*;
 import com.example.moduleapp.service.ProductService;
+import com.example.moduleapp.service.ProductVariantService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -28,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 @Service
 @AllArgsConstructor
@@ -43,6 +49,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductVariantRepository productVariantRepository;
     private final ProductVariantAttributeOptionRepository productVariantAttributeOptionRepository;
     private final ImageRepository imageRepository;
+    private final ReviewRepository reviewRepository;
+    private final ProductVariantService productVariantService;
 
     private static final Integer SKU_CODE_LENGTH = 8;
 
@@ -166,17 +174,46 @@ public class ProductServiceImpl implements ProductService {
                     return Single.zip(
                             imageRepository.findByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
                             productRepository.getNumberOfPaid(productIds),
-                            (images, paidMap) -> {
+                            reviewRepository.getRatedByProductIdIn(productIds),
+                            (images, paidMap, ratingMap) -> {
                                 Map<Integer, String> imageMap = images.stream().collect(Collectors.toMap(
                                         Image::getTargetId,
                                         Image::getUrl,
                                         (s, s2) -> s
                                 ));
                                 productResponses.forEach(productResponse -> {
-                                    productResponse.setImageUrl(imageMap.get(productResponse.getId()));
-                                    productResponse.setSold(paidMap.get(productResponse.getId()));
+                                    BigDecimal tempRate = ratingMap.get(productResponse.getId());
+                                    double rating = tempRate == null ? 0 : tempRate.setScale(1, ROUND_HALF_UP).doubleValue();
+                                    String imageUrl = imageMap.get(productResponse.getId());
+                                    Integer sold = paidMap.get(productResponse.getId());
+                                    productResponse.setImageUrl(imageUrl == null ? "" : imageUrl);
+                                    productResponse.setSold(sold == null ? 0 : sold);
+                                    productResponse.setRating(rating);
                                 });
                                 return productResponses;
+                            }
+                    );
+                });
+    }
+
+    @Override
+    public Single<ProductDetailResponse> findDetail(Integer id) {
+        return productRepository.findById(id)
+                .flatMap(productOptional -> {
+                    Product product = ValidateUtils.getOptionalValue(productOptional, Product.class);
+                    return Single.zip(
+                            imageRepository.findByTargetIdAndType(id, ImageEnum.PRODUCT.getValue()),
+                            productRepository.getNumberOfPaid(id),
+                            reviewRepository.getRatedByProductId(id),
+                            productVariantService.findDetailsByProductId(id),
+                            (images, payCount, ratingCount, productVariantDetails) -> {
+                                double rating = ratingCount.map(bigDecimal -> bigDecimal.setScale(1, ROUND_HALF_UP).doubleValue()).orElse(0.0);
+                                ProductDetailResponse productDetailResponse = productMapper.toProductDetailResponse(product);
+                                productDetailResponse.setImages(images);
+                                productDetailResponse.setProductVariants(productVariantDetails);
+                                productDetailResponse.setSold(payCount == null ? 0 : payCount);
+                                productDetailResponse.setRating(rating);
+                                return productDetailResponse;
                             }
                     );
                 });

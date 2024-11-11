@@ -13,6 +13,7 @@ public class ProductResponse {
     private String description;
     private Double price;
     private Integer sold;
+    private Double rating;
     private String imageUrl;
 
     public Double getPrice() {

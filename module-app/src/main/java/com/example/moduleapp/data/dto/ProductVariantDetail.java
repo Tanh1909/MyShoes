@@ -3,6 +3,8 @@ package com.example.moduleapp.data.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 public class ProductVariantDetail {
@@ -10,5 +12,5 @@ public class ProductVariantDetail {
     private int productId;
     private Double price;
     private String skuCode;
-    private String value;
+    private Map<String, String> attributes;
 }

@@ -29,6 +29,12 @@ public class ProductController {
         return productService.findAll(pageRequest).map(ApiResponse::success);
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> findDetail(@PathVariable Integer id) {
+        return productService.findDetail(id).map(ApiResponse::success);
+    }
+
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Single<ApiResponse> update(@PathVariable Integer id, ProductRequest productRequest) {
