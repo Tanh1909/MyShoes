@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import io.reactivex.rxjava3.core.Single;
 

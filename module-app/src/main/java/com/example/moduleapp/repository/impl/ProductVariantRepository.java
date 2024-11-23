@@ -3,6 +3,7 @@ package com.example.moduleapp.repository.impl;
 import com.example.moduleapp.data.dto.ProductVariantAttribute;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
 import com.example.moduleapp.model.tables.pojos.ProductVariant;
+import com.example.moduleapp.repository.IProductVariantRepository;
 import com.example.moduleapp.repository.IRxProductVariantRepository;
 import com.example.repository.JooqRepository;
 import io.reactivex.rxjava3.core.Single;
@@ -19,7 +20,8 @@ import static com.example.moduleapp.model.Tables.*;
 
 @Repository
 @AllArgsConstructor
-public class ProductVariantRepository extends JooqRepository<ProductVariant, Integer> implements IRxProductVariantRepository {
+public class ProductVariantRepository extends JooqRepository<ProductVariant, Integer>
+        implements IRxProductVariantRepository, IProductVariantRepository {
     private final DSLContext dsl;
 
     @Override
@@ -129,5 +131,21 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .where(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.VARIANT_ID.in(ids))
                 .fetchInto(ProductVariantAttribute.class)
         );
+    }
+
+    @Override
+    public List<ProductVariant> insertAndFindBlocking(Collection<ProductVariant> productVariants) {
+        List<String> skuCodes = productVariants.stream().map(ProductVariant::getSkuCode).toList();
+        insertBlocking(productVariants);
+        return findByNameInBlocking(skuCodes);
+    }
+
+    @Override
+    public List<ProductVariant> findByNameInBlocking(Collection<String> skuCodes) {
+        return getDSLContext()
+                .select()
+                .from(getTable())
+                .where(PRODUCT_VARIANT.SKU_CODE.in(skuCodes))
+                .fetchInto(pojoClass);
     }
 }

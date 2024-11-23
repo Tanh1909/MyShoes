@@ -12,4 +12,6 @@ public class PageResponse<T> {
     private Integer page;
     private Integer size;
     private Integer totalPage;
+    private Integer totalElements;
+    private Integer isLoadMore;
 }

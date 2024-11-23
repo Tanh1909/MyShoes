@@ -24,10 +24,11 @@ auth:
   jwt:
     secret: dtienanh1909
     refresh-expiration: 600000
-    token-expiration: 600000
+    token-expiration: 6000000
   public-end-points:
     - /auth
     - /vnpay-callback
+    - /product
 vnpay:
   tmn-code: O9IG86PT
   hash-secret: CXXMBGVOQGKJVRWIWX7S91HWCDM3X6DK

@@ -2,6 +2,7 @@ package com.example.moduleapp.repository.impl;
 
 import com.example.moduleapp.config.constant.OrderEnum;
 import com.example.moduleapp.model.tables.pojos.Product;
+import com.example.moduleapp.repository.IProductRepository;
 import com.example.moduleapp.repository.IRxProductRepository;
 import com.example.repository.JooqRepository;
 import io.reactivex.rxjava3.core.Single;
@@ -19,7 +20,8 @@ import static com.example.moduleapp.model.Tables.*;
 
 @Repository
 @RequiredArgsConstructor
-public class ProductRepository extends JooqRepository<Product, Integer> implements IRxProductRepository {
+public class ProductRepository extends JooqRepository<Product, Integer>
+        implements IRxProductRepository, IProductRepository {
     private final DSLContext dslContext;
 
     @Override

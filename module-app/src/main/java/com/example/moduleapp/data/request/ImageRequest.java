@@ -8,4 +8,9 @@ import lombok.Setter;
 public class ImageRequest {
     private Integer id;
     private boolean isPrimary;
+
+    public boolean getIsPrimary() {
+        return isPrimary;
+    }
+
 }

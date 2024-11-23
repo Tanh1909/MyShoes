@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @Getter
@@ -15,6 +17,8 @@ public class ReviewResponse {
     private Double rating;
     private String comment;
     private Product product;
+    private List<String> imageUrls;
+    private UserResponse user;
 
     @Getter
     @Builder
@@ -26,4 +30,7 @@ public class ReviewResponse {
         private Map<String, String> variants;
     }
 
+    public List<String> getImageUrls() {
+        return imageUrls == null ? Collections.emptyList() : imageUrls;
+    }
 }

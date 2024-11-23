@@ -4,29 +4,70 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="finish review function">
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/dto/ProductVariantAttribute.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductVariantService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductVariantServiceImpl.java" afterDir="false" />
+    <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="finish product detail and review">
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/AddressErrorCode.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/CategoryController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/UserController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/CartMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/CategoryMapper.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/CartRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/CartResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/CategoryRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/UserUpdateRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/CategoryResponse.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IImageRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductAttributeOptionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductAttributeRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductVariantAttributeOptionRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductVariantRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxCategoryRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/CategoryRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/CategoryService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/CartServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/CategoryServiceImpl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/request/pagination/Order.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/VNPayErrorCode.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/VNPayErrorCode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/AddressController.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/AddressController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/dto/ProductVariantDetail.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/dto/ProductVariantDetail.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/ProductMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/ProductMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/ProductVariantMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/ProductVariantMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ProductRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ProductRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ProductDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ProductDetailResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ProductResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ProductResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ReviewController.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ReviewController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/AddressMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/AddressMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ImageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ImageRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ReviewRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/ReviewRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/UserCreationRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/request/UserCreationRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/AddressResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/AddressResponse.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ReviewResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ReviewResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/productVariantResponse.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductVariantRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductVariantRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/UserResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/UserResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxAddressRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxAddressRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxCartRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxCartRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxReviewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxReviewRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/AddressRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/AddressRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/CartRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/CartRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ImageRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductAttributeOptionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductAttributeOptionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductAttributeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductAttributeRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductVariantAttributeOptionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductVariantAttributeOptionRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductVariantRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductVariantRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ReviewRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ReviewRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/AddressService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/AddressService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/CartService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/CartService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ReviewService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ReviewService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/AddressServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/AddressServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ReviewServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ReviewServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IBlockingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IBlockingRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/PageConstant.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/request/PageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/request/pagination/PageRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/PageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/data/response/PageResponse.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,8 +90,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Interface" />
         <option value="package-info" />
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -192,9 +233,9 @@
       <recent name="com.example.security" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.example.moduleapp.repository" />
       <recent name="com.example.moduleapp.config.constant" />
       <recent name="com.example.moduleapp.data.mapper" />
-      <recent name="com.example.moduleapp.repository" />
       <recent name="com.example.moduleapp.controller" />
     </key>
   </component>
@@ -331,7 +372,13 @@
       <workItem from="1730813393111" duration="11503000" />
       <workItem from="1730904635227" duration="605000" />
       <workItem from="1731249929504" duration="6859000" />
-      <workItem from="1731333617214" duration="8952000" />
+      <workItem from="1731333617214" duration="9881000" />
+      <workItem from="1731770914406" duration="1293000" />
+      <workItem from="1731850029593" duration="670000" />
+      <workItem from="1731936379616" duration="8600000" />
+      <workItem from="1732026174462" duration="8336000" />
+      <workItem from="1732112248333" duration="2497000" />
+      <workItem from="1732366943332" duration="12359000" />
     </task>
     <task id="LOCAL-00001" summary="fix bug security">
       <option name="closed" value="true" />
@@ -381,7 +428,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730825466427</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="finish product detail and review">
+      <option name="closed" value="true" />
+      <created>1731343406236</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1731343406236</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -405,6 +460,7 @@
     <MESSAGE value="add excel utils commit workspace compilier" />
     <MESSAGE value="add code" />
     <MESSAGE value="finish review function" />
-    <option name="LAST_COMMIT_MESSAGE" value="finish review function" />
+    <MESSAGE value="finish product detail and review" />
+    <option name="LAST_COMMIT_MESSAGE" value="finish product detail and review" />
   </component>
 </project>

@@ -1,7 +1,7 @@
 package com.example.moduleapp.service.impl;
 
 import com.example.common.config.constant.ErrorCodeBase;
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.exception.AppException;
 import com.example.common.utils.ValidateUtils;
 import com.example.moduleapp.config.constant.ImageEnum;
@@ -13,8 +13,6 @@ import com.example.moduleapp.data.request.ProductRequest;
 import com.example.moduleapp.data.response.ProductDetailResponse;
 import com.example.moduleapp.data.response.ProductResponse;
 import com.example.moduleapp.model.tables.pojos.*;
-import com.example.moduleapp.repository.IRxCartRepository;
-import com.example.moduleapp.repository.IRxProductRepository;
 import com.example.moduleapp.repository.impl.*;
 import com.example.moduleapp.service.ProductService;
 import com.example.moduleapp.service.ProductVariantService;
@@ -22,6 +20,7 @@ import io.reactivex.rxjava3.core.Single;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
@@ -39,11 +38,10 @@ import static java.math.BigDecimal.ROUND_HALF_UP;
 @AllArgsConstructor
 @Log4j2
 public class ProductServiceImpl implements ProductService {
-    private final IRxCartRepository cartRepository;
     private final ProductMapper productMapper;
     private final ProductAttributeMapper productAttributeMapper;
     private final ProductVariantMapper productVariantMapper;
-    private final IRxProductRepository productRepository;
+    private final ProductRepository productRepository;
     private final ProductAttributeRepository productAttributeRepository;
     private final ProductAttributeOptionRepository productAttributeOptionRepository;
     private final ProductVariantRepository productVariantRepository;
@@ -54,64 +52,55 @@ public class ProductServiceImpl implements ProductService {
 
     private static final Integer SKU_CODE_LENGTH = 8;
 
+    @Transactional
     @Override
     public Single<String> create(ProductRequest productRequest) {
         Map<Integer, ImageRequest> mapImageReq = productRequest.getImages().stream()
                 .collect(Collectors.toMap(ImageRequest::getId, img -> img));
         productRequest.getVariants().forEach(variantsRequest -> variantsRequest.setSkuCode(generateSkuCode(SKU_CODE_LENGTH)));
-        return Single.zip(
-                        productRepository.insertReturn(productMapper.toProduct(productRequest)),
-                        productAttributeRepository.insertAndFind(productAttributeMapper.toProductAttribute(productRequest.getAttributes())),
-                        imageRepository.findByIds(mapImageReq.keySet()),
-                        (product, productAttributes, images) -> {
-                            validateImage(images, mapImageReq.keySet());
-                            List<Image> imageReq = images.stream().map(image -> {
-                                image.setType(ImageEnum.PRODUCT.getValue());
-                                image.setTargetId(product.getId());
-                                if (mapImageReq.get(image.getId()).isPrimary()) image.setIsPrimary(Byte.valueOf("1"));
-                                return image;
-                            }).toList();
-                            Map<String, Integer> mapReq = productAttributes.stream()
-                                    .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
-                            List<ProductAttributeOption> productAttributeOptions = productRequest.getAttributes().stream()
-                                    .flatMap(attributeRequest -> attributeRequest.getOptions().stream()
-                                            .map(s -> new ProductAttributeOption()
-                                                    .setValue(s)
-                                                    .setProductAttributeId(mapReq.get(attributeRequest.getName()))
-                                            )).toList();
-                            List<ProductVariant> productVariantReq = productVariantMapper.toProductVariant(productRequest.getVariants()).stream()
-                                    .map(productVariant -> productVariant.setProductId(product.getId()))
-                                    .toList();
-                            return Single.zip(
-                                    productVariantRepository.insertAndFind(productVariantReq),
-                                    productAttributeOptionRepository.insertAndFind(productAttributeOptions, mapReq.values()),
-                                    imageRepository.insertUpdateOnDuplicateKey(imageReq),
-                                    (productVariants, productAttributeOptionResult, imageResults) -> {
-                                        Map<String, Integer> valueAndId = productAttributeOptionResult.stream()
-                                                .collect(Collectors.toMap(
-                                                        ProductAttributeOption::getValue,
-                                                        ProductAttributeOption::getId
-                                                ));
-                                        Map<String, Integer> skuCodeAndId = productVariants.stream()
-                                                .collect(Collectors.toMap(ProductVariant::getSkuCode, ProductVariant::getId));
-                                        List<ProductVariantsAttributeOption> pvaos = new ArrayList<>();
-                                        productRequest.getVariants().forEach(variantsRequest -> {
-                                            variantsRequest.getAttributeOptions().forEach(attributeOptionRequest -> {
-                                                ProductVariantsAttributeOption pvao = new ProductVariantsAttributeOption();
-                                                pvao.setVariantId(skuCodeAndId.get(variantsRequest.getSkuCode()));
-                                                pvao.setProductAttributeOptionId(valueAndId.get(attributeOptionRequest));
-                                                pvaos.add(pvao);
-                                            });
-                                        });
-                                        return productVariantAttributeOptionRepository.insert(pvaos);
-                                    }
+        Product productResult = productRepository.insertReturnBlocking(productMapper.toProduct(productRequest));
+        List<ProductAttribute> productAttributesResult = productAttributeRepository.insertAndFindBlocking(productAttributeMapper.toProductAttribute(productRequest.getAttributes()));
+        List<Image> imageResult = imageRepository.findByIdsBlocking(mapImageReq.keySet());
+        validateImage(imageResult, mapImageReq.keySet());
+        List<Image> imageReq = imageResult.stream().map(image -> {
+            image.setType(ImageEnum.PRODUCT.getValue());
+            image.setTargetId(productResult.getId());
+            if (mapImageReq.get(image.getId()).getIsPrimary()) image.setIsPrimary(Byte.valueOf("1"));
+            return image;
+        }).toList();
+        Map<String, Integer> mapReq = productAttributesResult.stream()
+                .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
+        List<ProductAttributeOption> productAttributeOptions = productRequest.getAttributes().stream()
+                .flatMap(attributeRequest -> attributeRequest.getOptions().stream()
+                        .map(s -> new ProductAttributeOption()
+                                .setValue(s)
+                                .setProductAttributeId(mapReq.get(attributeRequest.getName()))
+                        )).toList();
+        List<ProductVariant> productVariantReq = productVariantMapper.toProductVariant(productRequest.getVariants()).stream()
+                .map(productVariant -> productVariant.setProductId(productResult.getId()))
+                .toList();
 
-                            );
-                        }
-                )
-                .flatMap(singleSingle -> singleSingle)
-                .flatMap(listSingle -> listSingle)
-                .map(integers -> "SUCCESS");
+        List<ProductVariant> productVariantsResult = productVariantRepository.insertAndFindBlocking(productVariantReq);
+        List<ProductAttributeOption> productAttributeOptionsResult = productAttributeOptionRepository.insertAndFindBlocking(productAttributeOptions, mapReq.values());
+        imageRepository.insertUpdateOnDuplicateKeyBlocking(imageReq);
+        Map<String, Integer> valueAndId = productAttributeOptionsResult.stream()
+                .collect(Collectors.toMap(
+                        ProductAttributeOption::getValue,
+                        ProductAttributeOption::getId
+                ));
+        Map<String, Integer> skuCodeAndId = productVariantsResult.stream()
+                .collect(Collectors.toMap(ProductVariant::getSkuCode, ProductVariant::getId));
+        List<ProductVariantsAttributeOption> pvaos = new ArrayList<>();
+        productRequest.getVariants().forEach(variantsRequest -> {
+            variantsRequest.getAttributeOptions().forEach(attributeOptionRequest -> {
+                ProductVariantsAttributeOption pvao = new ProductVariantsAttributeOption();
+                pvao.setVariantId(skuCodeAndId.get(variantsRequest.getSkuCode()));
+                pvao.setProductAttributeOptionId(valueAndId.get(attributeOptionRequest));
+                pvaos.add(pvao);
+            });
+        });
+        productVariantAttributeOptionRepository.insertBlocking(pvaos);
+        return Single.just("SUCCESS");
     }
 
     public static String generateSkuCode(int length) {
@@ -172,7 +161,7 @@ public class ProductServiceImpl implements ProductService {
                     List<ProductResponse> productResponses = productMapper.toProductResponse(products);
                     List<Integer> productIds = products.stream().map(Product::getId).toList();
                     return Single.zip(
-                            imageRepository.findByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
+                            imageRepository.findPrimaryByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
                             productRepository.getNumberOfPaid(productIds),
                             reviewRepository.getRatedByProductIdIn(productIds),
                             (images, paidMap, ratingMap) -> {

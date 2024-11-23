@@ -1,6 +1,6 @@
 package com.example.moduleapp.controller;
 
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.ApiResponse;
 import com.example.moduleapp.data.request.ReviewRequest;
 import com.example.moduleapp.service.ReviewService;
@@ -26,6 +26,12 @@ public class ReviewController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Single<ApiResponse> findNotReviewYet(PageRequest pageRequest, boolean isReview) {
-        return reviewService.findReview(pageRequest,isReview).map(ApiResponse::success);
+        return reviewService.findReview(pageRequest, isReview).map(ApiResponse::success);
+    }
+
+    @GetMapping("/product/{productId}")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> findReviewByProductId(PageRequest pageRequest, @PathVariable Integer productId) {
+        return reviewService.findReviewByProductId(pageRequest, productId).map(ApiResponse::success);
     }
 }

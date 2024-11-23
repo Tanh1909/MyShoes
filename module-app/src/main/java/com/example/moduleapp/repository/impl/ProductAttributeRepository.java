@@ -1,6 +1,7 @@
 package com.example.moduleapp.repository.impl;
 
 import com.example.moduleapp.model.tables.pojos.ProductAttribute;
+import com.example.moduleapp.repository.IProductAttributeRepository;
 import com.example.moduleapp.repository.IRxProductAttributeRepository;
 import com.example.repository.JooqRepository;
 import io.reactivex.rxjava3.core.Single;
@@ -19,7 +20,8 @@ import static com.example.moduleapp.model.Tables.PRODUCT_ATTRIBUTE;
 
 @Repository
 @RequiredArgsConstructor
-public class ProductAttributeRepository extends JooqRepository<ProductAttribute, Integer> implements IRxProductAttributeRepository {
+public class ProductAttributeRepository extends JooqRepository<ProductAttribute, Integer>
+        implements IRxProductAttributeRepository, IProductAttributeRepository {
     private final DSLContext dslContext;
 
     @Override
@@ -47,5 +49,21 @@ public class ProductAttributeRepository extends JooqRepository<ProductAttribute,
                 .where(PRODUCT_ATTRIBUTE.NAME.in(names))
                 .fetchInto(pojoClass)
         );
+    }
+
+    @Override
+    public List<ProductAttribute> insertAndFindBlocking(Collection<ProductAttribute> productAttributeReqs) {
+        Set<String> nameReqs = productAttributeReqs.stream().map(ProductAttribute::getName).collect(Collectors.toSet());
+        insertUpdateOnDuplicateKeyBlocking(productAttributeReqs);
+        return findByNameInBlocking(nameReqs);
+    }
+
+    @Override
+    public List<ProductAttribute> findByNameInBlocking(Collection<String> names) {
+        return getDSLContext()
+                .select()
+                .from(getTable())
+                .where(PRODUCT_ATTRIBUTE.NAME.in(names))
+                .fetchInto(pojoClass);
     }
 }

@@ -1,12 +1,14 @@
 package com.example.repository;
 
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.repository.utils.SQLQueryUtils;
 import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.functions.Function;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
@@ -37,6 +39,10 @@ public abstract class JooqRepository<P, ID> implements
                 .findFirst()
                 .orElse(null);
 
+    }
+
+    public Condition filterActive() {
+        return DSL.trueCondition();
     }
 
     @Override
@@ -177,7 +183,11 @@ public abstract class JooqRepository<P, ID> implements
                 .offset(offset)
                 .limit(size)
                 .fetchInto(pojoClass)
-        ).map(result -> PageResponse.<P>builder().data(result).page(page).size(size).totalPage(totalPage).build());
+        ).map(toPageResponse(page, size, totalPage));
+    }
+
+    public static <P> Function<List<P>, PageResponse<P>> toPageResponse(int page, int size, int totalPage) {
+        return result -> PageResponse.<P>builder().data(result).page(page).size(size).totalPage(totalPage).build();
     }
 
     protected Integer getTotalRecords() {
@@ -200,7 +210,7 @@ public abstract class JooqRepository<P, ID> implements
         return rxSchedulerIo(() -> getDSLContext()
                 .select()
                 .from(getTable())
-                .where(idField.in(ids))
+                .where(filterActive().and(idField.in(ids)))
                 .fetchInto(pojoClass)
         );
     }
@@ -354,6 +364,15 @@ public abstract class JooqRepository<P, ID> implements
                 .from(getTable())
                 .where(idField.eq(id))
                 .fetchOneInto(pojoClass));
+    }
+
+    @Override
+    public List<P> findByIdsBlocking(Collection<ID> ids) {
+        return getDSLContext()
+                .select()
+                .from(getTable())
+                .where(filterActive().and(idField.in(ids)))
+                .fetchInto(pojoClass);
     }
 
     @Override

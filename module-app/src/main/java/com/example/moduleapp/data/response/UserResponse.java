@@ -10,5 +10,6 @@ public class UserResponse {
     private String username;
     private String email;
     private String fullName;
+    private String avatar;
     private String createdAt;
 }

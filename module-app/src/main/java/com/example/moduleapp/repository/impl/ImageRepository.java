@@ -1,10 +1,12 @@
 package com.example.moduleapp.repository.impl;
 
 import com.example.moduleapp.model.tables.pojos.Image;
+import com.example.moduleapp.repository.IImageRepository;
 import com.example.moduleapp.repository.IRxImageRepository;
 import com.example.repository.JooqRepository;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.stereotype.Repository;
@@ -19,7 +21,8 @@ import static java.util.Optional.ofNullable;
 
 @Repository
 @RequiredArgsConstructor
-public class ImageRepository extends JooqRepository<Image, Integer> implements IRxImageRepository {
+public class ImageRepository extends JooqRepository<Image, Integer>
+        implements IRxImageRepository, IImageRepository {
     private final DSLContext dslContext;
 
     @Override
@@ -30,6 +33,11 @@ public class ImageRepository extends JooqRepository<Image, Integer> implements I
     @Override
     protected Table getTable() {
         return IMAGE;
+    }
+
+    @Override
+    public Condition filterActive() {
+        return super.filterActive().and(IMAGE.TARGET_ID.isNull());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.example.moduleapp.repository.impl;
 
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.moduleapp.model.tables.pojos.Review;
 import com.example.moduleapp.repository.IRxReviewRepository;
@@ -55,6 +55,24 @@ public class ReviewRepository extends JooqRepository<Review, Integer> implements
     }
 
     @Override
+    public Single<PageResponse<Review>> getReviewByProductId(PageRequest pageRequest, Integer productId, boolean isReview) {
+        int totalRecords = getTotalRecords();
+        int page = pageRequest.getPage();
+        int size = pageRequest.getSize();
+        int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+        int offset = page * size;
+        Byte b = Byte.valueOf(isReview ? "1" : "0");
+        return rxSchedulerIo(() -> getDSLContext()
+                .select()
+                .from(getTable())
+                .where(REVIEW.IS_REVIEW.eq(b).and(REVIEW.PRODUCT_ID.eq(productId)))
+                .offset(offset)
+                .limit(size)
+                .fetchInto(pojoClass)
+        ).map(result -> PageResponse.<Review>builder().data(result).page(page).size(size).totalPage(totalPage).build());
+    }
+
+    @Override
     public Single<Map<Integer, BigDecimal>> getRatedByProductIdIn(Collection<Integer> productIds) {
         return rxSchedulerIo(() -> getDSLContext()
                 .select(REVIEW.PRODUCT_ID, DSL.avg(REVIEW.RATING).as("RATING"))
@@ -71,7 +89,7 @@ public class ReviewRepository extends JooqRepository<Review, Integer> implements
                 .select(DSL.avg(REVIEW.RATING).as("RATING"))
                 .from(getTable())
                 .where(REVIEW.PRODUCT_ID.eq(productId).and(REVIEW.IS_REVIEW.isTrue()))
-                .fetchOptional(DSL.field("RATING",BigDecimal.class))
+                .fetchOptional(DSL.field("RATING", BigDecimal.class))
         );
     }
 }

@@ -1,6 +1,6 @@
 package com.example.moduleapp.service;
 
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.moduleapp.data.request.ProductRequest;
 import com.example.moduleapp.data.response.ProductDetailResponse;
 import com.example.moduleapp.data.response.ProductResponse;

@@ -1,6 +1,6 @@
 package com.example.repository;
 
-import com.example.common.data.request.PageRequest;
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 
 import java.util.Collection;
@@ -35,6 +35,8 @@ public interface IBlockingRepository<P, ID> {
     PageResponse<P> findAllBlocking(PageRequest pageRequest);
 
     Optional<P> findByIdBlocking(ID id);
+
+    List<P> findByIdsBlocking(Collection<ID> ids);
 
     Boolean existsByIdBlocking(ID id);
 }
