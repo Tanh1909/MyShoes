@@ -41,6 +41,18 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    public Single<Map<String, String>> findMapAttrById(Integer id) {
+        return productVariantRepository.findById(id)
+                .flatMap(productVariantOptional -> {
+                    ProductVariant productVariant = ValidateUtils.getOptionalValue(productVariantOptional, ProductVariant.class);
+                    return productVariantRepository.findAttributeById(productVariant.getId())
+                            .map(productVariantAttributes -> productVariantAttributes.stream()
+                                    .collect(Collectors.toMap(ProductVariantAttribute::getName, ProductVariantAttribute::getValue))
+                            );
+                });
+    }
+
+    @Override
     public Single<List<ProductVariantDetail>> findDetailsByIdIn(Collection<Integer> ids) {
         return productVariantRepository.findByIdIn(ids)
                 .flatMap(productVariants -> getProductVariantDetails(productVariants, ids));

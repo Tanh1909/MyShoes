@@ -10,11 +10,11 @@ import lombok.Setter;
 public class ProductResponse {
     private Integer id;
     private String name;
-    private String description;
     private Double price;
     private Integer sold;
     private Double rating;
     private String imageUrl;
+    private Integer categoryId;
 
     public Double getPrice() {
         return price == null ? 0 : price;

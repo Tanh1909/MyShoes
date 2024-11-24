@@ -2,25 +2,31 @@ package com.example.moduleapp.service.impl;
 
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.context.UserPrincipal;
+import com.example.common.data.request.pagination.PageRequest;
+import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
 import com.example.common.utils.JsonUtils;
+import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.config.constant.OrderEnum;
 import com.example.moduleapp.config.constant.OrderErrorCode;
+import com.example.moduleapp.config.constant.PaymentErrorCode;
+import com.example.moduleapp.data.dto.ProductVariantDetail;
+import com.example.moduleapp.data.mapper.AddressMapper;
+import com.example.moduleapp.data.mapper.OrderItemMapper;
+import com.example.moduleapp.data.mapper.OrderMapper;
 import com.example.moduleapp.data.request.OrderRequest;
 import com.example.moduleapp.data.request.OrderStatusRequest;
-import com.example.moduleapp.model.tables.pojos.Address;
-import com.example.moduleapp.model.tables.pojos.Order;
-import com.example.moduleapp.model.tables.pojos.OrderItem;
-import com.example.moduleapp.model.tables.pojos.ProductVariant;
-import com.example.moduleapp.repository.impl.AddressRepository;
-import com.example.moduleapp.repository.impl.OrderItemRepository;
-import com.example.moduleapp.repository.impl.OrderRepository;
-import com.example.moduleapp.repository.impl.ProductVariantRepository;
+import com.example.moduleapp.data.response.OrderItemResponse;
+import com.example.moduleapp.data.response.OrderResponse;
+import com.example.moduleapp.model.tables.pojos.*;
+import com.example.moduleapp.repository.impl.*;
 import com.example.moduleapp.service.AuthService;
 import com.example.moduleapp.service.OrderService;
+import com.example.moduleapp.service.ProductVariantService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -29,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -40,10 +47,19 @@ import static com.example.common.utils.ValidateUtils.getOptionalValue;
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final ProductVariantRepository productVariantRepository;
+    private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
     private final OrderItemRepository orderItemRepository;
     private final AuthService authService;
     private final KafkaTemplate<String, String> kafkaTemplate;
+    private final ProductVariantService productVariantService;
+    private final ImageRepository imageRepository;
+    private final OrderMapper orderMapper;
+    private final OrderItemMapper orderItemMapper;
+    private final AddressMapper addressMapper;
+    private final PaymentRepository paymentRepository;
+
+
     @Value("${messing.kafka.topic.order-success}")
     private String oderSuccessTopic;
 
@@ -67,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
                             BigDecimal total = productVariants.stream().map(productVariant -> productVariant.getPrice()
                                             .multiply(new BigDecimal(productVariantsReq.get(productVariant.getId()))))
                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-                            orderReq.setTotalAmout(total);
+                            orderReq.setTotalAmount(total);
                             orderReq.setAddressId(address.getId());
                             Order order = orderRepository.insertReturnBlocking(orderReq);
                             List<OrderItem> orderItems = productVariants.stream().map(productVariant -> {
@@ -86,34 +102,38 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public Single<String> updateStatus(OrderStatusRequest orderStatusRequest) {
-        return orderRepository.findById(orderStatusRequest.getOrderId())
-                .flatMap(orderOptional -> {
-                    Order order = getOptionalValue(orderOptional, Order.class);
-                    OrderEnum orderEnum = OrderEnum.getValue(orderStatusRequest.getStatus());
-                    switch (orderEnum) {
-                        case SUCCESS: {
-                            Single<Integer> updateStatus = validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRM, OrderEnum.SUCCESS, order);
-                            kafkaTemplate.send(oderSuccessTopic, JsonUtils.encode(order));
-                            return updateStatus;
-                        }
-                        case CANCEL:
-                            return validateAndUpdateBusinessOrderStatus(OrderEnum.PENDING, OrderEnum.CANCEL, order);
-                        case REFUND:
-                            return validateAndUpdateBusinessOrderStatus(OrderEnum.SUCCESS, OrderEnum.REFUND, order);
-                        default:
-                            throw new AppException(ErrorCodeBase.NOT_FOUND, "ERROR STATUS");
-                    }
-                }).map(order -> "SUCCESS");
+        Optional<Order> orderOptional = orderRepository.findByIdBlocking(orderStatusRequest.getOrderId());
+        Order order = getOptionalValue(orderOptional, Order.class);
+        OrderEnum orderEnum = OrderEnum.getValue(orderStatusRequest.getStatus());
+        switch (orderEnum) {
+            case SUCCESS: {
+                validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRM, OrderEnum.SUCCESS, order);
+                Boolean isPaid = paymentRepository.findPaymentSuccessBlocking(order.getId());
+                if (!isPaid) {
+                    throw new AppException(PaymentErrorCode.ORDER_HAS_NOT_BEEN_PAYED);
+                }
+                kafkaTemplate.send(oderSuccessTopic, JsonUtils.encode(order));
+                break;
+            }
+            case CANCEL:
+                validateAndUpdateBusinessOrderStatus(OrderEnum.PENDING, OrderEnum.CANCEL, order);
+            case REFUND:
+                validateAndUpdateBusinessOrderStatus(OrderEnum.SUCCESS, OrderEnum.REFUND, order);
+            default:
+                throw new AppException(ErrorCodeBase.NOT_FOUND, "ERROR STATUS");
+        }
+        return Single.just("SUCCESS");
     }
 
-    private Single<Integer> validateAndUpdateBusinessOrderStatus(OrderEnum beforeStatus, OrderEnum afterStatus, Order order) {
+    private void validateAndUpdateBusinessOrderStatus(OrderEnum beforeStatus, OrderEnum afterStatus, Order order) {
         if (order.getStatus().equals(beforeStatus.getValue())) {
             order.setStatus(afterStatus.getValue());
         } else {
             throw new AppException(OrderErrorCode.WRONG_BUSINESS_UPDATE_STATUS);
         }
-        return orderRepository.update(order.getId(), order);
+        orderRepository.updateBlocking(order.getId(), order);
     }
 
 
@@ -125,5 +145,75 @@ public class OrderServiceImpl implements OrderService {
                 throw new AppException(ErrorCodeBase.NOT_FOUND, "Product");
             }
         });
+    }
+
+    @Override
+    public Single<PageResponse<OrderResponse>> getOrderResponseByStatus(String status, PageRequest pageRequest) {
+        Integer userId = authService.getCurrentUser().getUserInfo().getId();
+        OrderEnum.getValue(status);
+        return orderRepository.findByUserIdAndStatus(userId, status, pageRequest)
+                .flatMap(orderPageResponse -> {
+                    List<Order> orders = orderPageResponse.getData().stream().toList();
+                    List<Integer> addressIds = orders.stream().map(Order::getAddressId).toList();
+                    List<Integer> orderIds = orders.stream().map(Order::getId).toList();
+                    return Single.zip(
+                                    orderItemRepository.findByOrderIdIn(orderIds),
+                                    addressRepository.findByIds(addressIds),
+                                    (Pair::of)
+                            )
+                            .flatMap(pair -> {
+                                        List<OrderItem> orderItems = pair.getLeft();
+                                        List<Integer> productIds = orderItems.stream().map(OrderItem::getProductId).toList();
+                                        List<Integer> variantIds = orderItems.stream().map(OrderItem::getProductVariantId).toList();
+                                        return Single.zip(
+                                                productRepository.findByIds(productIds),
+                                                productVariantService.findDetailsByIdIn(variantIds),
+                                                imageRepository.findPrimaryByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
+                                                (products, productVariantDetails, images) -> {
+                                                    Map<Integer, Product> mapProduct = products.stream()
+                                                            .collect(Collectors.toMap(Product::getId, o -> o));
+                                                    Map<Integer, ProductVariantDetail> mapPVD = productVariantDetails.stream()
+                                                            .collect(Collectors.toMap(ProductVariantDetail::getId, o -> o));
+                                                    Map<Integer, String> mapImage = images.stream()
+                                                            .collect(Collectors.toMap(Image::getTargetId, Image::getUrl, (s, s2) -> s));
+                                                    Map<Integer, OrderResponse.AddressResponse> mapAddressResponse = pair.getRight().stream()
+                                                            .map(addressMapper::toAddressOrderResponse)
+                                                            .collect(Collectors.toMap(OrderResponse.AddressResponse::getId, o -> o));
+                                                    Map<Integer, List<OrderItemResponse>> groupByOrder = orderItems.stream()
+                                                            .collect(Collectors.groupingBy(
+                                                                    OrderItem::getOrderId,
+                                                                    Collectors.mapping(
+                                                                            orderItem -> {
+                                                                                Product product = mapProduct.getOrDefault(orderItem.getProductId(), new Product());
+                                                                                ProductVariantDetail productVariantDetail = mapPVD.getOrDefault(orderItem.getProductVariantId(), new ProductVariantDetail());
+                                                                                String image = mapImage.getOrDefault(orderItem.getProductId(), "");
+                                                                                OrderItemResponse orderItemResponse = orderItemMapper.toOrderItemResponse(orderItem);
+                                                                                orderItemResponse.setAttributes(productVariantDetail.getAttributes());
+                                                                                orderItemResponse.setName(product.getName());
+                                                                                orderItemResponse.setImageUrl(image);
+                                                                                return orderItemResponse;
+                                                                            }, Collectors.toList()
+                                                                    )
+                                                            ));
+                                                    List<OrderResponse> orderResponses = orders.stream()
+                                                            .map(order -> {
+                                                                OrderResponse orderResponse = orderMapper.toOrderResponse(order);
+                                                                orderResponse.setItems(groupByOrder.get(order.getId()));
+                                                                orderResponse.setShippingAddress(mapAddressResponse.get(order.getAddressId()));
+                                                                return orderResponse;
+                                                            })
+                                                            .toList();
+                                                    return PageResponse.<OrderResponse>builder()
+                                                            .data(orderResponses)
+                                                            .page(orderPageResponse.getPage())
+                                                            .size(orderPageResponse.getSize())
+                                                            .totalPage(orderPageResponse.getTotalPage())
+                                                            .build();
+
+                                                }
+                                        );
+                                    }
+                            );
+                });
     }
 }

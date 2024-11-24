@@ -5,5 +5,5 @@ import com.example.repository.IRxJooqRepository;
 import io.reactivex.rxjava3.core.Single;
 
 public interface IRxPaymentRepository extends IRxJooqRepository<Payment, Integer> {
-    Single<Boolean> findPaymentSuccess(Integer orderId);
+
 }

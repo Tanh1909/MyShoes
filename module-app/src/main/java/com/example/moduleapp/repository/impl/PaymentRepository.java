@@ -1,11 +1,10 @@
 package com.example.moduleapp.repository.impl;
 
-import com.example.common.template.RxTemplate;
 import com.example.moduleapp.config.constant.PaymentEnum;
 import com.example.moduleapp.model.tables.pojos.Payment;
+import com.example.moduleapp.repository.IPaymentRepository;
 import com.example.moduleapp.repository.IRxPaymentRepository;
 import com.example.repository.JooqRepository;
-import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Table;
@@ -15,7 +14,8 @@ import static com.example.moduleapp.model.Tables.PAYMENT;
 
 @Repository
 @RequiredArgsConstructor
-public class PaymentRepository extends JooqRepository<Payment, Integer> implements IRxPaymentRepository {
+public class PaymentRepository extends JooqRepository<Payment, Integer>
+        implements IRxPaymentRepository, IPaymentRepository {
     private final DSLContext dsl;
 
     @Override
@@ -29,10 +29,9 @@ public class PaymentRepository extends JooqRepository<Payment, Integer> implemen
     }
 
     @Override
-    public Single<Boolean> findPaymentSuccess(Integer orderId) {
-        return RxTemplate.rxSchedulerIo(() -> getDSLContext()
+    public Boolean findPaymentSuccessBlocking(Integer orderId) {
+        return getDSLContext()
                 .fetchExists(getTable(), PAYMENT.ORDER_ID.eq(orderId)
-                        .and(PAYMENT.PAYMENT_STATUS.eq(PaymentEnum.SUCCESS.getValue())))
-        );
+                        .and(PAYMENT.PAYMENT_STATUS.eq(PaymentEnum.SUCCESS.getValue())));
     }
 }

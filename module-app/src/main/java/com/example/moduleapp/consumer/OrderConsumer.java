@@ -28,7 +28,7 @@ public class OrderConsumer {
             log.error("error when consumer message: {}", message);
             return;
         }
-        List<OrderItem> orderItems = orderItemRepository.findByOrderId(order.getId()).blockingGet();
+        List<OrderItem> orderItems = orderItemRepository.findByOrderIdBlocking(order.getId());
         List<Review> reviews = new ArrayList<>();
         orderItems.forEach(orderItem -> {
             Review review = new Review();
@@ -37,6 +37,6 @@ public class OrderConsumer {
             review.setUserId(order.getUserId());
             reviews.add(review);
         });
-        reviewRepository.insert(reviews).blockingGet();
+        reviewRepository.insertBlocking(reviews);
     }
 }

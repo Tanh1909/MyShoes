@@ -1,38 +1,27 @@
 package com.example.moduleapp.data.response;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
+@Setter
 public class OrderResponse {
     private Integer id;
-    private UserResponse user;
-    private List<OrderResponse> items;
+    private String status;
+    private List<OrderItemResponse> items;
+    private AddressResponse shippingAddress;
     private Double totalAmount;
     private LocalDateTime createdAt;
-    private AddressResponse address;
-
 
     @Getter
-    @Builder
-    public static class UserResponse {
-        private String fullName;
-        private String email;
-        private String phoneNumber;
-        private String address;
+    @Setter
+    public static class AddressResponse {
+        private Integer id;
+        private String content;
+        private String phone;
     }
 
-    @Getter
-    @Builder
-    public static class OrderItemResponse {
-        private String name;
-        private Double price;
-        private Integer quantity;
-        private List<String> variants;
-        private String imageUrl;
-    }
 }

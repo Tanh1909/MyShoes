@@ -20,4 +20,5 @@ public interface ProductService {
     Single<ProductDetailResponse> findDetail(Integer id);
 
     Single<String> addToCart(Integer id);
+
 }

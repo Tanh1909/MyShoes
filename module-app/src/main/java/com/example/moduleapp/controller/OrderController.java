@@ -1,8 +1,11 @@
 package com.example.moduleapp.controller;
 
+import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.ApiResponse;
+import com.example.common.data.response.PageResponse;
 import com.example.moduleapp.data.request.OrderRequest;
 import com.example.moduleapp.data.request.OrderStatusRequest;
+import com.example.moduleapp.data.response.OrderResponse;
 import com.example.moduleapp.service.OrderService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +25,10 @@ public class OrderController {
     @PatchMapping("/status")
     public Single<ApiResponse<String>> update(@RequestBody OrderStatusRequest orderStatusRequest) {
         return orderService.updateStatus(orderStatusRequest).map(ApiResponse::success);
+    }
+
+    @GetMapping
+    public Single<ApiResponse<PageResponse<OrderResponse>>> findByStatus(String status, PageRequest pageRequest) {
+        return orderService.getOrderResponseByStatus(status, pageRequest).map(ApiResponse::success);
     }
 }
