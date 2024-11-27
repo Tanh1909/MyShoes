@@ -50,6 +50,7 @@ public class ImageRepository extends JooqRepository<Image, Integer>
         );
     }
 
+
     @Override
     public Single<List<Image>> findByTargetIdInAndType(Collection<Integer> targetIds, String type) {
         return rxSchedulerIo(() -> getDSLContext()
@@ -80,5 +81,11 @@ public class ImageRepository extends JooqRepository<Image, Integer>
         );
     }
 
-
+    @Override
+    public Integer deleteByTargetIdAndTypeBlocking(Integer targetId, String type) {
+        return getDSLContext()
+                .deleteFrom(getTable())
+                .where(IMAGE.TARGET_ID.eq(targetId).and(IMAGE.TYPE.eq(type)))
+                .execute();
+    }
 }

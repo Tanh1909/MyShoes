@@ -10,10 +10,12 @@ import java.util.Map;
 public interface ProductVariantService {
     Single<ProductVariantDetail> findDetailById(Integer id);
 
-    Single<Map<String,String>> findMapAttrById(Integer id);
+    Single<Map<String, String>> findMapAttrById(Integer id);
 
     Single<List<ProductVariantDetail>> findDetailsByIdIn(Collection<Integer> ids);
 
     Single<List<ProductVariantDetail>> findDetailsByProductId(Integer productId);
+
+    Single<List<ProductVariantDetail>> findDetailsByProductIdIn(Collection<Integer> productIds);
 
 }

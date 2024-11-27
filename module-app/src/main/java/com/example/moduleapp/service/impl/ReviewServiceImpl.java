@@ -5,8 +5,8 @@ import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
 import com.example.common.utils.ValidateUtils;
+import com.example.moduleapp.config.constant.AppErrorCode;
 import com.example.moduleapp.config.constant.ImageEnum;
-import com.example.moduleapp.config.constant.ReviewErrorCode;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
 import com.example.moduleapp.data.mapper.ReviewMapper;
 import com.example.moduleapp.data.mapper.UserMapper;
@@ -85,12 +85,7 @@ public class ReviewServiceImpl implements ReviewService {
                                     reviewResponse.setUser(userMapper.toUserResponse(user));
                                     return reviewResponse;
                                 }).toList();
-                                return PageResponse.<ReviewResponse>builder()
-                                        .page(pageResponse.getPage())
-                                        .size(pageResponse.getSize())
-                                        .totalPage(pageResponse.getTotalPage())
-                                        .data(results)
-                                        .build();
+                                return PageResponse.toPageResponse(results, pageResponse);
                             }
                     );
                 });
@@ -152,7 +147,7 @@ public class ReviewServiceImpl implements ReviewService {
             Review review = ValidateUtils.getOptionalValue(pair.getLeft(), Review.class);
             authService.validateOwner(review.getUserId());
             if (review.getIsReview().toString().equals("1")) {
-                throw new AppException(ReviewErrorCode.HAS_REVIEWED);
+                throw new AppException(AppErrorCode.HAS_REVIEWED);
             }
             reviewMapper.toReview(review, reviewRequest);
             review.setIsReview(Byte.valueOf("1"));
@@ -161,7 +156,7 @@ public class ReviewServiceImpl implements ReviewService {
                 image.setTargetId(reviewId);
             }).toList();
             return Single.zip(
-                    reviewRepository.update(reviewId,review),
+                    reviewRepository.update(reviewId, review),
                     imageRepository.insertUpdateOnDuplicateKey(imageReq),
                     (reviewOptional, integers) -> true
             );

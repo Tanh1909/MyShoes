@@ -29,6 +29,7 @@ auth:
     - /auth
     - /vnpay-callback
     - /product
+    - /category
 vnpay:
   tmn-code: O9IG86PT
   hash-secret: CXXMBGVOQGKJVRWIWX7S91HWCDM3X6DK

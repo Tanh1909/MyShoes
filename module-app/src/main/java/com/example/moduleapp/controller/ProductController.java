@@ -1,5 +1,6 @@
 package com.example.moduleapp.controller;
 
+import com.example.common.annotation.Pageable;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.ApiResponse;
 import com.example.moduleapp.data.request.ProductRequest;
@@ -19,14 +20,20 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Single<ApiResponse> create(@RequestBody ProductRequest productRequest) {
+    public Single<ApiResponse<String>> create(@RequestBody ProductRequest productRequest) {
         return productService.create(productRequest).map(ApiResponse::success);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> findAll(PageRequest pageRequest) {
+    public Single<ApiResponse> findAll(@Pageable PageRequest pageRequest) {
         return productService.findAll(pageRequest).map(ApiResponse::success);
+    }
+
+    @GetMapping("/category/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> findByCategoryId(@PathVariable Integer id, @Pageable PageRequest pageRequest) {
+        return productService.findByCategoryId(id, pageRequest).map(ApiResponse::success);
     }
 
     @GetMapping("/{id}")

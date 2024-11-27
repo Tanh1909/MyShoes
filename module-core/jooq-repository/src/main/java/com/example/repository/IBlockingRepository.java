@@ -30,6 +30,9 @@ public interface IBlockingRepository<P, ID> {
 
     Integer deleteByIdBlocking(ID id);
 
+    Integer deleteByIdsBlocking(Collection<ID> ids);
+
+
     List<P> findAllBlocking();
 
     PageResponse<P> findAllBlocking(PageRequest pageRequest);
@@ -39,4 +42,7 @@ public interface IBlockingRepository<P, ID> {
     List<P> findByIdsBlocking(Collection<ID> ids);
 
     Boolean existsByIdBlocking(ID id);
+
+    Integer getTotalRecordsBlocking();
+
 }

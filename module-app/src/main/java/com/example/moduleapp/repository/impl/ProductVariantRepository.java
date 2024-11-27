@@ -55,6 +55,16 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
     }
 
     @Override
+    public Single<List<ProductVariant>> findByProductIdIn(Collection<Integer> productIds) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select()
+                .from(getTable())
+                .where(PRODUCT_VARIANT.PRODUCT_ID.in(productIds))
+                .fetchInto(pojoClass)
+        );
+    }
+
+    @Override
     public Single<List<ProductVariant>> insertAndFind(Collection<ProductVariant> productVariants) {
         List<String> skuCodes = productVariants.stream().map(ProductVariant::getSkuCode).toList();
         return insert(productVariants)
@@ -75,7 +85,11 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
     public Single<List<ProductVariantDetail>> findDetailByProductIdsIn(Collection<Integer> ids) {
         return rxSchedulerIo(() -> getDSLContext()
                 .select(
-                        PRODUCT_VARIANT.ID, PRODUCT_VARIANT.PRODUCT_ID, PRODUCT_VARIANT.PRICE, PRODUCT_VARIANT.SKU_CODE,
+                        PRODUCT_VARIANT.ID,
+                        PRODUCT_VARIANT.PRODUCT_ID,
+                        PRODUCT_VARIANT.PRICE,
+                        PRODUCT_VARIANT.SKU_CODE,
+                        PRODUCT_VARIANT.STOCK,
                         PRODUCT_ATTRIBUTE_OPTION.VALUE
                 )
                 .from(getTable())
@@ -90,7 +104,11 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
     public Single<List<ProductVariantDetail>> findDetailByIdsIn(Collection<Integer> ids) {
         return rxSchedulerIo(() -> getDSLContext()
                 .select(
-                        PRODUCT_VARIANT.ID, PRODUCT_VARIANT.PRODUCT_ID, PRODUCT_VARIANT.PRICE, PRODUCT_VARIANT.SKU_CODE,
+                        PRODUCT_VARIANT.ID,
+                        PRODUCT_VARIANT.PRODUCT_ID,
+                        PRODUCT_VARIANT.PRICE,
+                        PRODUCT_VARIANT.SKU_CODE,
+                        PRODUCT_VARIANT.STOCK,
                         PRODUCT_ATTRIBUTE_OPTION.VALUE
                 )
                 .from(getTable())

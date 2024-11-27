@@ -3,10 +3,7 @@ package com.example.moduleapp.payment.abstracts;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.context.UserPrincipal;
 import com.example.common.exception.AppException;
-import com.example.moduleapp.config.constant.OrderEnum;
-import com.example.moduleapp.config.constant.PaymentEnum;
-import com.example.moduleapp.config.constant.PaymentErrorCode;
-import com.example.moduleapp.config.constant.PaymentMethodEnum;
+import com.example.moduleapp.config.constant.*;
 import com.example.moduleapp.data.response.PaymentResponse;
 import com.example.moduleapp.model.tables.pojos.Order;
 import com.example.moduleapp.model.tables.pojos.Payment;
@@ -73,7 +70,7 @@ public abstract class PaymentAbstract {
             throw new AppException(ErrorCodeBase.NOT_FOUND, "ORDER ID");
         }
         if (!OrderEnum.PENDING.getValue().equals(order.getStatus())) {
-            throw new AppException(PaymentErrorCode.ORDER_HAS_BEEN_PAYED);
+            throw new AppException(AppErrorCode.ORDER_HAS_BEEN_PAYED);
         }
     }
 

@@ -12,5 +12,6 @@ public class ProductVariantDetail {
     private int productId;
     private Double price;
     private String skuCode;
+    private Integer stock;
     private Map<String, String> attributes;
 }

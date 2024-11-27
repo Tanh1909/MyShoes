@@ -32,6 +32,7 @@ public class AddressRepository extends JooqRepository<Address, Integer> implemen
 
     @Override
     public Single<Optional<Address>> findDefaultAddressByUserId(Long userId) {
+
         return rxSchedulerIo(() -> Optional.ofNullable(
                 getDSLContext()
                         .select()

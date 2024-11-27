@@ -1,7 +1,7 @@
 package com.example.moduleapp.payment.factory;
 
 import com.cloudinary.api.exceptions.ApiException;
-import com.example.moduleapp.config.constant.PaymentErrorCode;
+import com.example.moduleapp.config.constant.AppErrorCode;
 import com.example.moduleapp.config.constant.PaymentMethodEnum;
 import com.example.moduleapp.payment.abstracts.PaymentAbstract;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +22,6 @@ public class PaymentFactory {
                 return paymentAbstract;
             }
         }
-        throw new ApiException(PaymentErrorCode.PAYMENT_METHOD_NOT_SUPPORT.getMessage());
+        throw new ApiException(AppErrorCode.PAYMENT_METHOD_NOT_SUPPORT.getMessage());
     }
 }

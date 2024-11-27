@@ -1,5 +1,6 @@
 package com.example.moduleapp.controller;
 
+import com.example.common.annotation.Pageable;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.ApiResponse;
 import com.example.common.data.response.PageResponse;
@@ -28,7 +29,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public Single<ApiResponse<PageResponse<OrderResponse>>> findByStatus(String status, PageRequest pageRequest) {
+    public Single<ApiResponse<PageResponse<OrderResponse>>> findByStatus(String status, @Pageable PageRequest pageRequest) {
         return orderService.getOrderResponseByStatus(status, pageRequest).map(ApiResponse::success);
     }
 }

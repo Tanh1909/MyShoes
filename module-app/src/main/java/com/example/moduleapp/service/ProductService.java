@@ -1,6 +1,7 @@
 package com.example.moduleapp.service;
 
 import com.example.common.data.request.pagination.PageRequest;
+import com.example.common.data.response.PageResponse;
 import com.example.moduleapp.data.request.ProductRequest;
 import com.example.moduleapp.data.response.ProductDetailResponse;
 import com.example.moduleapp.data.response.ProductResponse;
@@ -15,9 +16,12 @@ public interface ProductService {
 
     Single<String> delete(Integer id);
 
-    Single<List<ProductResponse>> findAll(PageRequest pageRequest);
+    Single<PageResponse<ProductResponse>> findAll(PageRequest pageRequest);
+
+    Single<PageResponse<ProductResponse>> findByCategoryId(Integer categoryId,PageRequest pageRequest);
 
     Single<ProductDetailResponse> findDetail(Integer id);
+
 
     Single<String> addToCart(Integer id);
 

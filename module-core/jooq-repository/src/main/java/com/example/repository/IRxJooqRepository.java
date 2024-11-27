@@ -3,6 +3,7 @@ package com.example.repository;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import io.reactivex.rxjava3.core.Single;
+import org.jooq.Condition;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,6 +31,8 @@ public interface IRxJooqRepository<P, ID> {
 
     Single<Integer> deleteById(ID id);
 
+    Single<Integer> deleteByIds(Collection<ID> ids);
+
     Single<List<P>> findAll();
 
     Single<PageResponse<P>> findAll(PageRequest pageRequest);
@@ -39,5 +42,9 @@ public interface IRxJooqRepository<P, ID> {
     Single<List<P>> findByIds(Collection<ID> ids);
 
     Single<Boolean> existsById(ID id);
+
+    Single<Integer> getTotalRecords();
+
+    Single<Integer> getTotalRecords(Condition condition);
 
 }

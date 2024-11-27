@@ -6,10 +6,9 @@ import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
 import com.example.common.utils.JsonUtils;
+import com.example.moduleapp.config.constant.AppErrorCode;
 import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.config.constant.OrderEnum;
-import com.example.moduleapp.config.constant.OrderErrorCode;
-import com.example.moduleapp.config.constant.PaymentErrorCode;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
 import com.example.moduleapp.data.mapper.AddressMapper;
 import com.example.moduleapp.data.mapper.OrderItemMapper;
@@ -80,6 +79,7 @@ public class OrderServiceImpl implements OrderService {
                         (productVariants, addressOptional) -> {
                             Address address = getOptionalValue(addressOptional, Address.class);
                             validateVariant(productVariants, productVariantsReq.keySet());
+                            checkOverStock(orderRequest, productVariants);
                             BigDecimal total = productVariants.stream().map(productVariant -> productVariant.getPrice()
                                             .multiply(new BigDecimal(productVariantsReq.get(productVariant.getId()))))
                                     .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -101,6 +101,16 @@ public class OrderServiceImpl implements OrderService {
                 .map(orderItems -> "SUCCESS");
     }
 
+    private static void checkOverStock(OrderRequest orderRequest, List<ProductVariant> productVariants) {
+        Map<Integer, ProductVariant> mapProductVariant = productVariants.stream().collect(Collectors.toMap(ProductVariant::getId, o -> o));
+        orderRequest.getProductVariants().forEach(productVariantRequest -> {
+            ProductVariant productVariant = mapProductVariant.get(productVariantRequest.getId());
+            if (productVariantRequest.getQuantity() > productVariant.getStock()) {
+                throw new AppException(AppErrorCode.OVER_STOCK);
+            }
+        });
+    }
+
     @Override
     @Transactional
     public Single<String> updateStatus(OrderStatusRequest orderStatusRequest) {
@@ -112,7 +122,7 @@ public class OrderServiceImpl implements OrderService {
                 validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRM, OrderEnum.SUCCESS, order);
                 Boolean isPaid = paymentRepository.findPaymentSuccessBlocking(order.getId());
                 if (!isPaid) {
-                    throw new AppException(PaymentErrorCode.ORDER_HAS_NOT_BEEN_PAYED);
+                    throw new AppException(AppErrorCode.ORDER_HAS_NOT_BEEN_PAYED);
                 }
                 kafkaTemplate.send(oderSuccessTopic, JsonUtils.encode(order));
                 break;
@@ -131,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus().equals(beforeStatus.getValue())) {
             order.setStatus(afterStatus.getValue());
         } else {
-            throw new AppException(OrderErrorCode.WRONG_BUSINESS_UPDATE_STATUS);
+            throw new AppException(AppErrorCode.WRONG_BUSINESS_UPDATE_STATUS);
         }
         orderRepository.updateBlocking(order.getId(), order);
     }
@@ -203,13 +213,7 @@ public class OrderServiceImpl implements OrderService {
                                                                 return orderResponse;
                                                             })
                                                             .toList();
-                                                    return PageResponse.<OrderResponse>builder()
-                                                            .data(orderResponses)
-                                                            .page(orderPageResponse.getPage())
-                                                            .size(orderPageResponse.getSize())
-                                                            .totalPage(orderPageResponse.getTotalPage())
-                                                            .build();
-
+                                                    return PageResponse.toPageResponse(orderResponses, orderPageResponse);
                                                 }
                                         );
                                     }

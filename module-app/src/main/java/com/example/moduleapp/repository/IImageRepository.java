@@ -4,4 +4,6 @@ import com.example.moduleapp.model.tables.pojos.Image;
 import com.example.repository.IBlockingRepository;
 
 public interface IImageRepository extends IBlockingRepository<Image, Integer> {
+
+    Integer deleteByTargetIdAndTypeBlocking(Integer targetId, String type);
 }

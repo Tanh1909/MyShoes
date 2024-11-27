@@ -1,16 +1,18 @@
 package com.example.common.data.request.pagination;
 
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Data
 public class PageRequest {
-    private static final int DEFAULT_PAGE_SIZE = 0;
-    private static final int DEFAULT_PAGE_NO = 7;
+    private static final int DEFAULT_PAGE_SIZE = 7;
+    private static final int DEFAULT_PAGE_NO = 0;
     private Integer page;
     private Integer size;
     private List<Order> orders;
@@ -39,6 +41,13 @@ public class PageRequest {
         }
     }
 
+    public PageRequest(Integer page, Integer size, Collection<Order> orders) {
+        this.page = page == null || page < 0 ? DEFAULT_PAGE_NO : page;
+        this.size = size == null || size < 0 ? DEFAULT_PAGE_SIZE : size;
+        this.orders = new ArrayList<>(orders);
+    }
+
+
     public PageRequest(Integer page, Integer size, Order... orders) {
         this(page, size);
         this.orders.addAll(Arrays.stream(orders).toList());
@@ -54,5 +63,9 @@ public class PageRequest {
 
     public Integer getSize() {
         return ObjectUtils.isEmpty(this.size) ? DEFAULT_PAGE_SIZE : this.size;
+    }
+
+    public List<Order> getOrders() {
+        return CollectionUtils.isEmpty(this.orders) ? List.of(new Order()) : this.orders;
     }
 }

@@ -13,5 +13,29 @@ public class PageResponse<T> {
     private Integer size;
     private Integer totalPage;
     private Integer totalElements;
-    private Integer isLoadMore;
+    private Boolean isLoadMore;
+
+
+    public static <T> PageResponse<T> toPageResponse(Collection<T> data, Integer page, Integer size, Integer totalPage, Integer totalElements) {
+        return PageResponse.<T>builder()
+                .data(data)
+                .page(page)
+                .size(size)
+                .totalPage(totalPage)
+                .totalElements(totalElements)
+                .isLoadMore(page < totalPage - 1)
+                .build();
+    }
+
+
+    public static <T> PageResponse<T> toPageResponse(Collection<T> data, PageResponse<?> pageResponse) {
+        return PageResponse.<T>builder()
+                .data(data)
+                .page(pageResponse.getPage())
+                .size(pageResponse.getSize())
+                .totalPage(pageResponse.getTotalPage())
+                .totalElements(pageResponse.getTotalElements())
+                .isLoadMore(pageResponse.getIsLoadMore())
+                .build();
+    }
 }

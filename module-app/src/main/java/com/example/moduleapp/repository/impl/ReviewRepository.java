@@ -5,8 +5,10 @@ import com.example.common.data.response.PageResponse;
 import com.example.moduleapp.model.tables.pojos.Review;
 import com.example.moduleapp.repository.IRxReviewRepository;
 import com.example.repository.JooqRepository;
+import com.example.repository.utils.SQLQueryUtils;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
@@ -37,39 +39,55 @@ public class ReviewRepository extends JooqRepository<Review, Integer> implements
 
     @Override
     public Single<PageResponse<Review>> getReviewByUserId(PageRequest pageRequest, Integer userId, boolean isReview) {
-        int totalRecords = getTotalRecords();
         int page = pageRequest.getPage();
         int size = pageRequest.getSize();
-        int totalPage = (int) Math.ceil(totalRecords * 1f / size);
         int offset = page * size;
         Byte b = Byte.valueOf(isReview ? "1" : "0");
         Long userIdLong = Long.valueOf(userId);
-        return rxSchedulerIo(() -> getDSLContext()
-                .select()
-                .from(getTable())
-                .where(REVIEW.IS_REVIEW.eq(b).and(REVIEW.USER_ID.eq(userIdLong)))
-                .offset(offset)
-                .limit(size)
-                .fetchInto(pojoClass)
-        ).map(result -> PageResponse.<Review>builder().data(result).page(page).size(size).totalPage(totalPage).build());
+        Condition condition = REVIEW.IS_REVIEW.eq(b).and(REVIEW.USER_ID.eq(userIdLong));
+        return Single.zip(
+                getTotalRecords(condition),
+                rxSchedulerIo(() -> getDSLContext()
+                        .select()
+                        .from(getTable())
+                        .where(condition)
+                        .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
+                        .offset(offset)
+                        .limit(size)
+                        .fetchInto(pojoClass)
+                ),
+                (totalRecords, results) -> {
+                    int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+                    return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
+                }
+
+        );
     }
 
     @Override
     public Single<PageResponse<Review>> getReviewByProductId(PageRequest pageRequest, Integer productId, boolean isReview) {
-        int totalRecords = getTotalRecords();
         int page = pageRequest.getPage();
         int size = pageRequest.getSize();
-        int totalPage = (int) Math.ceil(totalRecords * 1f / size);
         int offset = page * size;
         Byte b = Byte.valueOf(isReview ? "1" : "0");
-        return rxSchedulerIo(() -> getDSLContext()
-                .select()
-                .from(getTable())
-                .where(REVIEW.IS_REVIEW.eq(b).and(REVIEW.PRODUCT_ID.eq(productId)))
-                .offset(offset)
-                .limit(size)
-                .fetchInto(pojoClass)
-        ).map(result -> PageResponse.<Review>builder().data(result).page(page).size(size).totalPage(totalPage).build());
+        Condition condition = REVIEW.IS_REVIEW.eq(b).and(REVIEW.PRODUCT_ID.eq(productId));
+        return Single.zip(
+                getTotalRecords(condition),
+                rxSchedulerIo(() -> getDSLContext()
+                        .select()
+                        .from(getTable())
+                        .where(condition)
+                        .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
+                        .offset(offset)
+                        .limit(size)
+                        .fetchInto(pojoClass)
+                ),
+                (totalRecords, results) -> {
+                    int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+                    return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
+                }
+
+        );
     }
 
     @Override

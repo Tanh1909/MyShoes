@@ -14,6 +14,8 @@ public interface IRxProductVariantRepository extends IRxJooqRepository<ProductVa
 
     Single<List<ProductVariant>> findByProductId(Integer productId);
 
+    Single<List<ProductVariant>> findByProductIdIn(Collection<Integer> productIds);
+
     Single<List<ProductVariant>> insertAndFind(Collection<ProductVariant> productVariants);
 
     Single<List<ProductVariant>> findByNameIn(Collection<String> skuCodes);

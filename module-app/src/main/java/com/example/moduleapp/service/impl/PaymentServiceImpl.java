@@ -36,7 +36,7 @@ public class PaymentServiceImpl implements PaymentService {
         UserPrincipal userPrincipal = SecurityContext.getUserPrincipal();
         PaymentMethodEnum paymentMethod = PaymentMethodEnum.getValue(paymentRequest.getPaymentMethod());
         if (paymentMethod == null) {
-            throw new AppException(PaymentErrorCode.PAYMENT_METHOD_NOT_SUPPORT);
+            throw new AppException(AppErrorCode.PAYMENT_METHOD_NOT_SUPPORT);
         }
         PaymentAbstract paymentAbstract = paymentFactory.create(paymentMethod);
         return paymentAbstract.pay(paymentRequest.getOrderId(), userPrincipal);

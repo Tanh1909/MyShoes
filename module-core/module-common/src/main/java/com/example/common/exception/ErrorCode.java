@@ -16,7 +16,4 @@ public class ErrorCode {
         return message;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

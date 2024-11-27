@@ -4,7 +4,6 @@ import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.repository.utils.SQLQueryUtils;
 import io.reactivex.rxjava3.core.Single;
-import io.reactivex.rxjava3.functions.Function;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.*;
@@ -164,6 +163,14 @@ public abstract class JooqRepository<P, ID> implements
     }
 
     @Override
+    public Single<Integer> deleteByIds(Collection<ID> ids) {
+        return rxSchedulerIo(() -> getDSLContext().delete(getTable())
+                .where(idField.in(ids))
+                .execute()
+        );
+    }
+
+    @Override
     public Single<List<P>> findAll() {
         return rxSchedulerIo(() -> getDSLContext().select()
                 .from(getTable())
@@ -172,28 +179,49 @@ public abstract class JooqRepository<P, ID> implements
 
     @Override
     public Single<PageResponse<P>> findAll(PageRequest pageRequest) {
-        int totalRecords = getTotalRecords();
         int page = pageRequest.getPage();
         int size = pageRequest.getSize();
-        int totalPage = (int) Math.ceil(totalRecords * 1f / size);
-        int offset = page * size;
-        return rxSchedulerIo(() -> getDSLContext()
-                .select()
-                .from(getTable())
-                .offset(offset)
-                .limit(size)
-                .fetchInto(pojoClass)
-        ).map(toPageResponse(page, size, totalPage));
+        int offset = pageRequest.getOffset();
+        return Single.zip(
+                getTotalRecords(),
+                rxSchedulerIo(() -> getDSLContext()
+                        .select()
+                        .from(getTable())
+                        .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
+                        .offset(offset)
+                        .limit(size)
+                        .fetchInto(pojoClass)
+                ),
+                (totalRecords, results) -> {
+                    int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+                    return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
+                }
+        );
     }
 
-    public static <P> Function<List<P>, PageResponse<P>> toPageResponse(int page, int size, int totalPage) {
-        return result -> PageResponse.<P>builder().data(result).page(page).size(size).totalPage(totalPage).build();
-    }
 
-    protected Integer getTotalRecords() {
+    @Override
+    public Integer getTotalRecordsBlocking() {
         return getDSLContext().selectCount()
                 .from(getTable())
                 .fetchOne(0, int.class);
+    }
+
+    @Override
+    public Single<Integer> getTotalRecords() {
+        return rxSchedulerIo(() -> getDSLContext().selectCount()
+                .from(getTable())
+                .fetchOne(0, int.class)
+        );
+    }
+
+    @Override
+    public Single<Integer> getTotalRecords(Condition condition) {
+        return rxSchedulerIo(() -> getDSLContext().selectCount()
+                .from(getTable())
+                .where(condition)
+                .fetchOne(0, int.class)
+        );
     }
 
     @Override
@@ -336,6 +364,13 @@ public abstract class JooqRepository<P, ID> implements
     }
 
     @Override
+    public Integer deleteByIdsBlocking(Collection<ID> ids) {
+        return getDSLContext().delete(getTable())
+                .where(idField.in(ids))
+                .execute();
+    }
+
+    @Override
     public List<P> findAllBlocking() {
         return getDSLContext().select()
                 .from(getTable())
@@ -344,18 +379,19 @@ public abstract class JooqRepository<P, ID> implements
 
     @Override
     public PageResponse<P> findAllBlocking(PageRequest pageRequest) {
-        int totalRecords = getTotalRecords();
+        int totalRecords = getTotalRecordsBlocking();
         int page = pageRequest.getPage();
         int size = pageRequest.getSize();
         int totalPage = (int) Math.ceil(totalRecords * 1f / size);
-        int offset = page * size;
+        int offset = pageRequest.getOffset();
         List<P> results = getDSLContext()
                 .select()
                 .from(getTable())
+                .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
                 .offset(offset)
                 .limit(size)
                 .fetchInto(pojoClass);
-        return PageResponse.<P>builder().data(results).page(page).size(size).totalPage(totalPage).build();
+        return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
     }
 
     @Override

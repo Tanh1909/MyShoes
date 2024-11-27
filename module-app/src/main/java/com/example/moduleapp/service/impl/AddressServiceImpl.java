@@ -3,7 +3,7 @@ package com.example.moduleapp.service.impl;
 import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.context.UserPrincipal;
 import com.example.common.exception.AppException;
-import com.example.moduleapp.config.constant.AddressErrorCode;
+import com.example.moduleapp.config.constant.AppErrorCode;
 import com.example.moduleapp.data.mapper.AddressMapper;
 import com.example.moduleapp.data.request.AddressRequest;
 import com.example.moduleapp.data.response.AddressResponse;
@@ -73,7 +73,7 @@ public class AddressServiceImpl implements AddressService {
                     }
                     Address address = addressOptional.get();
                     if (!address.getUserId().equals(userId)) {
-                        throw new AppException(AddressErrorCode.USER_NOT_HAS_THIS_ADDRESS);
+                        throw new AppException(AppErrorCode.USER_NOT_HAS_THIS_ADDRESS);
                     }
                     address.setIsDefault(Byte.valueOf("1"));
                     if (addressOldOptional.isPresent()) {

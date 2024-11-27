@@ -2,6 +2,7 @@ package com.example.moduleapp.controller;
 
 import com.example.common.data.response.ApiResponse;
 import com.example.moduleapp.data.request.CategoryRequest;
+import com.example.moduleapp.data.request.CategoryUpdateRequest;
 import com.example.moduleapp.data.response.CategoryResponse;
 import com.example.moduleapp.service.CategoryService;
 import io.reactivex.rxjava3.core.Single;
@@ -27,6 +28,16 @@ public class CategoryController {
     @ResponseStatus(HttpStatus.OK)
     public Single<ApiResponse<List<CategoryResponse>>> findAll() {
         return categoryService.getAllCategories().map(ApiResponse::success);
+    }
+
+    @DeleteMapping("/{id}")
+    public Single<ApiResponse<String>> deleteById(@PathVariable Integer id) {
+        return categoryService.deleteCategory(id).map(ApiResponse::success);
+    }
+
+    @PatchMapping("/{id}")
+    public Single<ApiResponse<String>> updateById(@PathVariable Integer id, @RequestBody CategoryUpdateRequest categoryUpdateRequest) {
+        return categoryService.updateCategory(id, categoryUpdateRequest).map(ApiResponse::success);
     }
 
 

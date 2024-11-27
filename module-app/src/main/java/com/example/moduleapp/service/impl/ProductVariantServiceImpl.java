@@ -67,6 +67,15 @@ public class ProductVariantServiceImpl implements ProductVariantService {
                 });
     }
 
+    @Override
+    public Single<List<ProductVariantDetail>> findDetailsByProductIdIn(Collection<Integer> productIds) {
+        return productVariantRepository.findByProductIdIn(productIds)
+                .flatMap(productVariants -> {
+                    List<Integer> ids = productVariants.stream().map(ProductVariant::getId).toList();
+                    return getProductVariantDetails(productVariants, ids);
+                });
+    }
+
     private Single<List<ProductVariantDetail>> getProductVariantDetails(List<ProductVariant> productVariants, Collection<Integer> ids) {
         return productVariantRepository.findAttributeByIdIn(ids)
                 .map(productVariantAttributes -> {
