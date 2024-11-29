@@ -42,9 +42,9 @@ public class ProductController {
         return productService.findDetail(id).map(ApiResponse::success);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> update(@PathVariable Integer id, ProductRequest productRequest) {
+    public Single<ApiResponse> update(@PathVariable Integer id, @RequestBody ProductRequest productRequest) {
         return productService.update(id, productRequest).map(ApiResponse::success);
     }
 
@@ -53,12 +53,5 @@ public class ProductController {
     public Single<ApiResponse> deleteById(@PathVariable Integer id) {
         return productService.delete(id).map(ApiResponse::success);
     }
-
-    @PostMapping("/{id}/cart")
-    @ResponseStatus(HttpStatus.OK)
-    public Single<ApiResponse> addToCart() {
-        return productService.addToCart(1).map(ApiResponse::success);
-    }
-
 
 }

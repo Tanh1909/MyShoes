@@ -1,11 +1,12 @@
 package com.example.moduleapp.service.impl;
 
-import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
+import com.example.common.utils.StringUtils;
 import com.example.common.utils.ValidateUtils;
 import com.example.moduleapp.config.constant.ImageEnum;
+import com.example.moduleapp.data.mapper.ImageMapper;
 import com.example.moduleapp.data.mapper.ProductAttributeMapper;
 import com.example.moduleapp.data.mapper.ProductMapper;
 import com.example.moduleapp.data.mapper.ProductVariantMapper;
@@ -30,9 +31,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.common.config.constant.CommonConstant.SUCCESS;
+import static com.example.common.config.constant.ErrorCodeBase.NOT_FOUND;
 import static java.math.BigDecimal.ROUND_HALF_UP;
 
 @Service
@@ -51,16 +54,20 @@ public class ProductServiceImpl implements ProductService {
     private final ReviewRepository reviewRepository;
     private final ProductVariantService productVariantService;
     private final ImageService imageService;
+    private final ImageMapper imageMapper;
 
     private static final Integer SKU_CODE_LENGTH = 8;
 
     @Transactional
     @Override
     public Single<String> create(ProductRequest productRequest) {
-        productRequest.getVariants().forEach(variantsRequest -> variantsRequest.setSkuCode(generateSkuCode(SKU_CODE_LENGTH)));
         Product productResult = productRepository.insertReturnBlocking(productMapper.toProduct(productRequest));
-        List<ProductAttribute> productAttributesResult = productAttributeRepository.insertAndFindBlocking(productAttributeMapper.toProductAttribute(productRequest.getAttributes()));
+        productRequest.getVariants().forEach(variantsRequest -> {
+            String skuCode = variantsRequest.getSkuCode();
+            variantsRequest.setSkuCode(StringUtils.isEmpty(skuCode) ? generateSkuCode(SKU_CODE_LENGTH) : skuCode);
+        });
         imageService.updateImagesBlocking(productRequest.getImages(), productResult.getId(), ImageEnum.PRODUCT);
+        List<ProductAttribute> productAttributesResult = productAttributeRepository.insertAndFindBlocking(productAttributeMapper.toProductAttribute(productRequest.getAttributes()));
         Map<String, Integer> mapReq = productAttributesResult.stream()
                 .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
         List<ProductAttributeOption> productAttributeOptions = productRequest.getAttributes().stream()
@@ -110,22 +117,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+    @Transactional
     @Override
     public Single<String> update(Integer id, ProductRequest productRequest) {
-        return productRepository.existsById(id).flatMap(isExist ->
-                {
-                    if (!isExist) throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT");
-                    Product product = productMapper.toProduct(productRequest);
-//                    if (productRequest.getImage() != null) {
-//                        return uploadFileService.rxUpload(productRequest.getImage())
-//                                .flatMap(image -> {
-//                                    product.setImage(image);
-//                                    return productRepository.update(id, product);
-//                                });
-//                    }
-                    return productRepository.update(id, product);
-                }
-        ).map(integer -> SUCCESS);
+        Optional<Product> productOptional = productRepository.findByIdBlocking(id);
+        Product product = productOptional.orElseThrow(() -> new AppException(NOT_FOUND, "PRODUCT"));
+        productMapper.toProduct(product, productRequest);
+        productRepository.updateBlocking(id, product);
+        imageService.updateImagesBlocking(productRequest.getImages(), id, ImageEnum.PRODUCT);
+        return Single.just(SUCCESS);
     }
 
     @Transactional
@@ -135,7 +135,7 @@ public class ProductServiceImpl implements ProductService {
             productRepository.deleteByIdBlocking(id);
             imageRepository.deleteByTargetIdAndTypeBlocking(id, ImageEnum.PRODUCT.getValue());
         } else {
-            throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT");
+            throw new AppException(NOT_FOUND, "PRODUCT");
         }
         return Single.just(SUCCESS);
     }
@@ -217,23 +217,13 @@ public class ProductServiceImpl implements ProductService {
                             (images, payCount, ratingCount, productVariantDetails) -> {
                                 double rating = ratingCount.map(bigDecimal -> bigDecimal.setScale(1, ROUND_HALF_UP).doubleValue()).orElse(0.0);
                                 ProductDetailResponse productDetailResponse = productMapper.toProductDetailResponse(product);
-                                productDetailResponse.setImages(images);
+                                productDetailResponse.setImages(imageMapper.toImageResponses(images));
                                 productDetailResponse.setProductVariants(productVariantDetails);
                                 productDetailResponse.setSold(payCount == null ? 0 : payCount);
                                 productDetailResponse.setRating(rating);
                                 return productDetailResponse;
                             }
                     );
-                });
-    }
-
-    @Override
-    public Single<String> addToCart(Integer id) {
-        return productRepository.existsById(id)
-                .flatMap(isExist -> {
-                    if (!isExist) throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT");
-//                    UserDetailImpl userDetail = (UserDetailImpl) authService.getCurrentUser();
-                    return null;
                 });
     }
 

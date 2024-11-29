@@ -25,7 +25,7 @@ public class CashPayment extends PaymentAbstract {
 
     @Override
     public PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult, BigDecimal totalAmount) {
-        order.setStatus(OrderEnum.PAYMENT_CONFIRM.getValue());
+        order.setStatus(OrderEnum.PAYMENT_CONFIRMED.getValue());
         orderRepository.updateBlocking(order.getId(), order);
         return PaymentResponse.builder()
                 .success(Boolean.TRUE)

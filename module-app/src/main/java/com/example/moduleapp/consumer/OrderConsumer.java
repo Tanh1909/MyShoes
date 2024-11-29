@@ -1,18 +1,26 @@
 package com.example.moduleapp.consumer;
 
 import com.example.common.utils.JsonUtils;
+import com.example.moduleapp.config.constant.OrderItemEnum;
 import com.example.moduleapp.model.tables.pojos.Order;
 import com.example.moduleapp.model.tables.pojos.OrderItem;
+import com.example.moduleapp.model.tables.pojos.ProductVariant;
 import com.example.moduleapp.model.tables.pojos.Review;
 import com.example.moduleapp.repository.impl.OrderItemRepository;
+import com.example.moduleapp.repository.impl.ProductVariantRepository;
 import com.example.moduleapp.repository.impl.ReviewRepository;
+import com.example.moduleapp.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @Slf4j
@@ -20,6 +28,38 @@ import java.util.List;
 public class OrderConsumer {
     private final OrderItemRepository orderItemRepository;
     private final ReviewRepository reviewRepository;
+    private final OrderService orderService;
+    private final ProductVariantRepository productVariantRepository;
+
+
+    @KafkaListener(topics = "${messing.kafka.topic.push-order-request}", groupId = "order")
+    @Transactional
+    public void createOrder(String message) {
+        OrderItem orderItem = JsonUtils.decode(message, OrderItem.class);
+        if (orderItem == null) {
+            log.error("Invalid message received");
+            return;
+        }
+        ProductVariant productVariant = productVariantRepository.findByIdBlocking(orderItem.getProductVariantId())
+                .orElse(null);
+        if (productVariant == null) {
+            log.error("not found product variant");
+            return;
+        }
+        Integer stock = productVariant.getStock();
+        Integer quantity = orderItem.getQuantity();
+        if (stock == 0 || quantity > stock) {
+            orderItem.setStatus(OrderItemEnum.CANCEL.getValue());
+        } else {
+            orderItem.setStatus(OrderItemEnum.SUCCESS.getValue());
+            productVariant.setStock(stock - quantity);
+        }
+        orderItemRepository.updateByCodeBlocking(orderItem.getCode(), orderItem);
+        if (OrderItemEnum.SUCCESS.getValue().equals(orderItem.getStatus())) {
+            productVariantRepository.updateBlocking(productVariant.getId(), productVariant);
+        }
+    }
+
 
     @KafkaListener(topics = "${messing.kafka.topic.order-success}", groupId = "review")
     public void createReview(String message) {
@@ -39,4 +79,5 @@ public class OrderConsumer {
         });
         reviewRepository.insertBlocking(reviews);
     }
+
 }

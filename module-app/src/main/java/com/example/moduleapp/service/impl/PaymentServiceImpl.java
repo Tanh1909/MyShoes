@@ -54,7 +54,7 @@ public class PaymentServiceImpl implements PaymentService {
                             return orderRepository.findById(payment.getOrderId())
                                     .map(orderOptional -> {
                                         Order order = getOptionalValue(orderOptional, Order.class);
-                                        order.setStatus(OrderEnum.PAYMENT_CONFIRM.getValue());
+                                        order.setStatus(OrderEnum.PAYMENT_CONFIRMED.getValue());
                                         orderRepository.updateBlocking(order.getId(), order);
                                         paymentRepository.updateBlocking(paymentId, payment);
                                         return orderOptional;

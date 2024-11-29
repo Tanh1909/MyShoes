@@ -63,36 +63,47 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void updateImagesBlocking(List<ImageRequest> imageRequests, Integer targetId, ImageEnum imageEnum) {
+        String type = imageEnum.getValue();
         Map<Integer, ImageRequest> mapImageReq = imageRequests.stream()
                 .collect(Collectors.toMap(ImageRequest::getId, img -> img));
-        List<Image> images = imageRepository.findByIdsBlocking(mapImageReq.keySet());
-        if (!CollectionUtils.isEmpty(images)) {
-            Set<Integer> missingId = findMissingId(images, mapImageReq.keySet());
-            if (!CollectionUtils.isEmpty(missingId)) {
-                imageRepository.deleteByIdsBlocking(missingId);
-            }
-            Integer defaultId = images.stream()
-                    .filter(image -> image.getIsPrimary().equals(TRUE))
+        List<Image> imagesReq = imageRepository.findByIdsAndTargetIdNullableAndTypeBlocking(mapImageReq.keySet(), targetId, type);
+        if (!CollectionUtils.isEmpty(imageRequests)) {
+            deleteMissingId(imagesReq, mapImageReq.keySet());
+            Integer defaultId = imageRequests.stream()
+                    .filter(ImageRequest::getIsPrimary)
                     .findFirst()
-                    .orElse(images.getFirst())
+                    .orElse(imageRequests.getFirst())
                     .getId();
-            images.forEach(image -> {
-                image.setType(imageEnum.getValue());
-                image.setTargetId(targetId);
-                image.setIsPrimary(image.getId().equals(defaultId) ? TRUE : FALSE);
-            });
+            Map<Integer, Image> mapImage = imagesReq.stream().collect(Collectors.toMap(
+                    Image::getId,
+                    o -> o
+            ));
+            List<Image> insertImage = imageRequests.stream()
+                    .map(imageRequest -> {
+                        Image image = mapImage.getOrDefault(imageRequest.getId(), null);
+                        if (image == null) {
+                            throw new AppException(ErrorCodeBase.NOT_FOUND, "IMAGE");
+                        }
+                        image.setType(type);
+                        image.setTargetId(targetId);
+                        image.setIsPrimary(image.getId().equals(defaultId) ? TRUE : FALSE);
+                        return image;
+                    }).toList();
+            imageRepository.insertUpdateOnDuplicateKeyBlocking(insertImage);
+
         }
-        imageRepository.insertUpdateOnDuplicateKeyBlocking(images);
     }
 
-    private Set<Integer> findMissingId(List<Image> images, Set<Integer> imageIds) {
+    private void deleteMissingId(List<Image> images, Set<Integer> imageIds) {
         Set<Integer> imageIdsResult = images.stream().map(Image::getId).collect(Collectors.toSet());
         Set<Integer> imageIdMissing = new HashSet<>();
-        imageIds.forEach(id -> {
-            if (!imageIdsResult.contains(id)) {
+        imageIdsResult.forEach(id -> {
+            if (!imageIds.contains(id)) {
                 imageIdMissing.add(id);
             }
         });
-        return imageIdMissing;
+        if (!CollectionUtils.isEmpty(imageIdMissing)) {
+            imageRepository.deleteByIdsBlocking(imageIdMissing);
+        }
     }
 }

@@ -7,15 +7,10 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum OrderEnum {
+public enum OrderItemEnum {
     PENDING("PENDING"),
-    CONFIRMED("CONFIRMED"),
-    PAYMENT_CONFIRMED("PAYMENT_CONFIRMED"),
-    CANCEL("CANCEL"),
-    SHIPPING("SHIPPING"),
-    DELIVERED("DELIVERED"),
     SUCCESS("SUCCESS"),
-    REFUND("REFUND");
+    CANCEL("CANCEL");
     private final String value;
 
     public static OrderEnum getValue(String value) {

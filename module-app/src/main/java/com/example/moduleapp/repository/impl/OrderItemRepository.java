@@ -4,6 +4,7 @@ import com.example.moduleapp.model.tables.pojos.OrderItem;
 import com.example.moduleapp.repository.IOrderItemRepository;
 import com.example.moduleapp.repository.IRxOrderItemRepository;
 import com.example.repository.JooqRepository;
+import com.example.repository.utils.SQLQueryUtils;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -59,5 +60,13 @@ public class OrderItemRepository extends JooqRepository<OrderItem, Integer>
                 .where(ORDER_ITEM.ORDER_ID.in(orderIds))
                 .fetchInto(pojoClass)
         );
+    }
+
+    @Override
+    public Integer updateByCodeBlocking(String code, OrderItem orderItem) {
+        return getDSLContext().update(getTable())
+                .set(SQLQueryUtils.toInsertQueries(getTable(), orderItem))
+                .where(ORDER_ITEM.CODE.eq(code))
+                .execute();
     }
 }

@@ -44,6 +44,7 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
         );
     }
 
+
     @Override
     public Single<List<ProductVariant>> findByProductId(Integer productId) {
         return rxSchedulerIo(() -> getDSLContext()
@@ -166,4 +167,5 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .where(PRODUCT_VARIANT.SKU_CODE.in(skuCodes))
                 .fetchInto(pojoClass);
     }
+
 }

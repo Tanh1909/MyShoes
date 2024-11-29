@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface IOrderItemRepository extends IBlockingRepository<OrderItem, Integer> {
     List<OrderItem> findByOrderIdBlocking(Integer orderId);
+    Integer updateByCodeBlocking(String code,OrderItem orderItem);
 
 }

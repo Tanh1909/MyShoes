@@ -6,7 +6,6 @@ import com.example.moduleapp.repository.IRxImageRepository;
 import com.example.repository.JooqRepository;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
-import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.stereotype.Repository;
@@ -35,10 +34,6 @@ public class ImageRepository extends JooqRepository<Image, Integer>
         return IMAGE;
     }
 
-    @Override
-    public Condition filterActive() {
-        return super.filterActive().and(IMAGE.TARGET_ID.isNull());
-    }
 
     @Override
     public Single<List<Image>> findByTargetIdAndType(Integer targetId, String type) {
@@ -60,6 +55,7 @@ public class ImageRepository extends JooqRepository<Image, Integer>
                 .fetchInto(Image.class)
         );
     }
+
 
     @Override
     public Single<Optional<Image>> findPrimaryByTargetIdAndType(Integer targetId, String type) {
@@ -87,5 +83,20 @@ public class ImageRepository extends JooqRepository<Image, Integer>
                 .deleteFrom(getTable())
                 .where(IMAGE.TARGET_ID.eq(targetId).and(IMAGE.TYPE.eq(type)))
                 .execute();
+    }
+
+    @Override
+    public List<Image> findByIdsAndTargetIdNullableAndTypeBlocking(Collection<Integer> ids, Integer targetId, String type) {
+        return getDSLContext()
+                .select()
+                .from(getTable())
+                .where(
+                        IMAGE.ID.in(ids)
+                                .and(
+                                        (IMAGE.TARGET_ID.eq(targetId).and(IMAGE.TYPE.eq(type))).or(IMAGE.TARGET_ID.isNull())
+                                )
+                                .or(IMAGE.TARGET_ID.eq(targetId).and(IMAGE.TYPE.eq(type)))
+                )
+                .fetchInto(pojoClass);
     }
 }

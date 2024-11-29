@@ -20,7 +20,8 @@ public class OrderController {
 
     @PostMapping
     public Single<ApiResponse<String>> create(@RequestBody OrderRequest orderRequest) {
-        return orderService.create(orderRequest).map(ApiResponse::success);
+        return orderService.create(orderRequest)
+                .map(ApiResponse::success);
     }
 
     @PatchMapping("/status")

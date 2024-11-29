@@ -3,6 +3,7 @@ package com.example.moduleapp.data.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class OrderResponse {
     private String status;
     private List<OrderItemResponse> items;
     private AddressResponse shippingAddress;
-    private Double totalAmount;
+    private BigDecimal totalAmount;
     private LocalDateTime createdAt;
 
     @Getter

@@ -9,6 +9,7 @@ import com.example.common.utils.JsonUtils;
 import com.example.moduleapp.config.constant.AppErrorCode;
 import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.config.constant.OrderEnum;
+import com.example.moduleapp.config.constant.OrderItemEnum;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
 import com.example.moduleapp.data.mapper.AddressMapper;
 import com.example.moduleapp.data.mapper.OrderItemMapper;
@@ -32,13 +33,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.common.utils.ValidateUtils.getOptionalValue;
+import static com.example.moduleapp.config.constant.AppMessageConstants.ORDER_IN_PROGRESS;
 
 @Service
 @RequiredArgsConstructor
@@ -62,54 +63,57 @@ public class OrderServiceImpl implements OrderService {
     @Value("${messing.kafka.topic.order-success}")
     private String oderSuccessTopic;
 
+    @Value("${messing.kafka.topic.push-order-request}")
+    private String pushOrderRequest;
+
     @Transactional
     @Override
     public Single<String> create(OrderRequest orderRequest) {
-        Map<Integer, Integer> productVariantsReq = orderRequest.getProductVariants().stream()
+        Map<Integer, OrderRequest.ProductVariantRequest> productVariantRequestMap = orderRequest.getProductVariants().stream()
                 .collect(Collectors.toMap(
                         OrderRequest.ProductVariantRequest::getId,
-                        OrderRequest.ProductVariantRequest::getQuantity));
+                        o -> o));
         UserPrincipal user = authService.getCurrentUser();
         Order orderReq = new Order();
         orderReq.setUserId(user.getUserInfo().getId().longValue());
         orderReq.setStatus(OrderEnum.PENDING.getValue());
-        return Single.zip(
-                        productVariantRepository.findByIdIn(productVariantsReq.keySet()),
-                        addressRepository.findById(orderRequest.getAddressId()),
-                        (productVariants, addressOptional) -> {
-                            Address address = getOptionalValue(addressOptional, Address.class);
-                            validateVariant(productVariants, productVariantsReq.keySet());
-                            checkOverStock(orderRequest, productVariants);
-                            BigDecimal total = productVariants.stream().map(productVariant -> productVariant.getPrice()
-                                            .multiply(new BigDecimal(productVariantsReq.get(productVariant.getId()))))
-                                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-                            orderReq.setTotalAmount(total);
-                            orderReq.setAddressId(address.getId());
-                            Order order = orderRepository.insertReturnBlocking(orderReq);
-                            List<OrderItem> orderItems = productVariants.stream().map(productVariant -> {
-                                OrderItem orderItem = new OrderItem();
-                                orderItem.setOrderId(order.getId());
-                                orderItem.setProductVariantId(productVariant.getId());
-                                orderItem.setProductId(productVariant.getProductId());
-                                orderItem.setPrice(productVariant.getPrice());
-                                orderItem.setQuantity(productVariantsReq.get(productVariant.getId()));
-                                return orderItem;
-                            }).toList();
-                            return orderItemRepository.insertReturnBlocking(orderItems);
-                        }
-                )
-                .map(orderItems -> "SUCCESS");
+        List<ProductVariant> productVariants = productVariantRepository.findByIdsBlocking(productVariantRequestMap.keySet());
+        Address address = addressRepository.findByIdBlocking(orderRequest.getAddressId())
+                .orElseThrow(() -> new AppException(ErrorCodeBase.NOT_FOUND, "ADDRESS"));
+        validateVariant(productVariants, productVariantRequestMap.keySet());
+        //total_amount (not minus cancel order item)
+        BigDecimal total = productVariants.stream().map(productVariant -> productVariant.getPrice()
+                        .multiply(new BigDecimal(productVariantRequestMap.get(productVariant.getId()).getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        orderReq.setTotalAmount(total);
+        orderReq.setAddressId(address.getId());
+        Order order = orderRepository.insertReturnBlocking(orderReq);
+        List<OrderItem> orderItems = new ArrayList<>();
+        productVariants.forEach(productVariant -> {
+            OrderRequest.ProductVariantRequest productVariantRequest = productVariantRequestMap.get(productVariant.getId());
+            Integer orderId = order.getId();
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrderId(orderId);
+            orderItem.setProductVariantId(productVariant.getId());
+            orderItem.setProductId(productVariant.getProductId());
+            orderItem.setPrice(productVariant.getPrice());
+            orderItem.setQuantity(productVariantRequest.getQuantity());
+            orderItem.setStatus(OrderItemEnum.PENDING.getValue());
+            orderItem.setCode(generateOrderCode(orderId));
+            orderItems.add(orderItem);
+            kafkaTemplate.send(pushOrderRequest, productVariant.getId().toString(), JsonUtils.encode(orderItem));
+        });
+        orderItemRepository.insertBlocking(orderItems);
+        return Single.just(ORDER_IN_PROGRESS);
     }
 
-    private static void checkOverStock(OrderRequest orderRequest, List<ProductVariant> productVariants) {
-        Map<Integer, ProductVariant> mapProductVariant = productVariants.stream().collect(Collectors.toMap(ProductVariant::getId, o -> o));
-        orderRequest.getProductVariants().forEach(productVariantRequest -> {
-            ProductVariant productVariant = mapProductVariant.get(productVariantRequest.getId());
-            if (productVariantRequest.getQuantity() > productVariant.getStock()) {
-                throw new AppException(AppErrorCode.OVER_STOCK);
-            }
-        });
+    private String generateOrderCode(Integer orderId) {
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        String shortUUID = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+        // Combine orderId (if available), timestamp, and shortUUID
+        return "ORD-" + orderId + "-" + timestamp + "-" + shortUUID;
     }
+
 
     @Override
     @Transactional
@@ -119,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
         OrderEnum orderEnum = OrderEnum.getValue(orderStatusRequest.getStatus());
         switch (orderEnum) {
             case SUCCESS: {
-                validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRM, OrderEnum.SUCCESS, order);
+                validateAndUpdateBusinessOrderStatus(OrderEnum.PAYMENT_CONFIRMED, OrderEnum.SUCCESS, order);
                 Boolean isPaid = paymentRepository.findPaymentSuccessBlocking(order.getId());
                 if (!isPaid) {
                     throw new AppException(AppErrorCode.ORDER_HAS_NOT_BEEN_PAYED);
@@ -147,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    private static void validateVariant(List<ProductVariant> productVariants, Set<Integer> variantReqIds) {
+    private void validateVariant(List<ProductVariant> productVariants, Set<Integer> variantReqIds) {
         Set<Integer> variantIds = productVariants.stream().map(ProductVariant::getId).collect(Collectors.toSet());
         variantReqIds.forEach(id -> {
             if (!variantIds.contains(id)) {

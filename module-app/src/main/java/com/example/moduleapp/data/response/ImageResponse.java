@@ -8,4 +8,9 @@ import lombok.Getter;
 public class ImageResponse {
     private Integer id;
     private String url;
+    private boolean isPrimary;
+
+    public boolean getIsPrimary() {
+        return isPrimary;
+    }
 }

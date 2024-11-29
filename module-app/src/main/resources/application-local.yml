@@ -47,3 +47,4 @@ messing:
   kafka:
     topic:
       order-success: ORDER_SUCCESS
+      push-order-request: PUSH_ORDER_REQUEST

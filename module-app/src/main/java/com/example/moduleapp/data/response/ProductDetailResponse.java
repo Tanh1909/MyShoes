@@ -18,7 +18,7 @@ public class ProductDetailResponse {
     private Double price;
     private Integer sold;
     private Double rating;
-    private List<Image> images;
+    private List<ImageResponse> images;
     private Integer categoryId;
     private List<ProductVariantDetail> productVariants;
 }
