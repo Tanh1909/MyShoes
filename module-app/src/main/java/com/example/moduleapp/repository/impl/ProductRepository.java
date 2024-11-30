@@ -39,6 +39,11 @@ public class ProductRepository extends JooqRepository<Product, Integer>
     }
 
     @Override
+    public Condition filterActive() {
+        return super.filterActive().and(PRODUCT.DELETED_AT.isNull());
+    }
+
+    @Override
     public Single<Map<Integer, Integer>> getNumberOfPaid(Collection<Integer> productIds) {
         return rxSchedulerIo(() -> getDSLContext()
                 .select(ORDER_ITEM.PRODUCT_ID, DSL.count(ORDER_ITEM.PRODUCT_ID).as("count"))
@@ -72,7 +77,7 @@ public class ProductRepository extends JooqRepository<Product, Integer>
                 rxSchedulerIo(() -> getDSLContext()
                         .select()
                         .from(getTable())
-                        .where(condition)
+                        .where(condition.and(filterActive()))
                         .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
                         .offset(offset)
                         .limit(size)

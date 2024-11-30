@@ -8,6 +8,7 @@ import com.example.moduleapp.repository.IRxProductVariantRepository;
 import com.example.repository.JooqRepository;
 import io.reactivex.rxjava3.core.Single;
 import lombok.AllArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.stereotype.Repository;
@@ -35,13 +36,8 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
     }
 
     @Override
-    public Single<List<ProductVariant>> findByIdIn(Collection<Integer> ids) {
-        return rxSchedulerIo(() -> getDSLContext()
-                .select()
-                .from(getTable())
-                .where(PRODUCT_VARIANT.ID.in(ids))
-                .fetchInto(pojoClass)
-        );
+    public Condition filterActive() {
+        return super.filterActive().and(PRODUCT_VARIANT.DELETED_AT.isNull());
     }
 
 
@@ -50,7 +46,7 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
         return rxSchedulerIo(() -> getDSLContext()
                 .select()
                 .from(getTable())
-                .where(PRODUCT_VARIANT.PRODUCT_ID.eq(productId))
+                .where(PRODUCT_VARIANT.PRODUCT_ID.eq(productId).and(filterActive()))
                 .fetchInto(pojoClass)
         );
     }
@@ -60,7 +56,7 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
         return rxSchedulerIo(() -> getDSLContext()
                 .select()
                 .from(getTable())
-                .where(PRODUCT_VARIANT.PRODUCT_ID.in(productIds))
+                .where(PRODUCT_VARIANT.PRODUCT_ID.in(productIds).and(filterActive()))
                 .fetchInto(pojoClass)
         );
     }
@@ -77,7 +73,7 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
         return rxSchedulerIo(() -> getDSLContext()
                 .select()
                 .from(getTable())
-                .where(PRODUCT_VARIANT.SKU_CODE.in(skuCodes))
+                .where(PRODUCT_VARIANT.SKU_CODE.in(skuCodes).and(filterActive()))
                 .fetchInto(pojoClass)
         );
     }
@@ -96,7 +92,7 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .from(getTable())
                 .join(PRODUCT_VARIANTS_ATTRIBUTE_OPTION).on(PRODUCT_VARIANT.ID.eq(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.VARIANT_ID))
                 .join(PRODUCT_ATTRIBUTE_OPTION).on(PRODUCT_VARIANTS_ATTRIBUTE_OPTION.PRODUCT_ATTRIBUTE_OPTION_ID.eq(PRODUCT_ATTRIBUTE_OPTION.ID))
-                .where(PRODUCT_VARIANT.PRODUCT_ID.in(ids))
+                .where(PRODUCT_VARIANT.PRODUCT_ID.in(ids).and(filterActive()))
                 .fetchInto(ProductVariantDetail.class)
         );
     }
@@ -153,19 +149,18 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
     }
 
     @Override
-    public List<ProductVariant> insertAndFindBlocking(Collection<ProductVariant> productVariants) {
+    public List<ProductVariant> insertAndFindBlocking(Collection<ProductVariant> productVariants, Integer productId) {
         List<String> skuCodes = productVariants.stream().map(ProductVariant::getSkuCode).toList();
-        insertBlocking(productVariants);
-        return findByNameInBlocking(skuCodes);
+        insertUpdateOnDuplicateKeyBlocking(productVariants);
+        return findByProductIdBlocking(productId);
     }
 
     @Override
-    public List<ProductVariant> findByNameInBlocking(Collection<String> skuCodes) {
+    public List<ProductVariant> findByProductIdBlocking(Integer productId) {
         return getDSLContext()
                 .select()
                 .from(getTable())
-                .where(PRODUCT_VARIANT.SKU_CODE.in(skuCodes))
+                .where(PRODUCT_VARIANT.PRODUCT_ID.eq(productId).and(filterActive()))
                 .fetchInto(pojoClass);
     }
-
 }

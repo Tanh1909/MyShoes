@@ -1,9 +1,9 @@
 package com.example.moduleapp.payment.abstracts;
 
-import com.example.common.config.constant.ErrorCodeBase;
 import com.example.common.context.UserPrincipal;
 import com.example.common.exception.AppException;
 import com.example.moduleapp.config.constant.*;
+import com.example.moduleapp.data.mapper.PaymentMapper;
 import com.example.moduleapp.data.response.PaymentResponse;
 import com.example.moduleapp.model.tables.pojos.Order;
 import com.example.moduleapp.model.tables.pojos.Payment;
@@ -27,21 +27,28 @@ public abstract class PaymentAbstract {
     private PaymentRepository paymentRepository;
     @Autowired
     private PaymentMethodRepository paymentMethodRepository;
+    @Autowired
+    private PaymentMapper paymentMapper;
 
     public abstract PaymentMethodEnum getPaymentMethod();
 
 
     public Single<PaymentResponse> pay(Integer orderId, UserPrincipal userPrincipal) {
         return Single.zip(
+                        paymentRepository.findByOrderId(orderId),
                         orderRepository.findById(orderId),
                         orderItemRepository.findByOrderId(orderId),
                         paymentMethodRepository.findByName(getPaymentMethod().getValue()),
-                        (orderOptional, orderItems, paymentMethodOptional) -> {
-                            Order order = orderOptional.orElse(null);
-                            PaymentMethod paymentMethod = paymentMethodOptional.orElse(null);
-                            validatePaymentMethod(paymentMethod);
-                            validateOrder(order);
+                        (paymentOptional, orderOptional, orderItems, paymentMethodOptional) -> {
+                            Order order = orderOptional
+                                    .orElseThrow(() -> new AppException(AppErrorCode.NOT_FOUND, "ORDER ID"));
+                            PaymentMethod paymentMethod = paymentMethodOptional
+                                    .orElseThrow(() -> new AppException(AppErrorCode.IS_NOT_SUPPORTED, "PAYMENT METHOD"));
+                            if (!OrderEnum.PENDING.getValue().equals(order.getStatus())) {
+                                throw new AppException(AppErrorCode.ORDER_HAS_BEEN_PAYED);
+                            }
                             BigDecimal totalAmount = orderItems.stream()
+                                    .filter(orderItem -> OrderItemEnum.SUCCESS.getValue().equals(orderItem.getStatus()))
                                     .map(orderItem -> BigDecimal.valueOf(orderItem.getQuantity()).multiply(orderItem.getPrice()))
                                     .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
                             Payment payment = new Payment();
@@ -49,30 +56,18 @@ public abstract class PaymentAbstract {
                             payment.setPaymentMethodId(paymentMethod.getId());
                             payment.setAmount(totalAmount);
                             payment.setPaymentStatus(PaymentEnum.PENDING.getValue());
+                            if (paymentOptional.isPresent()) {
+                                Payment paymentSql = paymentOptional.get();
+                                paymentMapper.toPayment(paymentSql, payment);
+                                return Single.just(handlePaymentResponse(order, userPrincipal, paymentSql));
+                            }
                             return paymentRepository.insertReturn(payment)
-                                    .map(paymentResult -> handlePaymentResponse(order, userPrincipal, paymentResult, totalAmount));
+                                    .map(paymentResult -> handlePaymentResponse(order, userPrincipal, paymentResult));
                         })
                 .flatMap(p -> p);
     }
 
 
-    public abstract PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult, BigDecimal totalAmount);
-
-
-    private static void validatePaymentMethod(PaymentMethod paymentMethod) {
-        if (paymentMethod == null) {
-            throw new AppException(ErrorCodeBase.IS_NOT_SUPPORTED, "PAYMENT METHOD");
-        }
-    }
-
-    private static void validateOrder(Order order) {
-        if (order == null) {
-            throw new AppException(ErrorCodeBase.NOT_FOUND, "ORDER ID");
-        }
-        if (!OrderEnum.PENDING.getValue().equals(order.getStatus())) {
-            throw new AppException(AppErrorCode.ORDER_HAS_BEEN_PAYED);
-        }
-    }
-
+    public abstract PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult);
 
 }

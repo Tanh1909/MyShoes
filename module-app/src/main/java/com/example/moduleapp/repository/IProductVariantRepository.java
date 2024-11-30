@@ -7,9 +7,8 @@ import java.util.Collection;
 import java.util.List;
 
 public interface IProductVariantRepository extends IBlockingRepository<ProductVariant, Integer> {
-    List<ProductVariant> insertAndFindBlocking(Collection<ProductVariant> productVariants);
+    List<ProductVariant> insertAndFindBlocking(Collection<ProductVariant> productVariants, Integer productId);
 
-    List<ProductVariant> findByNameInBlocking(Collection<String> skuCodes);
-
+    List<ProductVariant> findByProductIdBlocking(Integer productId);
 
 }

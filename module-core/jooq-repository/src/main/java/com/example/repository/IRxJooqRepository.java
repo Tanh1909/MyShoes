@@ -16,7 +16,6 @@ public interface IRxJooqRepository<P, ID> {
 
     Single<P> insertReturn(P entity);
 
-
     Single<Optional<P>> insertIgnoreOnDuplicateKey(P pojo);
 
     Single<List<Integer>> insertIgnoreOnDuplicateKey(Collection<P> pojos);

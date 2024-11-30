@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface IRxProductVariantRepository extends IRxJooqRepository<ProductVariant, Integer> {
-    Single<List<ProductVariant>> findByIdIn(Collection<Integer> ids);
 
     Single<List<ProductVariant>> findByProductId(Integer productId);
 

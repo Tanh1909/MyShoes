@@ -31,17 +31,18 @@ public class VNPAYPayment extends PaymentAbstract {
     }
 
     @Override
-    public PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult, BigDecimal totalAmount) {
+    public PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult) {
         Map<String, String> params = vnPayConfig;
         params.put("vnp_OrderInfo", "THANH TOÁN CHO MÃ ĐƠN HÀNG: " + order.getId());
         params.put("vnp_IpAddr", userPrincipal.getClientId());
-        params.put("vnp_Amount", String.valueOf(totalAmount.setScale(0).multiply(new BigDecimal(100))));
+        params.put("vnp_Amount", String.valueOf(paymentResult.getAmount().setScale(0).multiply(new BigDecimal(100))));
         params.put("vnp_TxnRef", paymentResult.getId().toString());
         return PaymentResponse.builder()
                 .success(Boolean.TRUE)
                 .url(VNPAY_URL + buildQuery(params))
                 .build();
     }
+
 
     private String buildQuery(Map<String, String> params) {
         StringJoiner stringJoiner = new StringJoiner("&");

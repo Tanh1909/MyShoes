@@ -48,7 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
             case "00" -> {
                 return paymentRepository.findById(paymentId)
                         .flatMap(paymentOptional -> {
-                            Payment payment = getOptionalValue(paymentOptional, Payment.class);
+                            Payment payment = paymentOptional.orElseThrow(() -> new AppException(AppErrorCode.NOT_FOUND, "PAYMENT ID"));
                             payment.setPaymentStatus(PaymentEnum.SUCCESS.getValue());
                             payment.setPaidAt(paidAt);
                             return orderRepository.findById(payment.getOrderId())

@@ -54,7 +54,7 @@ public class ProductVariantServiceImpl implements ProductVariantService {
 
     @Override
     public Single<List<ProductVariantDetail>> findDetailsByIdIn(Collection<Integer> ids) {
-        return productVariantRepository.findByIdIn(ids)
+        return productVariantRepository.findByIds(ids)
                 .flatMap(productVariants -> getProductVariantDetails(productVariants, ids));
     }
 

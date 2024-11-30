@@ -10,6 +10,7 @@ import org.jooq.*;
 import org.jooq.impl.DSL;
 
 import java.lang.reflect.ParameterizedType;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +24,7 @@ public abstract class JooqRepository<P, ID> implements
         IRxJooqRepository<P, ID>, IBlockingRepository<P, ID> {
     protected Class<P> pojoClass;
     protected Field<ID> idField;
+    protected Field<LocalDateTime> deletedAtField;
 
     protected abstract DSLContext getDSLContext();
 
@@ -37,6 +39,7 @@ public abstract class JooqRepository<P, ID> implements
                 .filter(field -> field.getName().equalsIgnoreCase("id"))
                 .findFirst()
                 .orElse(null);
+        this.deletedAtField = getTable().field("deleted_at", LocalDateTime.class);
 
     }
 
@@ -174,6 +177,7 @@ public abstract class JooqRepository<P, ID> implements
     public Single<List<P>> findAll() {
         return rxSchedulerIo(() -> getDSLContext().select()
                 .from(getTable())
+                .where(filterActive())
                 .fetchInto(pojoClass));
     }
 
@@ -187,6 +191,7 @@ public abstract class JooqRepository<P, ID> implements
                 rxSchedulerIo(() -> getDSLContext()
                         .select()
                         .from(getTable())
+                        .where(filterActive())
                         .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
                         .offset(offset)
                         .limit(size)
@@ -211,6 +216,7 @@ public abstract class JooqRepository<P, ID> implements
     public Single<Integer> getTotalRecords() {
         return rxSchedulerIo(() -> getDSLContext().selectCount()
                 .from(getTable())
+                .where(filterActive())
                 .fetchOne(0, int.class)
         );
     }
@@ -219,7 +225,7 @@ public abstract class JooqRepository<P, ID> implements
     public Single<Integer> getTotalRecords(Condition condition) {
         return rxSchedulerIo(() -> getDSLContext().selectCount()
                 .from(getTable())
-                .where(condition)
+                .where(condition.and(filterActive()))
                 .fetchOne(0, int.class)
         );
     }
@@ -228,7 +234,7 @@ public abstract class JooqRepository<P, ID> implements
     public Single<Optional<P>> findById(ID id) {
         return rxSchedulerIo(() -> ofNullable(getDSLContext().select()
                 .from(getTable())
-                .where(idField.eq(id))
+                .where(idField.eq(id).and(filterActive()))
                 .fetchOneInto(pojoClass)
         ));
     }
@@ -238,14 +244,14 @@ public abstract class JooqRepository<P, ID> implements
         return rxSchedulerIo(() -> getDSLContext()
                 .select()
                 .from(getTable())
-                .where(filterActive().and(idField.in(ids)))
+                .where(idField.in(ids).and(filterActive()))
                 .fetchInto(pojoClass)
         );
     }
 
     @Override
     public Single<Boolean> existsById(ID id) {
-        return rxSchedulerIo(() -> getDSLContext().fetchExists(getTable(), idField.eq(id)));
+        return rxSchedulerIo(() -> getDSLContext().fetchExists(getTable(), idField.eq(id).and(filterActive())));
     }
 
     @Override
@@ -374,6 +380,7 @@ public abstract class JooqRepository<P, ID> implements
     public List<P> findAllBlocking() {
         return getDSLContext().select()
                 .from(getTable())
+                .where(filterActive())
                 .fetchInto(pojoClass);
     }
 
@@ -387,6 +394,7 @@ public abstract class JooqRepository<P, ID> implements
         List<P> results = getDSLContext()
                 .select()
                 .from(getTable())
+                .where(filterActive())
                 .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
                 .offset(offset)
                 .limit(size)
@@ -398,7 +406,7 @@ public abstract class JooqRepository<P, ID> implements
     public Optional<P> findByIdBlocking(ID id) {
         return ofNullable(getDSLContext().select()
                 .from(getTable())
-                .where(idField.eq(id))
+                .where(idField.eq(id).and(filterActive()))
                 .fetchOneInto(pojoClass));
     }
 
@@ -407,12 +415,13 @@ public abstract class JooqRepository<P, ID> implements
         return getDSLContext()
                 .select()
                 .from(getTable())
-                .where(filterActive().and(idField.in(ids)))
+                .where(idField.in(ids).and(filterActive()))
                 .fetchInto(pojoClass);
     }
 
     @Override
     public Boolean existsByIdBlocking(ID id) {
-        return getDSLContext().fetchExists(getTable(), idField.eq(id));
+        return getDSLContext()
+                .fetchExists(getTable(), idField.eq(id).and(filterActive()));
     }
 }

@@ -4,34 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="add image service">
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/AppMessageConstants.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/OrderItemEnum.java" afterDir="false" />
+    <list default="true" id="6c174076-8829-4080-97c3-9ffccfa8542c" name="Changes" comment="handle multi request">
+      <change afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/PaymentMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/OrderEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/config/constant/OrderEnum.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/consumer/OrderConsumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/consumer/OrderConsumer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/OrderController.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/OrderController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/controller/ProductController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/ImageMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/mapper/ImageMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ImageResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ImageResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/OrderItemResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/OrderItemResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/OrderResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/OrderResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ProductDetailResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/data/response/ProductDetailResponse.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/abstracts/PaymentAbstract.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/abstracts/PaymentAbstract.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/CashPayment.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/CashPayment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IImageRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IOrderItemRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IOrderItemRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductAttributeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductAttributeRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/VNPAYPayment.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/payment/concrete/VNPAYPayment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductVariantRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IProductVariantRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ImageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ImageRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/OrderItemRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/OrderItemRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxPaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxPaymentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductVariantRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/IRxProductVariantRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/PaymentRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductVariantRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/repository/impl/ProductVariantRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ImageServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ImageServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/OrderServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/OrderServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/PaymentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/PaymentServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/resources/application-local.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/CommonConstant.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/module-common/src/main/java/com/example/common/config/constant/CommonConstant.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductVariantServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductVariantServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/IRxJooqRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,10 +43,10 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="package-info" />
-        <option value="Interface" />
         <option value="AnnotationType" />
         <option value="Class" />
         <option value="Enum" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -160,7 +149,7 @@
     "Spring Boot.AuthConfigApplication.executor": "Run",
     "Spring Boot.Main (1).executor": "Run",
     "Spring Boot.Main.executor": "Run",
-    "Spring Boot.ModuleAppApplication.executor": "Run",
+    "Spring Boot.ModuleAppApplication.executor": "Debug",
     "Spring Boot.ModuleApplication.executor": "Run",
     "Spring Boot.ModuleAuthApplication.executor": "Run",
     "Spring Boot.ModuleCoreCommonApplication.executor": "Run",
@@ -348,7 +337,8 @@
       <workItem from="1732542751211" duration="11843000" />
       <workItem from="1732714846304" duration="12632000" />
       <workItem from="1732804484427" duration="10008000" />
-      <workItem from="1732893264870" duration="5811000" />
+      <workItem from="1732893264870" duration="10918000" />
+      <workItem from="1732979389582" duration="4619000" />
     </task>
     <task id="LOCAL-00001" summary="fix bug security">
       <option name="closed" value="true" />
@@ -430,7 +420,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732720090729</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="handle multi request">
+      <option name="closed" value="true" />
+      <created>1732899743973</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1732899743973</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -458,7 +456,8 @@
     <MESSAGE value="refactor code v1 and add ctg" />
     <MESSAGE value="change logic order payment" />
     <MESSAGE value="add image service" />
-    <option name="LAST_COMMIT_MESSAGE" value="add image service" />
+    <MESSAGE value="handle multi request" />
+    <option name="LAST_COMMIT_MESSAGE" value="handle multi request" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -470,8 +469,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java</url>
-          <line>333</line>
+          <line>339</line>
           <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/module-core/jooq-repository/src/main/java/com/example/repository/JooqRepository.java</url>
+          <line>112</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/module-app/src/main/java/com/example/moduleapp/service/impl/ProductServiceImpl.java</url>
+          <line>133</line>
+          <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

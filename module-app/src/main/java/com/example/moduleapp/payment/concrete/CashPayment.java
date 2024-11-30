@@ -11,8 +11,6 @@ import com.example.moduleapp.repository.impl.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-
 @Component
 @RequiredArgsConstructor
 public class CashPayment extends PaymentAbstract {
@@ -24,11 +22,13 @@ public class CashPayment extends PaymentAbstract {
     }
 
     @Override
-    public PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult, BigDecimal totalAmount) {
+    public PaymentResponse handlePaymentResponse(Order order, UserPrincipal userPrincipal, Payment paymentResult) {
         order.setStatus(OrderEnum.PAYMENT_CONFIRMED.getValue());
         orderRepository.updateBlocking(order.getId(), order);
         return PaymentResponse.builder()
                 .success(Boolean.TRUE)
                 .build();
     }
+
+
 }

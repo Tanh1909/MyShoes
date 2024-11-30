@@ -28,10 +28,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.common.config.constant.CommonConstant.SUCCESS;
@@ -61,28 +58,23 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public Single<String> create(ProductRequest productRequest) {
-        Product productResult = productRepository.insertReturnBlocking(productMapper.toProduct(productRequest));
+        Product product = productRepository.insertReturnBlocking(productMapper.toProduct(productRequest));
+        Integer productId = product.getId();
         productRequest.getVariants().forEach(variantsRequest -> {
             String skuCode = variantsRequest.getSkuCode();
             variantsRequest.setSkuCode(StringUtils.isEmpty(skuCode) ? generateSkuCode(SKU_CODE_LENGTH) : skuCode);
         });
-        imageService.updateImagesBlocking(productRequest.getImages(), productResult.getId(), ImageEnum.PRODUCT);
-        List<ProductAttribute> productAttributesResult = productAttributeRepository.insertAndFindBlocking(productAttributeMapper.toProductAttribute(productRequest.getAttributes()));
-        Map<String, Integer> mapReq = productAttributesResult.stream()
-                .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
-        List<ProductAttributeOption> productAttributeOptions = productRequest.getAttributes().stream()
-                .flatMap(attributeRequest -> attributeRequest.getOptions().stream()
-                        .map(s -> new ProductAttributeOption()
-                                .setValue(s)
-                                .setProductAttributeId(mapReq.get(attributeRequest.getName()))
-                        )).toList();
-        List<ProductVariant> productVariantReq = productVariantMapper.toProductVariant(productRequest.getVariants()).stream()
-                .map(productVariant -> productVariant.setProductId(productResult.getId()))
-                .toList();
+        imageService.updateImagesBlocking(productRequest.getImages(), productId, ImageEnum.PRODUCT);
+        //insert attr and options
+        List<ProductAttributeOption> productAttributeOptions = insertAttrAndReturnOption(productRequest);
+        //insert product variant req
+        List<ProductVariant> productVariantsResult = insertAndGetProductVariants(productRequest, productId);
+        insertPVAO(productRequest, productAttributeOptions, productVariantsResult);
+        return Single.just(SUCCESS);
+    }
 
-        List<ProductVariant> productVariantsResult = productVariantRepository.insertAndFindBlocking(productVariantReq);
-        List<ProductAttributeOption> productAttributeOptionsResult = productAttributeOptionRepository.insertAndFindBlocking(productAttributeOptions, mapReq.values());
-        Map<String, Integer> valueAndId = productAttributeOptionsResult.stream()
+    private void insertPVAO(ProductRequest productRequest, List<ProductAttributeOption> productAttributeOptions, List<ProductVariant> productVariantsResult) {
+        Map<String, Integer> valueAndId = productAttributeOptions.stream()
                 .collect(Collectors.toMap(
                         ProductAttributeOption::getValue,
                         ProductAttributeOption::getId
@@ -99,7 +91,26 @@ public class ProductServiceImpl implements ProductService {
             });
         });
         productVariantAttributeOptionRepository.insertBlocking(pvaos);
-        return Single.just(SUCCESS);
+    }
+
+    private List<ProductVariant> insertAndGetProductVariants(ProductRequest productRequest, Integer productId) {
+        List<ProductVariant> productVariantReq = productVariantMapper.toProductVariant(productRequest.getVariants()).stream()
+                .map(productVariant -> productVariant.setProductId(productId))
+                .toList();
+        return productVariantRepository.insertAndFindBlocking(productVariantReq, productId);
+    }
+
+    public List<ProductAttributeOption> insertAttrAndReturnOption(ProductRequest productRequest) {
+        List<ProductAttribute> productAttributesResult = productAttributeRepository.insertAndFindBlocking(productAttributeMapper.toProductAttribute(productRequest.getAttributes()));
+        Map<String, Integer> mapReq = productAttributesResult.stream()
+                .collect(Collectors.toMap(ProductAttribute::getName, ProductAttribute::getId));
+        List<ProductAttributeOption> productAttributeOptions = productRequest.getAttributes().stream()
+                .flatMap(attributeRequest -> attributeRequest.getOptions().stream()
+                        .map(s -> new ProductAttributeOption()
+                                .setValue(s)
+                                .setProductAttributeId(mapReq.get(attributeRequest.getName()))
+                        )).toList();
+        return productAttributeOptionRepository.insertAndFindBlocking(productAttributeOptions, mapReq.values());
     }
 
 
@@ -113,30 +124,46 @@ public class ProductServiceImpl implements ProductService {
             int index = random.nextInt(CHARACTERS.length());
             randomPart.append(CHARACTERS.charAt(index));
         }
-        return timestamp + "-" + randomPart.toString();
+        return timestamp + "-" + randomPart;
     }
 
 
     @Transactional
     @Override
     public Single<String> update(Integer id, ProductRequest productRequest) {
+        productRequest.getVariants().forEach(variantsRequest -> {
+            String skuCode = variantsRequest.getSkuCode();
+            variantsRequest.setSkuCode(StringUtils.isEmpty(skuCode) ? generateSkuCode(SKU_CODE_LENGTH) : skuCode);
+        });
         Optional<Product> productOptional = productRepository.findByIdBlocking(id);
         Product product = productOptional.orElseThrow(() -> new AppException(NOT_FOUND, "PRODUCT"));
         productMapper.toProduct(product, productRequest);
         productRepository.updateBlocking(id, product);
         imageService.updateImagesBlocking(productRequest.getImages(), id, ImageEnum.PRODUCT);
+        List<ProductAttributeOption> productAttributeOptions = insertAttrAndReturnOption(productRequest);
+        List<ProductVariant> productVariants = insertAndGetProductVariants(productRequest, product.getId());
+        setDeleteFieldForProductVariants(productRequest, productVariants);
+        insertPVAO(productRequest, productAttributeOptions, productVariants);
         return Single.just(SUCCESS);
+    }
+
+    private void setDeleteFieldForProductVariants(ProductRequest productRequest, List<ProductVariant> productVariants) {
+        Set<String> skuCodeReqs = productRequest.getVariants().stream()
+                .map(ProductRequest.VariantsRequest::getSkuCode)
+                .collect(Collectors.toSet());
+        List<ProductVariant> missingProductVariant = productVariants.stream()
+                .filter(productVariant -> !skuCodeReqs.contains(productVariant.getSkuCode()))
+                .peek(productVariant -> productVariant.setDeletedAt(LocalDateTime.now()))
+                .toList();
+        productVariantRepository.insertUpdateOnDuplicateKeyBlocking(missingProductVariant);
     }
 
     @Transactional
     @Override
     public Single<String> delete(Integer id) {
-        if (productRepository.existsByIdBlocking(id)) {
-            productRepository.deleteByIdBlocking(id);
-            imageRepository.deleteByTargetIdAndTypeBlocking(id, ImageEnum.PRODUCT.getValue());
-        } else {
-            throw new AppException(NOT_FOUND, "PRODUCT");
-        }
+        Product product = productRepository.findByIdBlocking(id).orElseThrow(() -> new AppException(NOT_FOUND, "PRODUCT"));
+        product.setDeletedAt(LocalDateTime.now());
+        productRepository.updateBlocking(id, product);
         return Single.just(SUCCESS);
     }
 
