@@ -34,7 +34,7 @@ public class SQLQueryUtils {
         String sortDirection = order.getSortDirection();
         Field<?> fieldSortBy = Arrays.stream(table.fields())
                 .filter(field -> field.getName().equalsIgnoreCase(sortBy))
-                .findFirst().orElseThrow(() -> new AppException(ErrorCodeBase.INVALID_SORT_BY, sortBy));
+                .findFirst().orElse(table.field("id"));
         if (Order.Direction.ASC.value().equalsIgnoreCase(sortDirection)) {
             return fieldSortBy.asc();
         } else if (Order.Direction.DESC.value().equalsIgnoreCase(sortDirection)) {

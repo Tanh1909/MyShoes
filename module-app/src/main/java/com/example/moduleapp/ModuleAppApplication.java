@@ -28,7 +28,6 @@ public class ModuleAppApplication {
     @Bean
     public ApplicationRunner applicationRunner() {
         return args -> {
-
         };
     }
 

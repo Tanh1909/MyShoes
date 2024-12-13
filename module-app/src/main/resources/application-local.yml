@@ -30,6 +30,7 @@ auth:
     - /vnpay-callback
     - /product
     - /category
+    - /
 vnpay:
   tmn-code: O9IG86PT
   hash-secret: CXXMBGVOQGKJVRWIWX7S91HWCDM3X6DK
@@ -37,7 +38,7 @@ vnpay:
   version: 2.1.0
   command: pay
   order-type: other
-  return-url: http://localhost:8080/payment/vnpay-callback
+  return-url: http://localhost:3000/payment-callback
   expiration-time: 300000
 
 app:
@@ -48,3 +49,5 @@ messing:
     topic:
       order-success: ORDER_SUCCESS
       push-order-request: PUSH_ORDER_REQUEST
+
+

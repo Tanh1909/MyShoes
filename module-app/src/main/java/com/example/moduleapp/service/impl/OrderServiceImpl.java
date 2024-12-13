@@ -16,6 +16,7 @@ import com.example.moduleapp.data.mapper.OrderItemMapper;
 import com.example.moduleapp.data.mapper.OrderMapper;
 import com.example.moduleapp.data.request.OrderRequest;
 import com.example.moduleapp.data.request.OrderStatusRequest;
+import com.example.moduleapp.data.response.OrderCreateResponse;
 import com.example.moduleapp.data.response.OrderItemResponse;
 import com.example.moduleapp.data.response.OrderResponse;
 import com.example.moduleapp.model.tables.pojos.*;
@@ -39,7 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.common.utils.ValidateUtils.getOptionalValue;
-import static com.example.moduleapp.config.constant.AppMessageConstants.ORDER_IN_PROGRESS;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public Single<String> create(OrderRequest orderRequest) {
+    public Single<OrderCreateResponse> create(OrderRequest orderRequest) {
         Map<Integer, OrderRequest.ProductVariantRequest> productVariantRequestMap = orderRequest.getProductVariants().stream()
                 .collect(Collectors.toMap(
                         OrderRequest.ProductVariantRequest::getId,
@@ -104,7 +104,8 @@ public class OrderServiceImpl implements OrderService {
             kafkaTemplate.send(pushOrderRequest, productVariant.getId().toString(), JsonUtils.encode(orderItem));
         });
         orderItemRepository.insertBlocking(orderItems);
-        return Single.just(ORDER_IN_PROGRESS);
+        return Single.just(new OrderCreateResponse()
+                .setOrderId(order.getId()));
     }
 
     private String generateOrderCode(Integer orderId) {
@@ -156,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
         variantReqIds.forEach(id -> {
             if (!variantIds.contains(id)) {
                 log.debug("Product variant id: {} not found", id);
-                throw new AppException(ErrorCodeBase.NOT_FOUND, "Product");
+                throw new AppException(ErrorCodeBase.NOT_FOUND, "PRODUCT VARIANT ID");
             }
         });
     }

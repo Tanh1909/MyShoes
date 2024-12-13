@@ -58,7 +58,7 @@ public class CartRepository extends JooqRepository<Cart, Long> implements IRxCar
     }
 
     @Override
-    public Single<Integer> insertOrUpdate(Cart cart, Integer stock) {
+    public Single<Integer> insertOrUpdate(Cart cart,Integer quantity, Integer stock) {
         return rxSchedulerIo(() -> getDSLContext()
                 .insertInto(getTable())
                 .set(SQLQueryUtils.toInsertQueries(getTable(), cart))
@@ -66,10 +66,10 @@ public class CartRepository extends JooqRepository<Cart, Long> implements IRxCar
                 .set(
                         field("quantity"),
                         when(
-                                field("quantity").add(1).le(stock),
-                                field("quantity").add(1)
+                                field("quantity").add(quantity).le(stock),
+                                field("quantity").add(quantity)
                         )
-                                .otherwise(field("quantity"))
+                                .otherwise(stock)
                 )
                 .execute()
         );

@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserUpdateRequest {
     private String email;
     private String fullName;
+    private Integer avatarId;
     private MultipartFile avatar;
     private String password;
 }

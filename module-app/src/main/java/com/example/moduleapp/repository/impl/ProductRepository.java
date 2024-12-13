@@ -89,4 +89,28 @@ public class ProductRepository extends JooqRepository<Product, Integer>
                 }
         );
     }
+
+    @Override
+    public Single<PageResponse<Product>> findByNameLike(String productName, PageRequest pageRequest) {
+        int page = pageRequest.getPage();
+        int size = pageRequest.getSize();
+        int offset = pageRequest.getOffset();
+        Condition condition = PRODUCT.NAME.likeIgnoreCase("%" + productName + "%");
+        return Single.zip(
+                getTotalRecords(condition),
+                rxSchedulerIo(() -> getDSLContext()
+                        .select()
+                        .from(getTable())
+                        .where(condition.and(filterActive()))
+                        .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
+                        .offset(offset)
+                        .limit(size)
+                        .fetchInto(pojoClass)
+                ),
+                (totalRecords, results) -> {
+                    int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+                    return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
+                }
+        );
+    }
 }

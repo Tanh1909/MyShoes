@@ -30,6 +30,12 @@ public class ProductController {
         return productService.findAll(pageRequest).map(ApiResponse::success);
     }
 
+    @GetMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public Single<ApiResponse> findByNameLike(String name, @Pageable PageRequest pageRequest) {
+        return productService.findByNameLike(name, pageRequest).map(ApiResponse::success);
+    }
+
     @GetMapping("/category/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Single<ApiResponse> findByCategoryId(@PathVariable Integer id, @Pageable PageRequest pageRequest) {

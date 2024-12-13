@@ -9,7 +9,6 @@ import lombok.Getter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PaymentResponse {
     private boolean success;
-    private String transactionId;
     private String url;
     private String message;
 }

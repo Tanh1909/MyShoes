@@ -9,5 +9,5 @@ import io.reactivex.rxjava3.core.Single;
 public interface IRxCartRepository extends IRxJooqRepository<Cart, Long> {
     Single<PageResponse<Cart>> findByUserId(Long userId, PageRequest pageRequest);
 
-    Single<Integer> insertOrUpdate(Cart cart,Integer stock);
+    Single<Integer> insertOrUpdate(Cart cart, Integer quantity, Integer stock);
 }

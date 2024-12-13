@@ -8,6 +8,7 @@ import com.example.moduleapp.config.constant.AppErrorCode;
 import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
 import com.example.moduleapp.data.mapper.CartMapper;
+import com.example.moduleapp.data.request.CartRequest;
 import com.example.moduleapp.data.request.CartUpdateRequest;
 import com.example.moduleapp.data.response.CartResponse;
 import com.example.moduleapp.model.tables.pojos.Cart;
@@ -23,6 +24,7 @@ import com.example.moduleapp.service.CartService;
 import com.example.moduleapp.service.ProductVariantService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -86,6 +88,7 @@ public class CartServiceImpl implements CartService {
                                             cartResponse.setOptions(mapProductCart.get(cart.getProductId()));
                                             return cartResponse;
                                         })
+                                        .filter(cartResponse -> !ObjectUtils.isEmpty(cartResponse.getProductVariant()))
                                         .toList();
                                 return PageResponse.toPageResponse(cartResponses, cartPageResponse);
                             }
@@ -94,7 +97,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Single<String> addToCart(Integer productVariantId) {
+    public Single<String> addToCart(Integer productVariantId, CartRequest cartRequest) {
         Integer userId = authService.getCurrentUser().getUserInfo().getId();
         return productVariantRepository.findById(productVariantId)
                 .flatMap(productVariantOptional -> {
@@ -103,8 +106,8 @@ public class CartServiceImpl implements CartService {
                     cart.setUserId(userId.longValue());
                     cart.setProductVariantId(productVariant.getId());
                     cart.setProductId(productVariant.getProductId());
-                    cart.setQuantity(1);
-                    return cartRepository.insertOrUpdate(cart, productVariant.getStock())
+                    cart.setQuantity(cartRequest.getQuantity());
+                    return cartRepository.insertOrUpdate(cart,cartRequest.getQuantity(), productVariant.getStock())
                             .map(integer -> "SUCCESS");
                 });
     }

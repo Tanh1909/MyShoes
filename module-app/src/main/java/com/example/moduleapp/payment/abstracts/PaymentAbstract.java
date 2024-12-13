@@ -14,6 +14,7 @@ import com.example.moduleapp.repository.impl.PaymentMethodRepository;
 import com.example.moduleapp.repository.impl.PaymentRepository;
 import io.reactivex.rxjava3.core.Single;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,9 +31,11 @@ public abstract class PaymentAbstract {
     @Autowired
     private PaymentMapper paymentMapper;
 
+
     public abstract PaymentMethodEnum getPaymentMethod();
 
 
+    @Transactional
     public Single<PaymentResponse> pay(Integer orderId, UserPrincipal userPrincipal) {
         return Single.zip(
                         paymentRepository.findByOrderId(orderId),
@@ -45,6 +48,11 @@ public abstract class PaymentAbstract {
                             PaymentMethod paymentMethod = paymentMethodOptional
                                     .orElseThrow(() -> new AppException(AppErrorCode.IS_NOT_SUPPORTED, "PAYMENT METHOD"));
                             if (!OrderEnum.PENDING.getValue().equals(order.getStatus())) {
+                                throw new AppException(AppErrorCode.ORDER_HAS_BEEN_PAYED);
+                            }
+                            boolean isPending = orderItems.stream()
+                                    .anyMatch(orderItem -> OrderItemEnum.PENDING.getValue().equals(orderItem.getStatus()));
+                            if (isPending) {
                                 throw new AppException(AppErrorCode.ORDER_HAS_BEEN_PAYED);
                             }
                             BigDecimal totalAmount = orderItems.stream()

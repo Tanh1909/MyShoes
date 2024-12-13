@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -15,6 +17,8 @@ public class ProductResponse {
     private Double rating;
     private String imageUrl;
     private Integer categoryId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public Double getPrice() {
         return price == null ? 0 : price;

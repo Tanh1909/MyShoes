@@ -4,6 +4,7 @@ import com.example.common.annotation.Pageable;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.ApiResponse;
 import com.example.common.data.response.PageResponse;
+import com.example.moduleapp.data.request.CartRequest;
 import com.example.moduleapp.data.request.CartUpdateRequest;
 import com.example.moduleapp.data.response.CartResponse;
 import com.example.moduleapp.service.CartService;
@@ -20,8 +21,8 @@ public class CartController {
 
     @PostMapping("/{productVariantId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Single<ApiResponse<String>> create(@PathVariable Integer productVariantId) {
-        return cartService.addToCart(productVariantId).map(ApiResponse::success);
+    public Single<ApiResponse<String>> create(@PathVariable Integer productVariantId, @RequestBody CartRequest cartRequest) {
+        return cartService.addToCart(productVariantId,cartRequest).map(ApiResponse::success);
     }
 
     @GetMapping

@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -151,6 +152,7 @@ public class ReviewServiceImpl implements ReviewService {
             }
             reviewMapper.toReview(review, reviewRequest);
             review.setIsReview(Byte.valueOf("1"));
+            review.setReviewedAt(LocalDateTime.now());
             List<Image> imageReq = pair.getRight().stream().peek(image -> {
                 image.setType(ImageEnum.REVIEW.getValue());
                 image.setTargetId(reviewId);

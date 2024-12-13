@@ -3,12 +3,15 @@ package com.example.moduleapp.service.impl;
 import com.example.common.context.SecurityContext;
 import com.example.common.context.UserPrincipal;
 import com.example.common.exception.AppException;
+import com.example.common.utils.JsonUtils;
 import com.example.moduleapp.config.constant.*;
+import com.example.moduleapp.config.vnpay.VNPayReturnParams;
 import com.example.moduleapp.data.request.PaymentRequest;
 import com.example.moduleapp.data.response.PaymentResponse;
 import com.example.moduleapp.model.tables.pojos.Order;
 import com.example.moduleapp.model.tables.pojos.Payment;
 import com.example.moduleapp.payment.abstracts.PaymentAbstract;
+import com.example.moduleapp.payment.concrete.VNPAYPayment;
 import com.example.moduleapp.payment.factory.PaymentFactory;
 import com.example.moduleapp.repository.impl.OrderRepository;
 import com.example.moduleapp.repository.impl.PaymentRepository;
@@ -20,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 import static com.example.common.utils.ValidateUtils.getOptionalValue;
 
@@ -43,29 +47,28 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Transactional
-    public Single<String> handleVNPayCallback(Integer paymentId, LocalDateTime paidAt, String responseCode) {
-        switch (responseCode) {
-            case "00" -> {
-                return paymentRepository.findById(paymentId)
-                        .flatMap(paymentOptional -> {
-                            Payment payment = paymentOptional.orElseThrow(() -> new AppException(AppErrorCode.NOT_FOUND, "PAYMENT ID"));
-                            payment.setPaymentStatus(PaymentEnum.SUCCESS.getValue());
-                            payment.setPaidAt(paidAt);
-                            return orderRepository.findById(payment.getOrderId())
-                                    .map(orderOptional -> {
-                                        Order order = getOptionalValue(orderOptional, Order.class);
-                                        order.setStatus(OrderEnum.PAYMENT_CONFIRMED.getValue());
-                                        orderRepository.updateBlocking(order.getId(), order);
-                                        paymentRepository.updateBlocking(paymentId, payment);
-                                        return orderOptional;
-                                    });
-                        }).map(integer -> "SUCCESS");
-            }
-            case "11" -> throw new AppException(VNPayErrorCode.TIME_OUT);
-            case "13" -> throw new AppException(VNPayErrorCode.WRONG_OTP);
-            default -> throw new AppException(VNPayErrorCode.NOT_SUCCESS);
+    public Single<String> verify(VNPayReturnParams vnPayReturnParams) {
+        VNPAYPayment paymentAbstract = (VNPAYPayment) paymentFactory.create(PaymentMethodEnum.VNPAY);
+        Map<String, String> params = JsonUtils.covertObjToMap(vnPayReturnParams, String.class, String.class);
+        boolean isVerify = paymentAbstract.verifyPayment(params);
+        if (isVerify) {
+            Integer paymentId = Integer.valueOf(vnPayReturnParams.getVnp_TxnRef());
+            return paymentRepository.findById(paymentId)
+                    .flatMap(paymentOptional -> {
+                        Payment payment = paymentOptional.orElseThrow(() -> new AppException(AppErrorCode.NOT_FOUND, "PAYMENT ID"));
+                        payment.setPaymentStatus(PaymentEnum.SUCCESS.getValue());
+                        payment.setPaidAt(LocalDateTime.now());
+                        return orderRepository.findById(payment.getOrderId())
+                                .map(orderOptional -> {
+                                    Order order = getOptionalValue(orderOptional, Order.class);
+                                    order.setStatus(OrderEnum.PAYMENT_CONFIRMED.getValue());
+                                    orderRepository.updateBlocking(order.getId(), order);
+                                    paymentRepository.updateBlocking(paymentId, payment);
+                                    return orderOptional;
+                                });
+                    }).map(integer -> "SUCCESS");
         }
-
+        throw new AppException(VNPayErrorCode.NOT_SUCCESS);
     }
 
 

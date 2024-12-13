@@ -29,6 +29,10 @@ public class Order {
         this(sortBy, DEFAULT_SORT_DIRECTION);
     }
 
+    public boolean isAsc() {
+        return sortDirection.equals(DEFAULT_SORT_DIRECTION);
+    }
+
     public Order(String sortBy, String sortDirection) {
         this.sortBy = sortBy;
         this.sortDirection = sortDirection;

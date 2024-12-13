@@ -1,5 +1,6 @@
 package com.example.moduleapp.service.impl;
 
+import com.example.common.data.request.pagination.Order;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.common.exception.AppException;
@@ -162,7 +163,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Single<String> delete(Integer id) {
         Product product = productRepository.findByIdBlocking(id).orElseThrow(() -> new AppException(NOT_FOUND, "PRODUCT"));
+        List<ProductVariant> productVariants = productVariantRepository.findByProductIdBlocking(product.getId());
+        List<ProductVariant> productVariantsReq = productVariants.stream().peek(productVariant -> productVariant.setDeletedAt(LocalDateTime.now()))
+                .toList();
         product.setDeletedAt(LocalDateTime.now());
+        productVariantRepository.insertUpdateOnDuplicateKeyBlocking(productVariantsReq);
         productRepository.updateBlocking(id, product);
         return Single.just(SUCCESS);
     }
@@ -170,33 +175,60 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Single<PageResponse<ProductResponse>> findAll(PageRequest pageRequest) {
         return productRepository.findAll(pageRequest)
-                .flatMap(productPageResponse -> {
-                    List<Product> products = productPageResponse.getData().stream().toList();
-                    List<ProductResponse> productResponses = productMapper.toProductResponse(products);
-                    List<Integer> productIds = products.stream().map(Product::getId).toList();
-                    return Single.zip(
-                            imageRepository.findPrimaryByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
-                            productRepository.getNumberOfPaid(productIds),
-                            reviewRepository.getRatedByProductIdIn(productIds),
-                            (images, paidMap, ratingMap) -> {
-                                Map<Integer, String> imageMap = images.stream().collect(Collectors.toMap(
-                                        Image::getTargetId,
-                                        Image::getUrl,
-                                        (s, s2) -> s
-                                ));
-                                productResponses.forEach(productResponse -> {
-                                    BigDecimal tempRate = ratingMap.get(productResponse.getId());
-                                    double rating = tempRate == null ? 0 : tempRate.setScale(1, ROUND_HALF_UP).doubleValue();
-                                    String imageUrl = imageMap.get(productResponse.getId());
-                                    Integer sold = paidMap.get(productResponse.getId());
-                                    productResponse.setImageUrl(imageUrl == null ? "" : imageUrl);
-                                    productResponse.setSold(sold == null ? 0 : sold);
-                                    productResponse.setRating(rating);
-                                });
-                                return PageResponse.toPageResponse(productResponses, productPageResponse);
-                            }
-                    );
-                });
+                .flatMap(productPageResponse -> getPageResponseSingle(pageRequest, productPageResponse));
+    }
+
+    @Override
+    public Single<PageResponse<ProductResponse>> findByNameLike(String name, PageRequest pageRequest) {
+        return productRepository.findByNameLike(name, pageRequest)
+                .flatMap(productPageResponse -> getPageResponseSingle(pageRequest, productPageResponse));
+    }
+
+    private Single<PageResponse<ProductResponse>> getPageResponseSingle(PageRequest pageRequest, PageResponse<Product> productPageResponse) {
+        List<Product> products = productPageResponse.getData().stream().toList();
+        List<ProductResponse> productResponses = productMapper.toProductResponse(products);
+        List<Integer> productIds = products.stream().map(Product::getId).toList();
+        return Single.zip(
+                imageRepository.findPrimaryByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
+                productRepository.getNumberOfPaid(productIds),
+                reviewRepository.getRatedByProductIdIn(productIds),
+                (images, paidMap, ratingMap) -> {
+                    Map<Integer, String> imageMap = images.stream().collect(Collectors.toMap(
+                            Image::getTargetId,
+                            Image::getUrl,
+                            (s, s2) -> s
+                    ));
+
+                    Order soldOrder = pageRequest.getOrders()
+                            .stream()
+                            .filter(order -> order.getSortBy().equalsIgnoreCase("sold"))
+                            .findFirst().orElse(null);
+                    Order ratingOrder = pageRequest.getOrders()
+                            .stream()
+                            .filter(order -> order.getSortBy().equalsIgnoreCase("rating"))
+                            .findFirst().orElse(null);
+                    productResponses.forEach(productResponse -> {
+                        BigDecimal tempRate = ratingMap.get(productResponse.getId());
+                        double rating = tempRate == null ? 0 : tempRate.setScale(1, ROUND_HALF_UP).doubleValue();
+                        String imageUrl = imageMap.get(productResponse.getId());
+                        Integer sold = paidMap.get(productResponse.getId());
+                        productResponse.setImageUrl(imageUrl == null ? "" : imageUrl);
+                        productResponse.setSold(sold == null ? 0 : sold);
+                        productResponse.setRating(rating);
+                    });
+
+                    if (soldOrder != null) {
+                        boolean isDesc = Order.Direction.DESC.value().equalsIgnoreCase(soldOrder.getSortDirection());
+                        productResponses.sort((o1, o2) -> isDesc ? o2.getSold().compareTo(o1.getSold()) : o1.getSold().compareTo(o2.getSold()));
+                    }
+
+                    if (ratingOrder != null) {
+                        boolean isDesc = Order.Direction.DESC.value().equalsIgnoreCase(ratingOrder.getSortDirection());
+                        productResponses.sort((o1, o2) -> isDesc ? o2.getRating().compareTo(o1.getRating()) : o1.getRating().compareTo(o2.getRating()));
+                    }
+                    return PageResponse.toPageResponse(productResponses, productPageResponse);
+                }
+        );
     }
 
     @Override

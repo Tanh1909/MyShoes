@@ -9,8 +9,6 @@ import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/payment")
@@ -22,11 +20,8 @@ public class PaymentController {
         return paymentService.pay(paymentRequest).map(ApiResponse::success);
     }
 
-    @GetMapping("/vnpay-callback")
-    public Single<String> handleVnPayCallback(VNPayReturnParams vnPayReturnParams) {
-        Integer paymentId = Integer.valueOf(vnPayReturnParams.getVnp_TxnRef());
-        LocalDateTime paidAt = LocalDateTime.now();
-        String responseCode = vnPayReturnParams.getVnp_ResponseCode();
-        return paymentService.handleVNPayCallback(paymentId, paidAt, responseCode);
+    @GetMapping("/vnpay/verify")
+    public Single<String> handleVerifyVNPay(VNPayReturnParams vnPayReturnParams) {
+        return paymentService.verify(vnPayReturnParams);
     }
 }

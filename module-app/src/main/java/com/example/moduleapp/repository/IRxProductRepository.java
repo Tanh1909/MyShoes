@@ -15,4 +15,6 @@ public interface IRxProductRepository extends IRxJooqRepository<Product, Integer
     Single<Integer> getNumberOfPaid(Integer productId);
 
     Single<PageResponse<Product>> findByCategoryId(Integer categoryId, PageRequest pageRequest);
+
+    Single<PageResponse<Product>> findByNameLike(String productName, PageRequest pageRequest);
 }

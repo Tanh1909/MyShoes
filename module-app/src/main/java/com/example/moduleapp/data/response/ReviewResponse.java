@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ public class ReviewResponse {
     private Product product;
     private List<String> imageUrls;
     private UserResponse user;
+    private LocalDateTime reviewedAt;
 
     @Getter
     @Builder

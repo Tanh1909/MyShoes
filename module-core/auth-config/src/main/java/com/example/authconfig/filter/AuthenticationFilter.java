@@ -24,12 +24,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
-import static org.springframework.core.Ordered.HIGHEST_PRECEDENCE;
-
 @Log4j2
 @Component
-@Order(HIGHEST_PRECEDENCE)
 @RequiredArgsConstructor
+@Order(0)
 public class AuthenticationFilter extends OncePerRequestFilter {
     @Qualifier("publicEndpoints")
     private final List<String> PUBLIC_ENDPOINTS;
@@ -38,13 +36,13 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.debug("AuthenticationFilter Invoked");
+        log.info("AuthenticationFilter Invoked");
+        String token = getTokenFromRequest(request);
         try {
-            if (PUBLIC_ENDPOINTS.stream().anyMatch(request.getRequestURI()::contains)) {
+            if (PUBLIC_ENDPOINTS.stream().anyMatch(request.getRequestURI()::contains)&&token==null) {
                 log.debug("API PUBLIC MATCH WITH URI: {}", request.getRequestURI());
                 filterChain.doFilter(request, response);
             } else {
-                String token = getTokenFromRequest(request);
                 if (token != null && jwtUtils.getBody(token) != null) {
                     SimpleSecurityUser simpleSecurityUser = jwtUtils.getUser(token);
                     UserPrincipal userPrincipal = UserPrincipal.builder()
@@ -68,7 +66,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             ErrorCode e = AuthErrorCode.UNAUTHORIZED;
             ApiResponse.writeResponseError(response, e);
         } catch (Exception ex) {
-            log.error("SOMETHING WRONG WITH {}: {}", request.getMethod(), request.getRequestURI());
+            log.error("SOMETHING WRONG WITH {}: {}", request.getMethod(), request.getRequestURI(), ex);
             ErrorCode e = ErrorCodeBase.INTERNAL_SERVER_ERROR;
             ApiResponse.writeResponseError(response, e);
         } finally {

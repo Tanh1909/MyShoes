@@ -1,9 +1,13 @@
 package com.example.common.utils;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.Collections;
+import java.util.Map;
 
 @Log4j2
 public class JsonUtils {
@@ -31,6 +35,16 @@ public class JsonUtils {
         } catch (Exception e) {
             log.error("Error converting JSON to Object: {}", e.getMessage());
             return null;
+        }
+    }
+
+    public static <K, V> Map<K, V> covertObjToMap(Object obj, Class<K> key, Class<V> value) {
+        try {
+            return getObjectMapper().convertValue(obj, new TypeReference<Map<K, V>>() {
+            });
+        } catch (Exception e) {
+            log.error("Error converting Object to Map: {}", e.getMessage());
+            return Collections.emptyMap();
         }
     }
 

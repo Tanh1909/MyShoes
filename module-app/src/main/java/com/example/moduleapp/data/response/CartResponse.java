@@ -24,6 +24,7 @@ public class CartResponse {
     @Setter
     public static class ProductVariant {
         private Integer id;
+        private Integer productId;
         private String name;
         private String imageUrl;
         private Double price;

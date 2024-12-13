@@ -7,8 +7,6 @@ import com.example.moduleapp.data.response.ProductDetailResponse;
 import com.example.moduleapp.data.response.ProductResponse;
 import io.reactivex.rxjava3.core.Single;
 
-import java.util.List;
-
 public interface ProductService {
     Single<String> create(ProductRequest productRequest);
 
@@ -18,7 +16,9 @@ public interface ProductService {
 
     Single<PageResponse<ProductResponse>> findAll(PageRequest pageRequest);
 
-    Single<PageResponse<ProductResponse>> findByCategoryId(Integer categoryId,PageRequest pageRequest);
+    Single<PageResponse<ProductResponse>> findByNameLike(String name,PageRequest pageRequest);
+
+    Single<PageResponse<ProductResponse>> findByCategoryId(Integer categoryId, PageRequest pageRequest);
 
     Single<ProductDetailResponse> findDetail(Integer id);
 
