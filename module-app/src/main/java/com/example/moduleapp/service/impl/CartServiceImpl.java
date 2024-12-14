@@ -113,7 +113,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Single<String> deleteFromCart(Long cartId) {
+    public Single<String> deleteFromCart(Integer cartId) {
         return cartRepository.findById(cartId)
                 .flatMap(cartOptional -> {
                     ValidateUtils.getOptionalValue(cartOptional, Cart.class);
@@ -123,7 +123,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Single<String> updateCart(Long cartId, CartUpdateRequest cartUpdateRequest) {
+    public Single<String> updateCart(Integer cartId, CartUpdateRequest cartUpdateRequest) {
         return Single.zip(
                         cartRepository.findById(cartId),
                         productVariantRepository.findById(cartUpdateRequest.getProductVariantId()),

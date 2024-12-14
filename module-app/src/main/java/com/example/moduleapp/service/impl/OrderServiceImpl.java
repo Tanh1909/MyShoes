@@ -16,6 +16,7 @@ import com.example.moduleapp.data.mapper.OrderItemMapper;
 import com.example.moduleapp.data.mapper.OrderMapper;
 import com.example.moduleapp.data.request.OrderRequest;
 import com.example.moduleapp.data.request.OrderStatusRequest;
+import com.example.moduleapp.data.request.RemoveCartRequest;
 import com.example.moduleapp.data.response.OrderCreateResponse;
 import com.example.moduleapp.data.response.OrderItemResponse;
 import com.example.moduleapp.data.response.OrderResponse;
@@ -66,6 +67,9 @@ public class OrderServiceImpl implements OrderService {
     @Value("${messing.kafka.topic.push-order-request}")
     private String pushOrderRequest;
 
+    @Value("${messing.kafka.topic.remove-cart-request}")
+    private String removeCartRequestTopic;
+
     @Transactional
     @Override
     public Single<OrderCreateResponse> create(OrderRequest orderRequest) {
@@ -75,7 +79,8 @@ public class OrderServiceImpl implements OrderService {
                         o -> o));
         UserPrincipal user = authService.getCurrentUser();
         Order orderReq = new Order();
-        orderReq.setUserId(user.getUserInfo().getId().longValue());
+        long userId = user.getUserInfo().getId().longValue();
+        orderReq.setUserId(userId);
         orderReq.setStatus(OrderEnum.PENDING.getValue());
         List<ProductVariant> productVariants = productVariantRepository.findByIdsBlocking(productVariantRequestMap.keySet());
         Address address = addressRepository.findByIdBlocking(orderRequest.getAddressId())
@@ -89,6 +94,9 @@ public class OrderServiceImpl implements OrderService {
         orderReq.setAddressId(address.getId());
         Order order = orderRepository.insertReturnBlocking(orderReq);
         List<OrderItem> orderItems = new ArrayList<>();
+        RemoveCartRequest removeCartRequest = new RemoveCartRequest();
+        removeCartRequest.setUserId(userId);
+        List<Integer> productVariantIds = new ArrayList<>();
         productVariants.forEach(productVariant -> {
             OrderRequest.ProductVariantRequest productVariantRequest = productVariantRequestMap.get(productVariant.getId());
             Integer orderId = order.getId();
@@ -102,11 +110,15 @@ public class OrderServiceImpl implements OrderService {
             orderItem.setCode(generateOrderCode(orderId));
             orderItems.add(orderItem);
             kafkaTemplate.send(pushOrderRequest, productVariant.getId().toString(), JsonUtils.encode(orderItem));
+            productVariantIds.add(productVariant.getId());
         });
+        removeCartRequest.setProductVariantIds(productVariantIds);
+        kafkaTemplate.send(removeCartRequestTopic, JsonUtils.encode(removeCartRequest));
         orderItemRepository.insertBlocking(orderItems);
         return Single.just(new OrderCreateResponse()
                 .setOrderId(order.getId()));
     }
+
 
     private String generateOrderCode(Integer orderId) {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));

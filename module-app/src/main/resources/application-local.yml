@@ -49,5 +49,6 @@ messing:
     topic:
       order-success: ORDER_SUCCESS
       push-order-request: PUSH_ORDER_REQUEST
+      remove-cart-request: REMOVE_CART_REQUEST
 
 

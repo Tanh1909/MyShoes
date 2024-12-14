@@ -3,6 +3,7 @@ package com.example.moduleapp.repository.impl;
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
 import com.example.moduleapp.model.tables.pojos.Cart;
+import com.example.moduleapp.repository.ICartRepository;
 import com.example.moduleapp.repository.IRxCartRepository;
 import com.example.repository.JooqRepository;
 import com.example.repository.utils.SQLQueryUtils;
@@ -13,6 +14,9 @@ import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
+
 import static com.example.common.template.RxTemplate.rxSchedulerIo;
 import static com.example.moduleapp.model.Tables.CART;
 import static org.jooq.impl.DSL.field;
@@ -20,7 +24,7 @@ import static org.jooq.impl.DSL.when;
 
 @Repository
 @RequiredArgsConstructor
-public class CartRepository extends JooqRepository<Cart, Long> implements IRxCartRepository {
+public class CartRepository extends JooqRepository<Cart, Integer> implements IRxCartRepository, ICartRepository {
     private final DSLContext dsl;
 
     @Override
@@ -58,7 +62,7 @@ public class CartRepository extends JooqRepository<Cart, Long> implements IRxCar
     }
 
     @Override
-    public Single<Integer> insertOrUpdate(Cart cart,Integer quantity, Integer stock) {
+    public Single<Integer> insertOrUpdate(Cart cart, Integer quantity, Integer stock) {
         return rxSchedulerIo(() -> getDSLContext()
                 .insertInto(getTable())
                 .set(SQLQueryUtils.toInsertQueries(getTable(), cart))
@@ -73,5 +77,15 @@ public class CartRepository extends JooqRepository<Cart, Long> implements IRxCar
                 )
                 .execute()
         );
+    }
+
+
+    @Override
+    public List<Cart> findByUserIdAndProductVariantIdInBlocking(long userId, Collection<Integer> productVariantIds) {
+        return getDSLContext()
+                .select()
+                .from(getTable())
+                .where(CART.USER_ID.eq(userId).and(CART.PRODUCT_VARIANT_ID.in(productVariantIds)))
+                .fetchInto(Cart.class);
     }
 }

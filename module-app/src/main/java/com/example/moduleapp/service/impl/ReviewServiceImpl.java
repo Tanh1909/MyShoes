@@ -74,15 +74,16 @@ public class ReviewServiceImpl implements ReviewService {
                                     Product productReview = mapProduct.get(review.getProductId());
                                     ProductVariantDetail productVariantDetail = mapPVD.get(review.getProductVariantId());
                                     Image image = mapImage.get(review.getProductId());
-                                    ReviewResponse.Product product = ReviewResponse.Product.builder()
-                                            .id(productReview.getId())
+                                    ReviewResponse.ProductVariant productVariant = ReviewResponse.ProductVariant.builder()
+                                            .id(productVariantDetail.getId())
+                                            .productId(productReview.getId())
                                             .name(productReview.getName())
-                                            .price(productVariantDetail == null ? 0 : productVariantDetail.getPrice())
+                                            .price(productVariantDetail.getPrice())
                                             .variants(productVariantDetail.getAttributes())
                                             .image(image == null ? "" : image.getUrl())
                                             .build();
                                     ReviewResponse reviewResponse = reviewMapper.toReviewResponse(review);
-                                    reviewResponse.setProduct(product);
+                                    reviewResponse.setProductVariant(productVariant);
                                     reviewResponse.setUser(userMapper.toUserResponse(user));
                                     return reviewResponse;
                                 }).toList();
@@ -114,7 +115,7 @@ public class ReviewServiceImpl implements ReviewService {
                                 List<ReviewResponse> results = reviews.stream().map(review -> {
                                     ProductVariantDetail productVariantDetail = mapPVD.get(review.getProductVariantId());
                                     User user = userMap.getOrDefault(review.getUserId(), new User());
-                                    ReviewResponse.Product productResponse = ReviewResponse.Product.builder()
+                                    ReviewResponse.ProductVariant productVariantResponse = ReviewResponse.ProductVariant.builder()
                                             .id(productId)
                                             .name(product.getName())
                                             .price(productVariantDetail == null ? 0 : productVariantDetail.getPrice())
@@ -122,7 +123,7 @@ public class ReviewServiceImpl implements ReviewService {
                                             .image(imageOptional.isEmpty() ? "" : imageOptional.get().getUrl())
                                             .build();
                                     ReviewResponse reviewResponse = reviewMapper.toReviewResponse(review);
-                                    reviewResponse.setProduct(productResponse);
+                                    reviewResponse.setProductVariant(productVariantResponse);
                                     reviewResponse.setUser(userMapper.toUserResponse(user));
                                     reviewResponse.setImageUrls(groupByReviewIds.get(review.getId()));
                                     return reviewResponse;

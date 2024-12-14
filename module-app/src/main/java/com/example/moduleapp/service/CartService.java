@@ -13,8 +13,8 @@ public interface CartService {
 
     Single<String> addToCart(Integer productVariantId, CartRequest cartRequest);
 
-    Single<String> deleteFromCart(Long cartId);
+    Single<String> deleteFromCart(Integer cartId);
 
-    Single<String> updateCart(Long cartId, CartUpdateRequest cartUpdateRequest);
+    Single<String> updateCart(Integer cartId, CartUpdateRequest cartUpdateRequest);
 
 }

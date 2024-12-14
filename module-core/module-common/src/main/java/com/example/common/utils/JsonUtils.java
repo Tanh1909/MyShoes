@@ -38,6 +38,15 @@ public class JsonUtils {
         }
     }
 
+    public static <T> T decode(String json, TypeReference<T> type) {
+        try {
+            return getObjectMapper().readValue(json, type);
+        } catch (Exception e) {
+            log.error("Error converting JSON to TypeReference: {}", e.getMessage());
+            return null;
+        }
+    }
+
     public static <K, V> Map<K, V> covertObjToMap(Object obj, Class<K> key, Class<V> value) {
         try {
             return getObjectMapper().convertValue(obj, new TypeReference<Map<K, V>>() {

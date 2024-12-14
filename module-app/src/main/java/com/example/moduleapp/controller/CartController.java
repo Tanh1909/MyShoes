@@ -31,12 +31,12 @@ public class CartController {
     }
 
     @PatchMapping("/{cartId}")
-    public Single<ApiResponse<String>> updateCart(@PathVariable Long cartId, @RequestBody CartUpdateRequest cartUpdateRequest) {
+    public Single<ApiResponse<String>> updateCart(@PathVariable Integer cartId, @RequestBody CartUpdateRequest cartUpdateRequest) {
         return cartService.updateCart(cartId, cartUpdateRequest).map(ApiResponse::success);
     }
 
     @DeleteMapping("/{cartId}")
-    public Single<ApiResponse<String>> deleteCart(@PathVariable Long cartId) {
+    public Single<ApiResponse<String>> deleteCart(@PathVariable Integer cartId) {
         return cartService.deleteFromCart(cartId).map(ApiResponse::success);
     }
 }

@@ -6,7 +6,7 @@ import com.example.moduleapp.model.tables.pojos.Cart;
 import com.example.repository.IRxJooqRepository;
 import io.reactivex.rxjava3.core.Single;
 
-public interface IRxCartRepository extends IRxJooqRepository<Cart, Long> {
+public interface IRxCartRepository extends IRxJooqRepository<Cart, Integer> {
     Single<PageResponse<Cart>> findByUserId(Long userId, PageRequest pageRequest);
 
     Single<Integer> insertOrUpdate(Cart cart, Integer quantity, Integer stock);

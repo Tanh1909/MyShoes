@@ -75,7 +75,7 @@ CREATE TABLE `category`
 ) ENGINE = InnoDB;
 
 
-CREATE TABLE `product`
+CREATE TABLE `productVariant`
 (
 `id`          INT AUTO_INCREMENT PRIMARY KEY,
 `name`        VARCHAR(255)   NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE `product_variant`
 `stock`      INT      DEFAULT 0,
 `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE
+FOREIGN KEY (`product_id`) REFERENCES `productVariant` (`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `product_variants_attribute_option`
@@ -145,7 +145,7 @@ CREATE TABLE `image`
 `product_id` INT(255),
 `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-FOREIGN KEY (`product_id`) REFERENCES `product` (id)
+FOREIGN KEY (`product_id`) REFERENCES `productVariant` (id)
 ) ENGINE = InnoDB;
 
 CREATE TABLE `order`
@@ -229,7 +229,7 @@ CREATE TABLE `category`
 ) ENGINE = InnoDB;
 
 
-CREATE TABLE `product`
+CREATE TABLE `productVariant`
 (
 `id`          INT AUTO_INCREMENT PRIMARY KEY,
 `name`        VARCHAR(255)   NOT NULL,
@@ -267,7 +267,7 @@ CREATE TABLE `product_variant`
 `stock`      INT      DEFAULT 0,
 `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
 `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-FOREIGN KEY (`product_id`) REFERENCES `product` (`id`) ON DELETE CASCADE
+FOREIGN KEY (`product_id`) REFERENCES `productVariant` (`id`) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
 CREATE TABLE `product_variants_attribute_option`

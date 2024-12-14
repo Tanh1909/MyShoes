@@ -17,15 +17,16 @@ public class ReviewResponse {
     private Integer id;
     private Double rating;
     private String comment;
-    private Product product;
+    private ProductVariant productVariant;
     private List<String> imageUrls;
     private UserResponse user;
     private LocalDateTime reviewedAt;
 
     @Getter
     @Builder
-    public static class Product {
+    public static class ProductVariant {
         private Integer id;
+        private Integer productId;
         private String name;
         private Double price;
         private String image;
