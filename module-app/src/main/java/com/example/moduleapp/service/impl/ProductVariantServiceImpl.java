@@ -59,6 +59,12 @@ public class ProductVariantServiceImpl implements ProductVariantService {
     }
 
     @Override
+    public Single<List<ProductVariantDetail>> findDetailsByIdInIgnoreFilter(Collection<Integer> ids) {
+        return productVariantRepository.findByIdsIgnoreFilter(ids)
+                .flatMap(productVariants -> getProductVariantDetails(productVariants, ids));
+    }
+
+    @Override
     public Single<List<ProductVariantDetail>> findDetailsByProductId(Integer productId) {
         return productVariantRepository.findByProductId(productId)
                 .flatMap(productVariants -> {

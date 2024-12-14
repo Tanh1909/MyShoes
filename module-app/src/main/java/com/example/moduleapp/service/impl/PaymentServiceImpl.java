@@ -47,12 +47,11 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Transactional
-    public Single<String> verify(VNPayReturnParams vnPayReturnParams) {
+    public Single<String> verify(Map<String,String> vnPayReturnParams) {
         VNPAYPayment paymentAbstract = (VNPAYPayment) paymentFactory.create(PaymentMethodEnum.VNPAY);
-        Map<String, String> params = JsonUtils.covertObjToMap(vnPayReturnParams, String.class, String.class);
-        boolean isVerify = paymentAbstract.verifyPayment(params);
+        boolean isVerify = paymentAbstract.verifyPayment(vnPayReturnParams);
         if (isVerify) {
-            Integer paymentId = Integer.valueOf(vnPayReturnParams.getVnp_TxnRef());
+            Integer paymentId = Integer.valueOf(vnPayReturnParams.get("vnp_TxnRef"));
             return paymentRepository.findById(paymentId)
                     .flatMap(paymentOptional -> {
                         Payment payment = paymentOptional.orElseThrow(() -> new AppException(AppErrorCode.NOT_FOUND, "PAYMENT ID"));

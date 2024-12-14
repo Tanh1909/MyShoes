@@ -181,8 +181,8 @@ public class OrderServiceImpl implements OrderService {
                                         List<Integer> productIds = orderItems.stream().map(OrderItem::getProductId).toList();
                                         List<Integer> variantIds = orderItems.stream().map(OrderItem::getProductVariantId).toList();
                                         return Single.zip(
-                                                productRepository.findByIds(productIds),
-                                                productVariantService.findDetailsByIdIn(variantIds),
+                                                productRepository.findByIdsIgnoreFilter(productIds),
+                                                productVariantService.findDetailsByIdInIgnoreFilter(variantIds),
                                                 imageRepository.findPrimaryByTargetIdInAndType(productIds, ImageEnum.PRODUCT.getValue()),
                                                 (products, productVariantDetails, images) -> {
                                                     Map<Integer, Product> mapProduct = products.stream()

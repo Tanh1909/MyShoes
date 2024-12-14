@@ -9,7 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum OrderEnum {
     PENDING("PENDING"),
-    CONFIRMED("CONFIRMED"),
     PAYMENT_CONFIRMED("PAYMENT_CONFIRMED"),
     CANCEL("CANCEL"),
     SHIPPING("SHIPPING"),

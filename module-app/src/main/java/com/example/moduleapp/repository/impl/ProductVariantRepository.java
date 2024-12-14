@@ -163,4 +163,5 @@ public class ProductVariantRepository extends JooqRepository<ProductVariant, Int
                 .where(PRODUCT_VARIANT.PRODUCT_ID.eq(productId).and(filterActive()))
                 .fetchInto(pojoClass);
     }
+
 }

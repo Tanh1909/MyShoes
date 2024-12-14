@@ -9,6 +9,9 @@ import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/payment")
@@ -20,8 +23,8 @@ public class PaymentController {
         return paymentService.pay(paymentRequest).map(ApiResponse::success);
     }
 
-    @GetMapping("/vnpay/verify")
-    public Single<String> handleVerifyVNPay(VNPayReturnParams vnPayReturnParams) {
+    @PostMapping("/vnpay/verify")
+    public Single<String> handleVerifyVNPay(@RequestBody Map<String,String> vnPayReturnParams) {
         return paymentService.verify(vnPayReturnParams);
     }
 }

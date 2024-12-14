@@ -50,34 +50,38 @@ public class VNPAYPayment extends PaymentAbstract {
     }
 
     public boolean verifyPayment(Map<String, String> params) {
-        String secureHash = params.remove("secureHash");
+        String secureHash = params.remove("vnp_SecureHash");
 
         if (secureHash == null || !"00".equals(params.get("vnp_ResponseCode"))) {
             return false;
         }
-        String generateSecureHash = generateSecureHash(params);
+        String generateSecureHash = generateSecureHash(buildParams(params,true));
         return secureHash.equals(generateSecureHash);
     }
 
 
     private String buildQuery(Map<String, String> params) {
-        String secureHash = generateSecureHash(params);
-        return secureHash +
+        String buildParams = buildParams(params,true);
+        return buildParams +
                 "&vnp_SecureHash=" +
-                URLEncoder.encode(secureHash, StandardCharsets.UTF_8);
+                generateSecureHash(buildParams);
     }
 
-    private String generateSecureHash(Map<String, String> params) {
+    private String buildParams(Map<String, String> params,boolean isEncode) {
         StringJoiner stringJoiner = new StringJoiner("&");
         params.entrySet().stream()
                 .filter(entry -> entry.getValue() != null && entry.getKey() != null)
                 .filter(entry -> !entry.getKey().equals("vnp_SecretKey"))
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
-                    String value = URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8);
+                    String value = isEncode?URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8):entry.getValue();
                     stringJoiner.add(entry.getKey() + "=" + value);
                 });
-        return HashUtils.hmacSHA512(vnPayConfigProperties.getHashSecret(), stringJoiner.toString());
+        return stringJoiner.toString();
+    }
+
+    private String generateSecureHash(String params) {
+        return HashUtils.hmacSHA512(vnPayConfigProperties.getHashSecret(), params);
     }
 
     private Map<String, String> getVnPayConfig() {

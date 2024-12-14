@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 public class VNPayReturnParams {
-    private String vnp_TmnCode;
-    private BigDecimal vnp_Amount;
+    private String vnp_Amount;
     private String vnp_BankCode;
-    private String vnp_OrderInfo;
+    private String vnp_BankTranNo;
+    private String vnp_CardType;
     private String vnp_TransactionNo;
     private String vnp_ResponseCode;
     private String vnp_TransactionStatus;

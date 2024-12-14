@@ -14,6 +14,8 @@ public interface ProductVariantService {
 
     Single<List<ProductVariantDetail>> findDetailsByIdIn(Collection<Integer> ids);
 
+    Single<List<ProductVariantDetail>> findDetailsByIdInIgnoreFilter(Collection<Integer> ids);
+
     Single<List<ProductVariantDetail>> findDetailsByProductId(Integer productId);
 
     Single<List<ProductVariantDetail>> findDetailsByProductIdIn(Collection<Integer> productIds);
