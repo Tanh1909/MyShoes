@@ -11,15 +11,11 @@ import com.example.moduleapp.config.constant.ImageEnum;
 import com.example.moduleapp.config.constant.OrderEnum;
 import com.example.moduleapp.config.constant.OrderItemEnum;
 import com.example.moduleapp.data.dto.ProductVariantDetail;
-import com.example.moduleapp.data.mapper.AddressMapper;
-import com.example.moduleapp.data.mapper.OrderItemMapper;
-import com.example.moduleapp.data.mapper.OrderMapper;
+import com.example.moduleapp.data.mapper.*;
 import com.example.moduleapp.data.request.OrderRequest;
 import com.example.moduleapp.data.request.OrderStatusRequest;
 import com.example.moduleapp.data.request.RemoveCartRequest;
-import com.example.moduleapp.data.response.OrderCreateResponse;
-import com.example.moduleapp.data.response.OrderItemResponse;
-import com.example.moduleapp.data.response.OrderResponse;
+import com.example.moduleapp.data.response.*;
 import com.example.moduleapp.model.tables.pojos.*;
 import com.example.moduleapp.repository.impl.*;
 import com.example.moduleapp.service.AuthService;
@@ -28,6 +24,7 @@ import com.example.moduleapp.service.ProductVariantService;
 import io.reactivex.rxjava3.core.Single;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -58,7 +55,11 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final OrderItemMapper orderItemMapper;
     private final AddressMapper addressMapper;
+    private final UserMapper userMapper;
+    private final PaymentMapper paymentMapper;
     private final PaymentRepository paymentRepository;
+    private final UserRepository userRepository;
+    private final PaymentMethodRepository paymentMethodRepository;
 
 
     @Value("${messing.kafka.topic.order-success}")
@@ -175,7 +176,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Single<PageResponse<OrderResponse>> getOrderResponseByStatus(String status, PageRequest pageRequest) {
+    public Single<PageResponse<OrderResponse>> getOrderResponseByUserAndStatus(String status, PageRequest pageRequest) {
         Integer userId = authService.getCurrentUser().getUserInfo().getId();
         OrderEnum.getValue(status);
         return orderRepository.findByUserIdAndStatus(userId, status, pageRequest)
@@ -236,5 +237,91 @@ public class OrderServiceImpl implements OrderService {
                                     }
                             );
                 });
+    }
+
+    @Override
+    public Single<PageResponse<OrderPaymentResponse>> getOrderPaymentResponse(String status, PageRequest pageRequest) {
+        OrderEnum orderEnum = OrderEnum.fromValue(status);
+        return orderRepository.findOrderPaymentResponses(orderEnum, pageRequest)
+                .flatMap(this::getOrderPaymentResponses);
+    }
+
+    @Override
+    public Single<PageResponse<OrderPaymentResponse>> getOrderPaymentSuccess(PageRequest pageRequest) {
+        return orderRepository.findOrderPaymentSuccess(pageRequest)
+                .flatMap(this::getOrderPaymentResponses);
+    }
+
+    @Override
+    public Single<OrderPaymentResponse> getById(Integer id) {
+        return orderRepository.findById(id)
+                .flatMap(orderOptional -> {
+                    Order order = orderOptional.orElseThrow(() -> new AppException(ErrorCodeBase.NOT_FOUND, "ORDER ID"));
+                    return Single.zip(
+                            paymentMethodRepository.findAll(),
+                            orderItemRepository.findByOrderId(id),
+                            userRepository.findByIdIgnoreFilter(order.getUserId().intValue()),
+                            paymentRepository.findByOrderId(id),
+                            addressRepository.findById(order.getAddressId()),
+                            (paymentMethods, orderItems, userOptional, paymentOptional, addressOptional) -> {
+                                Map<Integer, String> mapPaymentMethod = paymentMethods.stream()
+                                        .collect(Collectors.toMap(PaymentMethod::getId, PaymentMethod::getName));
+                                User user = userOptional.orElseThrow(() -> new AppException(ErrorCodeBase.NOT_FOUND, "USER ID"));
+                                UserResponse userResponse = userMapper.toUserResponse(user);
+                                Payment payment = paymentOptional.orElseThrow(() -> new AppException(ErrorCodeBase.NOT_FOUND, "PAYMENT ID"));
+                                PaymentOrderResponse paymentOrderResponse = paymentMapper.toPaymentOrderResponse(payment);
+                                paymentOrderResponse.setPaymentMethod(mapPaymentMethod.get(payment.getPaymentMethodId()));
+                                Address address = addressOptional.orElseThrow(() -> new AppException(ErrorCodeBase.NOT_FOUND, "ADDRESS ID"));
+                                AddressResponse addressResponse = addressMapper.toAddressResponse(address);
+                                return orderMapper.toOrderPaymentResponse(order)
+                                        .setOrderItems(orderItems)
+                                        .setUser(userResponse)
+                                        .setPayment(paymentOrderResponse)
+                                        .setAddress(addressResponse);
+                            }
+                    );
+                });
+    }
+
+    private Single<PageResponse<OrderPaymentResponse>> getOrderPaymentResponses(PageResponse<Order> orderPageResponse) {
+        List<Order> orders = orderPageResponse.getData().stream().toList();
+        Set<Integer> addressIds = orders.stream().map(Order::getAddressId).collect(Collectors.toSet());
+        Set<Integer> orderIds = orders.stream().map(Order::getId).collect(Collectors.toSet());
+        Set<Integer> userIds = orders.stream().map(order -> order.getUserId().intValue()).collect(Collectors.toSet());
+        return Single.zip(
+                paymentMethodRepository.findAll(),
+                orderItemRepository.findByOrderIdIn(orderIds),
+                userRepository.findByIdsIgnoreFilter(userIds),
+                paymentRepository.findByOrderIds(orderIds),
+                addressRepository.findByIds(addressIds),
+                (paymentMethods, orderItems, users, payments, addresses) -> {
+                    Map<Integer, String> mapPaymentMethod = paymentMethods.stream()
+                            .collect(Collectors.toMap(PaymentMethod::getId, PaymentMethod::getName));
+                    Map<Long, UserResponse> mapUser = users.stream()
+                            .collect(Collectors.toMap(User::getId, userMapper::toUserResponse));
+                    Map<Integer, PaymentOrderResponse> mapPayment = payments.stream()
+                            .collect(Collectors.toMap(Payment::getOrderId, payment -> {
+                                PaymentOrderResponse paymentOrderResponse = paymentMapper.toPaymentOrderResponse(payment);
+                                paymentOrderResponse.setPaymentMethod(mapPaymentMethod.get(payment.getPaymentMethodId()));
+                                return paymentOrderResponse;
+                            }));
+                    Map<Integer, AddressResponse> mapAddress = addresses.stream()
+                            .collect(Collectors.toMap(Address::getId, addressMapper::toAddressResponse));
+                    Map<Integer, List<OrderItem>> orderItemGroupByOrderId = orderItems.stream()
+                            .collect(Collectors.groupingBy(OrderItem::getOrderId));
+                    List<OrderPaymentResponse> orderPaymentResponses = orders.stream()
+                            .map(order -> {
+                                OrderPaymentResponse orderPaymentResponse = orderMapper.toOrderPaymentResponse(order);
+                                orderPaymentResponse.setOrderItems(orderItemGroupByOrderId.get(order.getId()));
+                                orderPaymentResponse.setAddress(mapAddress.get(order.getAddressId()));
+                                orderPaymentResponse.setPayment(mapPayment.get(order.getId()));
+                                orderPaymentResponse.setUser(mapUser.get(order.getUserId()));
+                                return orderPaymentResponse;
+                            })
+                            .filter(orderPaymentResponse -> ObjectUtils.isNotEmpty(orderPaymentResponse.getPayment()))
+                            .toList();
+                    return PageResponse.toPageResponse(orderPaymentResponses, orderPageResponse);
+                }
+        );
     }
 }

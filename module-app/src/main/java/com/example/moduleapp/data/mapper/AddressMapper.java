@@ -19,4 +19,5 @@ public interface AddressMapper extends ConvertMapper {
     OrderResponse.AddressResponse toAddressOrderResponse(Address address);
 
     List<OrderResponse.AddressResponse> toAddressOrderResponses(List<Address> addresses);
+
 }

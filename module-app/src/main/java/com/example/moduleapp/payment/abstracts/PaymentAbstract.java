@@ -63,7 +63,7 @@ public abstract class PaymentAbstract {
                             payment.setOrderId(order.getId());
                             payment.setPaymentMethodId(paymentMethod.getId());
                             payment.setAmount(totalAmount);
-                            payment.setPaymentStatus(PaymentEnum.PENDING.getValue());
+                            payment.setStatus(PaymentEnum.PENDING.getValue());
                             if (paymentOptional.isPresent()) {
                                 Payment paymentSql = paymentOptional.get();
                                 paymentMapper.toPayment(paymentSql, payment);

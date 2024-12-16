@@ -21,4 +21,5 @@ public interface UserMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "avatar", source = "avatar", ignore = true)
     void toUser(@MappingTarget User user, UserUpdateRequest userUpdateRequest);
+
 }

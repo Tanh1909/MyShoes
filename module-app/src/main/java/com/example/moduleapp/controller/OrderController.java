@@ -7,6 +7,7 @@ import com.example.common.data.response.PageResponse;
 import com.example.moduleapp.data.request.OrderRequest;
 import com.example.moduleapp.data.request.OrderStatusRequest;
 import com.example.moduleapp.data.response.OrderCreateResponse;
+import com.example.moduleapp.data.response.OrderPaymentResponse;
 import com.example.moduleapp.data.response.OrderResponse;
 import com.example.moduleapp.service.OrderService;
 import io.reactivex.rxjava3.core.Single;
@@ -31,7 +32,22 @@ public class OrderController {
     }
 
     @GetMapping
-    public Single<ApiResponse<PageResponse<OrderResponse>>> findByStatus(String status, @Pageable PageRequest pageRequest) {
-        return orderService.getOrderResponseByStatus(status, pageRequest).map(ApiResponse::success);
+    public Single<ApiResponse<PageResponse<OrderResponse>>> findByUserAndStatus(String status, @Pageable PageRequest pageRequest) {
+        return orderService.getOrderResponseByUserAndStatus(status, pageRequest).map(ApiResponse::success);
+    }
+
+    @GetMapping("/admin")
+    public Single<ApiResponse<PageResponse<OrderPaymentResponse>>> findByStatus(String status, @Pageable PageRequest pageRequest) {
+        return orderService.getOrderPaymentResponse(status, pageRequest).map(ApiResponse::success);
+    }
+
+    @GetMapping("/admin/payment-success")
+    public Single<ApiResponse<PageResponse<OrderPaymentResponse>>> findByPaymentSuccess(@Pageable PageRequest pageRequest) {
+        return orderService.getOrderPaymentSuccess(pageRequest).map(ApiResponse::success);
+    }
+
+    @GetMapping("/admin/{id}")
+    public Single<ApiResponse<OrderPaymentResponse>> findByOrderId(@PathVariable Integer id, @Pageable PageRequest pageRequest) {
+        return orderService.getById(id).map(ApiResponse::success);
     }
 }

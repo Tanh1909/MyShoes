@@ -1,5 +1,6 @@
 package com.example.moduleapp.data.mapper;
 
+import com.example.moduleapp.data.response.PaymentOrderResponse;
 import com.example.moduleapp.model.tables.pojos.Payment;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -10,4 +11,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 public interface PaymentMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void toPayment(@MappingTarget Payment target, Payment source);
+
+    PaymentOrderResponse toPaymentOrderResponse(Payment payment);
 }

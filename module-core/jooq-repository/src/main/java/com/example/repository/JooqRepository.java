@@ -212,6 +212,29 @@ public abstract class JooqRepository<P, ID> implements
     }
 
     @Override
+    public Single<PageResponse<P>> findAllByCondition(PageRequest pageRequest, Condition condition) {
+        int page = pageRequest.getPage();
+        int size = pageRequest.getSize();
+        int offset = pageRequest.getOffset();
+        return Single.zip(
+                getTotalRecords(condition),
+                rxSchedulerIo(() -> getDSLContext()
+                        .select()
+                        .from(getTable())
+                        .where(filterActive().and(condition))
+                        .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
+                        .offset(offset)
+                        .limit(size)
+                        .fetchInto(pojoClass)
+                ),
+                (totalRecords, results) -> {
+                    int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+                    return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
+                }
+        );
+    }
+
+    @Override
     public Single<PageResponse<P>> findAllIgnoreFilter(PageRequest pageRequest) {
         int page = pageRequest.getPage();
         int size = pageRequest.getSize();
@@ -237,6 +260,14 @@ public abstract class JooqRepository<P, ID> implements
     public Integer getTotalRecordsBlocking() {
         return getDSLContext().selectCount()
                 .from(getTable())
+                .fetchOne(0, int.class);
+    }
+
+    @Override
+    public Integer getTotalRecordsBlocking(Condition condition) {
+        return getDSLContext().selectCount()
+                .from(getTable())
+                .where(filterActive().and(condition))
                 .fetchOne(0, int.class);
     }
 
@@ -447,6 +478,24 @@ public abstract class JooqRepository<P, ID> implements
                 .select()
                 .from(getTable())
                 .where(filterActive())
+                .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
+                .offset(offset)
+                .limit(size)
+                .fetchInto(pojoClass);
+        return PageResponse.toPageResponse(results, page, size, totalPage, totalRecords);
+    }
+
+    @Override
+    public PageResponse<P> findAllByConditionBlocking(PageRequest pageRequest, Condition condition) {
+        int totalRecords = getTotalRecordsBlocking(condition);
+        int page = pageRequest.getPage();
+        int size = pageRequest.getSize();
+        int totalPage = (int) Math.ceil(totalRecords * 1f / size);
+        int offset = pageRequest.getOffset();
+        List<P> results = getDSLContext()
+                .select()
+                .from(getTable())
+                .where(filterActive().and(condition))
                 .orderBy(SQLQueryUtils.getSortFields(pageRequest.getOrders(), getTable()))
                 .offset(offset)
                 .limit(size)

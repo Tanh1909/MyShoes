@@ -25,4 +25,12 @@ public enum OrderEnum {
         }
     }
 
+    public static OrderEnum fromValue(String value) {
+        try {
+            return OrderEnum.valueOf(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 }

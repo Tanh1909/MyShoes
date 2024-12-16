@@ -55,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
             return paymentRepository.findById(paymentId)
                     .flatMap(paymentOptional -> {
                         Payment payment = paymentOptional.orElseThrow(() -> new AppException(AppErrorCode.NOT_FOUND, "PAYMENT ID"));
-                        payment.setPaymentStatus(PaymentEnum.SUCCESS.getValue());
+                        payment.setStatus(PaymentEnum.SUCCESS.getValue());
                         payment.setPaidAt(LocalDateTime.now());
                         return orderRepository.findById(payment.getOrderId())
                                 .map(orderOptional -> {

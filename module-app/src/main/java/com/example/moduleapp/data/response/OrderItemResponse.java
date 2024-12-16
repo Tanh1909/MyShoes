@@ -11,6 +11,7 @@ import java.util.Map;
 @Setter
 public class OrderItemResponse {
     private Integer id;
+    private Integer productId;
     private String name;
     private String imageUrl;
     private String code;

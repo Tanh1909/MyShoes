@@ -36,7 +36,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("AuthenticationFilter Invoked");
+        log.debug("AuthenticationFilter Invoked");
         String token = getTokenFromRequest(request);
         try {
             if (PUBLIC_ENDPOINTS.stream().anyMatch(request.getRequestURI()::contains)&&token==null) {

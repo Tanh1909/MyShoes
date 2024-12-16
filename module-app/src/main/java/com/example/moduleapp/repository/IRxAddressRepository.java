@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface IRxAddressRepository extends IRxJooqRepository<Address,Integer> {
     Single<Optional<Address>> findDefaultAddressByUserId(Long userId);
     Single<List<Address>> findByUserId(Long userId);
+
 }

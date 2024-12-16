@@ -11,6 +11,8 @@ import org.jooq.DSLContext;
 import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.common.template.RxTemplate.rxSchedulerIo;
@@ -36,7 +38,7 @@ public class PaymentRepository extends JooqRepository<Payment, Integer>
     public Boolean findPaymentSuccessBlocking(Integer orderId) {
         return getDSLContext()
                 .fetchExists(getTable(), PAYMENT.ORDER_ID.eq(orderId)
-                        .and(PAYMENT.PAYMENT_STATUS.eq(PaymentEnum.SUCCESS.getValue())));
+                        .and(PAYMENT.STATUS.eq(PaymentEnum.SUCCESS.getValue())));
     }
 
     @Override
@@ -46,6 +48,16 @@ public class PaymentRepository extends JooqRepository<Payment, Integer>
                 .from(getTable())
                 .where(PAYMENT.ORDER_ID.eq(orderId))
                 .fetchOptionalInto(pojoClass)
+        );
+    }
+
+    @Override
+    public Single<List<Payment>> findByOrderIds(Collection<Integer> orderIds) {
+        return rxSchedulerIo(() -> getDSLContext()
+                .select()
+                .from(getTable())
+                .where(PAYMENT.ORDER_ID.in(orderIds))
+                .fetchInto(pojoClass)
         );
     }
 }

@@ -2,6 +2,7 @@ package com.example.repository;
 
 import com.example.common.data.request.pagination.PageRequest;
 import com.example.common.data.response.PageResponse;
+import org.jooq.Condition;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,6 +38,8 @@ public interface IBlockingRepository<P, ID> {
 
     PageResponse<P> findAllBlocking(PageRequest pageRequest);
 
+    PageResponse<P> findAllByConditionBlocking(PageRequest pageRequest, Condition condition);
+
     Optional<P> findByIdBlocking(ID id);
 
     List<P> findByIdsBlocking(Collection<ID> ids);
@@ -44,5 +47,7 @@ public interface IBlockingRepository<P, ID> {
     Boolean existsByIdBlocking(ID id);
 
     Integer getTotalRecordsBlocking();
+
+    Integer getTotalRecordsBlocking(Condition condition);
 
 }

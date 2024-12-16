@@ -38,6 +38,8 @@ public interface IRxJooqRepository<P, ID> {
 
     Single<PageResponse<P>> findAll(PageRequest pageRequest);
 
+    Single<PageResponse<P>> findAllByCondition(PageRequest pageRequest,Condition condition);
+
     Single<PageResponse<P>> findAllIgnoreFilter(PageRequest pageRequest);
 
     Single<Optional<P>> findById(ID id);
